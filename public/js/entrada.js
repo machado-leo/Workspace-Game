@@ -32,6 +32,10 @@
 
   // Uma permissao so pros dois: se ja temos stream, e so ligar/desligar a track.
   async function garantirStream(comVideo) {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      aviso('Navegador bloqueou câmera/microfone em HTTP. Ative a flag chrome://flags/#unsafely-treat-insecure-origin-as-secure');
+      throw new Error('Ambiente inseguro (HTTP sem flag). mediaDevices indisponivel.');
+    }
     if (stream) {
       const temVideo = stream.getVideoTracks().length > 0;
       if (!comVideo || temVideo) return stream;

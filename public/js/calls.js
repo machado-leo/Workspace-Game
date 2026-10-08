@@ -561,6 +561,10 @@
   }
 
   async function ligarCamera() {
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+      mostrarAviso('Microfone bloqueado pelo navegador em HTTP. Para liberar, adicione esta URL em chrome://flags/#unsafely-treat-insecure-origin-as-secure ou use HTTPS.');
+      return;
+    }
     let avisoParcial = null;
     try {
       localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });

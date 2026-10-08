@@ -3529,7 +3529,17 @@
         self.vx = (ix / n) * SPEED;
         self.vy = (iy / n) * SPEED;
       }
-      if (!temInput || kart) {
+      if (!temInput) {
+        if (kart) {
+          const freio = Math.exp(-ATRITO_KART * dt);
+          self.vx *= freio;
+          self.vy *= freio;
+        } else {
+          // Parada rapida no passo normal: soltou a tecla, para na hora sem deslizar
+          self.vx = 0;
+          self.vy = 0;
+        }
+      } else if (kart) {
         const freio = Math.exp(-ATRITO_KART * dt);
         self.vx *= freio;
         self.vy *= freio;
