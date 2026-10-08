@@ -1,0 +1,5 @@
+# Scripts de shell rodam no Linux do VPS: quebra de linha do Windows (CRLF)
+# faz o bash falhar com "$'\r': command not found". Esta maquina tem
+# core.autocrlf=true, e o espelhar.js publica o que esta no DISCO - entao a
+# regra tem que valer na copia de trabalho tambem, nao so no repositorio.
+*.sh text eol=lf

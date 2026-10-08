@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Escritorio Virtual - {{NOME_SEDE}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&family=Bree+Serif&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <!-- A identidade desta sede (cores, fontes e o desenho do fundo). Vem do
+       server/marca.js, e DEPOIS do style.css de proposito: e ela que troca por
+       cima. Sem sede configurada, nao vem nada e a tela fica como era. -->
+  {{ESTILO_SEDE}}
+
+  <!-- App instalavel no computador (PWA). Ver docs/app-computador.md. -->
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/icones/favicon-32.png" />
+  <link rel="apple-touch-icon" href="/icones/icone-192.png" />
+  <meta name="theme-color" content="#4f46e5" />
+  <meta name="description" content="Escritorio virtual 2D da {{NOME_SEDE}}: presenca, chat e chamada por proximidade." />
+</head>
+<body>
+
+  <!-- Tela 0: login -->
+  <section id="tela-login" class="tela oculto">
+    <!-- Tela dividida: a marca de um lado, o formulario do outro. No celular
+         a marca vira uma faixa em cima. -->
+    <aside class="login-marca-painel">
+      <div class="login-marca-alto">
+        <span class="login-marca">{{LOGO_SEDE_CLARO}}</span>
+        <h1>{{NOME_SEDE}}</h1>
+      </div>
+
+      <div class="login-marca-meio">
+        {{MOTE_SEDE}}
+        <ul class="login-dentro">
+          <li>Você anda pela sede e conversa com quem está perto</li>
+          <li>Chat, agenda e quadro do time no mesmo lugar</li>
+          <li>Estante com o acervo da empresa, aberta pra ler</li>
+        </ul>
+      </div>
+
+      <p id="login-sub" class="login-marca-pe">{{SUBTITULO_SEDE}}</p>
+    </aside>
+
+    <div class="login-coluna">
+    <div class="login-card">
+      <header class="login-entrada-topo">
+        <h2>Entrar na sede</h2>
+        <p>Use a conta da empresa. Leva dez segundos.</p>
+      </header>
+
+      <!-- Porta principal de quem e da empresa: o Google prova que a pessoa e dona do
+           e-mail. So aparece quando o servidor tem o Google configurado - ver
+           /api/login-opcoes e docs/plano-login.md. -->
+      <div id="login-google" class="login-google oculto">
+        <a id="btn-google" class="login-btn-google" href="/api/google/entrar">
+          <svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true">
+            <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+            <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+            <path fill="#FBBC05" d="M10.53 28.59A14.5 14.5 0 0 1 9.5 24c0-1.59.28-3.13.76-4.59l-7.98-6.19A23.94 23.94 0 0 0 0 24c0 3.87.92 7.53 2.56 10.78l7.97-6.19z"/>
+            <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+          </svg>
+          <span>Entrar com o Google da {{SIGLA_SEDE}}</span>
+        </a>
+        <p class="login-dica login-dica-google">Primeira vez? A conta é criada na hora, sem senha.</p>
+        <div class="login-ou"><span>ou com e-mail e senha</span></div>
+      </div>
+
+      <div id="login-abas" class="login-abas" role="tablist">
+        <button id="aba-entrar" class="login-aba ativa" type="button" role="tab">Entrar</button>
+        <button id="aba-criar" class="login-aba" type="button" role="tab">Criar conta</button>
+      </div>
+
+      <form id="form-login" class="login-form" novalidate>
+        <label id="campo-nome" class="login-campo campo-cadastro oculto">
+          <span>Nome</span>
+          <input id="login-nome" type="text" maxlength="18" placeholder="Como te chamam na sede" autocomplete="name" />
+        </label>
+
+        <label class="login-campo campo-conta">
+          <span>E-mail</span>
+          <input id="login-email" type="email" placeholder="voce@{{DOMINIO_EXEMPLO}}" autocomplete="email" required />
+        </label>
+
+        <label class="login-campo campo-conta">
+          <span>Senha</span>
+          <input id="login-senha" type="password" placeholder="Pelo menos 8 caracteres" autocomplete="current-password" required />
+        </label>
+
+        <!-- O codigo da sede so aparece pra quem digitou um e-mail DE FORA.
+             Quem tem e-mail da empresa entra direto, e nem fica sabendo que existe
+             um codigo - ver o `mostrarCampoCodigo` em js/auth.js. -->
+        <p id="dica-email-adm" class="login-dica login-dica-aviso oculto">
+          E-mail da {{SIGLA_SEDE}} não precisa de cadastro: use o botão
+          <strong>Entrar com o Google da {{SIGLA_SEDE}}</strong>, ali em cima.
+        </p>
+
+        <label id="campo-codigo" class="login-campo campo-cadastro oculto">
+          <span>Código da sede</span>
+          <input id="login-codigo" type="text" placeholder="Peça pra diretoria" autocomplete="off" />
+          <small class="login-dica">Seu e-mail não é da {{SIGLA_SEDE}}, então a diretoria
+            precisa te passar o código.</small>
+        </label>
+
+        <details class="campo-admin campo-cadastro oculto">
+          <summary>Sou da diretoria</summary>
+          <input id="login-admin" type="password" placeholder="Código da diretoria" autocomplete="off" />
+        </details>
+
+        <p id="login-erro" class="login-erro oculto" role="alert"></p>
+
+        <button id="btn-login" class="btn btn-primario login-enviar" type="submit">Entrar</button>
+        <details id="login-esqueci" class="login-esqueci">
+          <summary>Esqueci minha senha</summary>
+          <!-- Com e-mail ligado (docs/email.md): link pro e-mail digitado acima. -->
+          <div id="esqueci-por-email" class="oculto">
+            <p>Digite seu e-mail no campo de cima e mande o link: ele chega em
+              alguns minutos e vale por 1 hora.</p>
+            <button id="btn-esqueci" class="btn btn-secundario" type="button">Mandar link de senha nova</button>
+          </div>
+          <!-- Sem e-mail: a diretoria gera uma senha provisoria. -->
+          <p id="esqueci-pela-diretoria">
+            Peça pra alguém da <strong>diretoria</strong> abrir
+            <em>Sua conta &rarr; Membros da sede &rarr; Redefinir senha</em>.
+            Você recebe uma senha provisória e troca por uma sua no primeiro acesso.
+          </p>
+        </details>
+      </form>
+
+      <!-- Senha nova pelo link do e-mail (?redefinir=...). Ver docs/email.md. -->
+      <form id="form-nova-senha" class="login-form oculto" novalidate>
+        <p class="login-dica">Escolha a sua senha nova. Quem estiver logado com a
+          senha antiga em outro lugar sai na hora.</p>
+        <label class="login-campo">
+          <span>Senha nova</span>
+          <input id="nova-senha" type="password" placeholder="Pelo menos 8 caracteres" autocomplete="new-password" required />
+        </label>
+        <p id="nova-senha-erro" class="login-erro oculto" role="alert"></p>
+        <button class="btn btn-primario login-enviar" type="submit">Salvar e entrar</button>
+      </form>
+    </div>
+    </div>
+  </section>
+
+  <!-- Tela 1: entrada (checagem de camera/microfone antes de entrar na sede) -->
+  <section id="tela-entrada" class="tela oculto">
+    <div class="entrada-topo">
+      <div class="entrada-marca">
+        <span class="entrada-logo">{{LOGO_SEDE}}</span>
+        <strong>{{NOME_SEDE}} Office</strong>
+      </div>
+      <div class="entrada-conta">
+        <span id="entrada-inicial" class="entrada-inicial"></span>
+        <span id="entrada-email"></span>
+      </div>
+    </div>
+
+    <div class="entrada-corpo">
+      <div class="entrada-palco">
+        <video id="entrada-video" autoplay playsinline muted></video>
+        <p id="entrada-vazio" class="entrada-vazio">Sua camera esta desligada</p>
+        <p id="entrada-aviso" class="entrada-aviso oculto"></p>
+        <div class="entrada-controles">
+          <button id="entrada-btn-mic" class="entrada-toggle desligado" type="button" title="Microfone">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="entrada-corte"></span>
+          </button>
+          <button id="entrada-btn-camera" class="entrada-toggle desligado" type="button" title="Camera">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="6.5" width="12" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 11l5-3v8l-5-3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span class="entrada-corte"></span>
+          </button>
+        </div>
+      </div>
+
+      <form id="form-entrada" class="entrada-lado">
+        <h2>Bem-vindo a {{NOME_SEDE}}</h2>
+        <input id="entrada-nome" type="text" maxlength="18" placeholder="Seu nome na sede" autocomplete="off" required />
+        <button id="btn-entrar-sede" class="btn btn-primario entrada-enviar" type="submit">Entrar</button>
+        <button id="btn-entrada-avatar" class="entrada-link" type="button">Editar avatar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Tela 2: montar boneco -->
+  <section id="tela-criador" class="tela oculto">
+    <div class="editor-card">
+      <header class="editor-topo">
+        <h1>Editar avatar</h1>
+        <span class="editor-espaco-nome">{{NOME_SEDE}} · Escritorio Virtual</span>
+      </header>
+
+      <div class="editor-corpo">
+        <nav id="editor-categorias" class="editor-categorias"></nav>
+
+        <div class="editor-meio">
+          <div id="editor-opcoes" class="editor-opcoes"></div>
+          <div id="editor-paleta" class="editor-paleta"></div>
+        </div>
+
+        <div class="editor-preview">
+          <canvas id="canvas-preview" width="190" height="240"></canvas>
+          <button id="btn-aleatorio" class="btn-dado" type="button" title="Aparencia aleatoria">
+            <svg viewBox="0 0 24 24" width="16" height="16"><rect x="4" y="4" width="16" height="16" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="9" r="1.4" fill="currentColor"/><circle cx="15" cy="15" r="1.4" fill="currentColor"/><circle cx="15" cy="9" r="1.4" fill="currentColor"/><circle cx="9" cy="15" r="1.4" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <form id="form-criador" class="editor-rodape">
+        <div class="editor-rodape-campos">
+          <input id="input-nome" type="text" maxlength="18" placeholder="Como te chamam?" autocomplete="off" required />
+        </div>
+        <button id="btn-entrar" class="btn btn-primario" type="submit">Pronto</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Tela 2: escritorio -->
+  <section id="tela-jogo" class="tela oculto">
+    <div class="area-jogo">
+      <canvas id="canvas-jogo"></canvas>
+
+      <div class="vinheta"></div>
+
+      <!-- Barra de chamada marcada. Fica por cima do mapa porque a pessoa
+           continua andando pela sede durante a chamada - ela precisa saber que
+           esta no ar sem abrir painel nenhum. -->
+      <div id="barra-chamada" class="barra-chamada oculto">
+        <span class="barra-chamada-ponto"></span>
+        <span id="barra-chamada-titulo" class="barra-chamada-titulo"></span>
+        <span id="barra-chamada-gente" class="barra-chamada-gente"></span>
+        <button id="barra-chamada-sair" class="barra-chamada-sair" type="button">Sair</button>
+      </div>
+
+      <!-- Gente de fora que entrou pelo link da reuniao: quem pede pra entrar
+           (Admitir / Recusar) e quem ja esta la (Remover). So aparece quando ha
+           alguem. Ver js/visitantes.js. -->
+      <div id="painel-visitantes" class="painel-visitantes oculto" role="region" aria-live="polite" aria-label="Visitantes da reuniao">
+        <ul id="painel-visitantes-lista" class="painel-visitantes-lista"></ul>
+      </div>
+
+      <!-- trilho de icones a esquerda, como o Gather -->
+      <nav class="trilho">
+        <div class="trilho-logo" title="{{NOME_SEDE}}">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+            <circle cx="8" cy="8" r="2.6" fill="currentColor"/>
+            <circle cx="16" cy="8" r="2.6" fill="currentColor"/>
+            <circle cx="8" cy="16" r="2.6" fill="currentColor"/>
+            <circle cx="16" cy="16" r="2.6" fill="currentColor"/>
+          </svg>
+        </div>
+        <!-- Pessoas: juntou a busca (Ctrl+K) e a visao de salas. Ver js/pessoas.js. -->
+        <button id="btn-pessoas" class="trilho-btn" type="button" title="Quem esta na sede, e em que sala (Ctrl+K)">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="9" cy="8.5" r="3.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3 19.5c0-3.3 2.7-5.2 6-5.2s6 1.9 6 5.2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M15.5 5.6a3 3 0 0 1 0 5.8M17.5 14.6c2 .6 3.5 2.2 3.5 4.9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="trilho-nome">Pessoas</span>
+        </button>
+        <button id="btn-chat" class="trilho-btn" type="button" title="Chat da sede">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M20 12a7 7 0 0 1-7 7H8l-4 3v-4.5A7 7 0 0 1 6 5.6 7 7 0 0 1 13 5a7 7 0 0 1 7 7z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+          <span id="chat-badge" class="chat-badge oculto"></span>
+          <span class="trilho-nome">Chat</span>
+        </button>
+        <button id="btn-calendario" class="trilho-btn" type="button" title="Agenda do time">
+          <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3.5" y="5" width="17" height="15" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="trilho-nome">Agenda</span>
+        </button>
+        <button id="btn-trello" class="trilho-btn" type="button" title="Quadros das diretorias">
+          <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3.5" y="3.5" width="17" height="17" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><rect x="6.5" y="6.5" width="4.5" height="9" rx="1" fill="currentColor"/><rect x="13" y="6.5" width="4.5" height="5.5" rx="1" fill="currentColor"/></svg>
+          <span class="trilho-nome">Quadros</span>
+        </button>
+        <!-- Central de avisos: mencoes, DMs, convites, lembretes e acenos que passaram.
+             Ver js/central.js. -->
+        <button id="btn-avisos" class="trilho-btn" type="button" title="Avisos: o que a sede te avisou">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6 16.5h12l-1.6-2.2V10a4.4 4.4 0 0 0-8.8 0v4.3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="avisos-badge" class="chat-badge oculto"></span>
+          <span class="trilho-nome">Avisos</span>
+        </button>
+        <!-- No celular estes quatro vao pro botao "Mais" (a barra de baixo nao comporta
+             tudo); no computador o grupo nao muda nada. Ver js/paineis.js. -->
+        <div class="trilho-mais-grupo" id="trilho-mais-grupo">
+        <button id="btn-whatsapp" class="trilho-btn" type="button" title="Abrir o seu WhatsApp numa janela ao lado">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M9.2 8.6c.3 2.6 2.4 4.9 5.2 5.4l1-1.2-1.8-.9-.8.8c-.9-.4-1.7-1.2-2.1-2.1l.8-.8-.9-1.8z" fill="currentColor"/></svg>
+          <span class="trilho-nome">WhatsApp</span>
+        </button>
+        <!-- O Spotify de cada um, na conta dele, numa janela no canto. Ver js/spotify.js. -->
+        <button id="btn-spotify" class="trilho-btn" type="button" title="Abrir o seu Spotify numa janela ao lado (entre na sua conta)">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M9 17.5V6.2l10-2.2v11.3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6.6" cy="17.6" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.6" cy="15.4" r="2.6" fill="none" stroke="currentColor" stroke-width="1.8"/></svg>
+          <span class="trilho-nome">Spotify</span>
+        </button>
+        <!-- Discador do CRM. Nasce escondido: so aparece onde o discador esta
+             ligado (a sede que tem CRM) - ver js/discador.js e docs/discador.md. -->
+        <button id="btn-discador" class="trilho-btn oculto" type="button" title="Discador: uma ligacao atras da outra">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M6.6 3.8l2.3-.4 1.6 3.8-1.6 1.2a10.5 10.5 0 0 0 4.7 4.7l1.2-1.6 3.8 1.6-.4 2.3a2.2 2.2 0 0 1-2.4 1.8A14.6 14.6 0 0 1 4.8 6.2a2.2 2.2 0 0 1 1.8-2.4z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M15 3.5h5.5M17.75 1.5v4M15 8h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span class="trilho-nome">Discador</span>
+        </button>
+        <button id="btn-estante" class="trilho-btn" type="button" title="Estante: o acervo de livros da sede">
+          <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3.5" y="3.5" width="17" height="17" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 9h17M3.5 15h17" stroke="currentColor" stroke-width="1.6"/><path d="M6.5 5.5v3M9 5.5v3M6.5 11.5v3M9 11.5v3M6.5 17.5v3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+          <span class="trilho-nome">Estante</span>
+        </button>
+        <!-- So a diretoria ve: decorar a sede, membros e a situacao das integracoes.
+             Ver js/diretoria.js. -->
+        <button id="btn-diretoria" class="trilho-btn oculto" type="button" title="Diretoria: decorar a sede, membros e a situacao da sede">
+          <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3.5l7.5 3v5.2c0 4.3-3.1 7.6-7.5 8.8-4.4-1.2-7.5-4.5-7.5-8.8V6.5z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.8 12.2l2.2 2.2 4.2-4.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="trilho-nome">Diretoria</span>
+        </button>
+        <!-- Pra diretoria o decorador abre pelo painel Diretoria; este botao fica pra
+             quem personaliza a propria mesa ("Minha mesa"). Ver js/decorador.js. -->
+        <button id="btn-decorar" class="trilho-btn oculto" type="button" title="Decorar o escritorio">
+          <svg viewBox="0 0 24 24" width="20" height="20"><path d="M4 20l3.5-1 9-9a2.1 2.1 0 0 0-3-3l-9 9L4 20z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 5.5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="trilho-nome">Decorar</span>
+        </button>
+        </div>
+        <button id="btn-mais" class="trilho-btn trilho-so-celular" type="button" title="Mais" aria-haspopup="true" aria-expanded="false" aria-controls="trilho-mais-grupo">
+          <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="5" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="19" cy="12" r="2" fill="currentColor"/></svg>
+          <span class="trilho-nome">Mais</span>
+        </button>
+        <div class="trilho-espaco"></div>
+        <button id="btn-conta" class="trilho-btn" type="button" title="Sua conta">
+          <svg viewBox="0 0 24 24" width="20" height="20"><circle cx="12" cy="8.5" r="3.6" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 20c0-3.6 3.1-5.5 7-5.5s7 1.9 7 5.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span class="trilho-nome">Conta</span>
+        </button>
+        <div id="menu-conta" class="menu-conta oculto">
+          <div class="conta-topo">
+            <div id="conta-avatar" class="conta-avatar"></div>
+            <div class="conta-id">
+              <strong id="menu-conta-nome"></strong>
+              <span id="menu-conta-desde"></span>
+            </div>
+          </div>
+          <div class="conta-acoes">
+            <button id="btn-trocar-avatar" class="conta-editar" type="button">
+              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="12" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 19.5c0-3.2 3.1-5 7-5s7 1.8 7 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+              Editar perfil
+            </button>
+            <button id="btn-conta-mais" class="conta-mais" type="button" title="Mais opcoes" aria-label="Mais opcoes">
+              <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg>
+            </button>
+          </div>
+          <div id="menu-conta-mais" class="menu-suspenso oculto">
+            <button id="btn-largar-mesa" class="menu-suspenso-item oculto" type="button">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M6 13.5v4M18 13.5v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Largar minha mesa
+            </button>
+            <button id="btn-meu-whatsapp" class="menu-suspenso-item oculto" type="button">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M4.5 19.5l1.2-3.6A8 8 0 1 1 8.6 18.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              Meu WhatsApp
+            </button>
+            <button id="btn-trocar-senha" class="menu-suspenso-item oculto" type="button">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="5" y="10.5" width="14" height="9" rx="1.8" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              Trocar senha
+            </button>
+            <button id="btn-som-avisos" class="menu-suspenso-item" type="button">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M6 16.5h12l-1.6-2.2V10a4.4 4.4 0 0 0-8.8 0v4.3z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+              <span>Silenciar avisos sonoros</span>
+            </button>
+            <button id="btn-sair" class="menu-suspenso-item" type="button">
+              <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M14 4.5H6.5v15H14M12 12h8m0 0l-3-3m3 3l-3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              Sair da conta
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div class="topo-esq">
+        <div id="badge-sala" class="badge-sala">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><circle cx="9" cy="9" r="3" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="16.5" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M3.5 19c0-2.6 2.4-4 5.5-4s5.5 1.4 5.5 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          <span id="badge-sala-nome">Escritorio</span>
+        </div>
+        <div id="indicador-conexao" class="indicador indicador-conectando">
+          <span class="bolinha"></span>
+          <span class="texto-indicador">Conectando...</span>
+        </div>
+      </div>
+
+      <div class="topo-dir">
+        <button id="btn-status" class="seletor-status status-livre" type="button" title="Clique para mudar seu status">
+          <span class="bolinha"></span>
+          <span class="texto-status">Livre</span>
+        </button>
+      </div>
+
+      <div class="zoom-controles">
+        <button id="btn-zoom-mais" class="zoom-btn" type="button" title="Aproximar">+</button>
+        <button id="btn-zoom-menos" class="zoom-btn" type="button" title="Afastar">−</button>
+      </div>
+
+      <!-- Lembretes de reuniao da sede ("comeca em 5 minutos"). Ver js/lembretes.js. -->
+      <div id="lembretes-reuniao" class="lembretes-reuniao"></div>
+
+      <!-- O Spotify de cada um, flutuando no canto do escritorio. Ver js/spotify.js. -->
+      <section id="spotify-mini" class="spotify-mini oculto vazio" aria-label="Spotify">
+        <div class="spotify-topo" title="Arraste pra levar o Spotify pra onde quiser">
+          <button id="spotify-alca" class="spotify-alca" type="button" aria-label="Mover o Spotify (setas movem, Home volta pro canto)" title="Arraste pra mudar de lugar - dois cliques volta pro canto">
+            <svg viewBox="0 0 24 24" width="14" height="18" aria-hidden="true"><circle cx="9" cy="6" r="1.6" fill="currentColor"/><circle cx="15" cy="6" r="1.6" fill="currentColor"/><circle cx="9" cy="12" r="1.6" fill="currentColor"/><circle cx="15" cy="12" r="1.6" fill="currentColor"/><circle cx="9" cy="18" r="1.6" fill="currentColor"/><circle cx="15" cy="18" r="1.6" fill="currentColor"/></svg>
+          </button>
+          <button id="spotify-atual" class="spotify-atual" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="spotify-menu">
+            <span class="spotify-capa-caixa" aria-hidden="true">
+              <img id="spotify-capa" class="spotify-capa oculto" alt="" width="34" height="34" />
+              <svg class="spotify-nota" viewBox="0 0 24 24" width="16" height="16"><path d="M9 17.5V6.2l10-2.2v11.3" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="6.6" cy="17.6" r="2.6" fill="currentColor"/><circle cx="16.6" cy="15.4" r="2.6" fill="currentColor"/></svg>
+            </span>
+            <span class="spotify-textos">
+              <span id="spotify-nome" class="spotify-nome">Sua musica</span>
+              <span id="spotify-tipo" class="spotify-tipo">Cole um link do Spotify</span>
+            </span>
+            <svg class="spotify-seta" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M7 10l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="spotify-minimizar" class="spotify-icone spotify-so-aberto" type="button" title="Minimizar (a musica continua)" aria-label="Minimizar o Spotify">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <button id="spotify-fechar" class="spotify-icone" type="button" title="Fechar e parar a musica" aria-label="Fechar o Spotify">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div id="spotify-menu" class="spotify-menu oculto" role="menu" aria-label="Suas musicas">
+          <div id="spotify-menu-itens" class="spotify-menu-itens"></div>
+          <button id="spotify-adicionar" class="spotify-menu-acao" type="button" role="menuitem">+ Adicionar playlist, album ou podcast</button>
+          <button id="spotify-canto" class="spotify-menu-acao oculto" type="button" role="menuitem">Voltar pro canto</button>
+          <button id="spotify-tirar" class="spotify-menu-acao spotify-menu-tirar oculto" type="button" role="menuitem">Tirar esta da lista</button>
+        </div>
+
+        <div id="spotify-player" class="spotify-player spotify-so-aberto"><span class="spotify-carregando">Carregando o player...</span></div>
+
+        <form id="spotify-form" class="spotify-form spotify-so-aberto">
+          <label for="spotify-link" class="spotify-dica">Na sua playlist, album ou podcast: <b>Compartilhar &rsaquo; Copiar link</b></label>
+          <div class="spotify-form-linha">
+            <input id="spotify-link" type="text" inputmode="url" placeholder="https://open.spotify.com/playlist/..." autocomplete="off" />
+            <button class="spotify-tocar" type="submit">Tocar</button>
+          </div>
+          <p id="spotify-erro" class="spotify-erro oculto" role="alert"></p>
+          <button id="spotify-cancelar" class="spotify-cancelar" type="button">Cancelar</button>
+        </form>
+
+        <button id="spotify-completo" class="spotify-completo spotify-so-aberto" type="button" title="O seu Spotify com tudo: biblioteca, curtidas e busca, numa janela ao lado">
+          <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M14 4.5h5.5V10M19.5 4.5L11 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M17.5 13.5v5a1.5 1.5 0 0 1-1.5 1.5H6a1.5 1.5 0 0 1-1.5-1.5V8A1.5 1.5 0 0 1 6 6.5h5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          <span>Abrir meu Spotify completo</span>
+        </button>
+        <p class="spotify-nota-rodape spotify-so-aberto">Curtidas e biblioteca ficam no completo. Aqui, musica inteira pra quem e Premium e esta logado no Spotify neste navegador.</p>
+      </section>
+
+      <div id="grade-chamada" class="grade-chamada oculto">
+        <div id="grade-chamada-tiles" class="grade-chamada-tiles"></div>
+      </div>
+
+      <div id="dica-controles" class="dica-controles">WASD ou clique para mover · <b>Shift</b> para correr · Chegue perto de alguem para entrar em chamada</div>
+      <div id="aviso-camera" class="aviso-camera oculto"></div>
+
+      <div class="barra-reacoes oculto" id="barra-reacoes">
+        <button class="btn-reacao" type="button" data-emoji="👋" title="Acenar">👋</button>
+        <button class="btn-reacao" type="button" data-emoji="👍" title="Reagir">👍</button>
+        <button class="btn-reacao" type="button" data-emoji="🎉" title="Reagir">🎉</button>
+        <button class="btn-reacao" type="button" data-emoji="😂" title="Reagir">😂</button>
+        <button class="btn-reacao" type="button" data-emoji="❤️" title="Reagir">❤️</button>
+        <button class="btn-reacao" type="button" data-emoji="👏" title="Reagir">👏</button>
+      </div>
+
+      <!-- barra de controle inferior, no formato da referencia do Gather -->
+      <div class="barra-controle">
+        <div id="preview-local" class="preview-local oculto">
+          <video id="video-local" autoplay muted playsinline></video>
+          <div id="preview-local-controles" class="preview-local-controles">
+            <button id="btn-mic" class="ctrl-btn" type="button" title="Mudo/desmudo">
+              <svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="risco" d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+            <button id="btn-video-toggle" class="ctrl-btn" type="button" title="Camera on/off">
+              <svg viewBox="0 0 24 24" width="18" height="18"><rect x="3" y="6.5" width="12" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 11l5.5-3v8L15 13z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path class="risco" d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button id="btn-camera" class="ctrl-btn ctrl-entrar" type="button" title="Ativar camera e microfone">
+          <svg viewBox="0 0 24 24" width="18" height="18"><rect x="3" y="6.5" width="12" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 11l5.5-3v8L15 13z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button id="btn-tela" class="ctrl-btn" type="button" title="Dividir a tela">
+          <svg viewBox="0 0 24 24" width="18" height="18"><rect x="2.5" y="4.5" width="19" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 20.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 14.5V8.5m0 0L9.5 11M12 8.5l2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button id="btn-emojis" class="ctrl-btn" type="button" title="Reacoes">
+          <svg viewBox="0 0 24 24" width="18" height="18"><circle cx="12" cy="12" r="8.5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="9" cy="10" r="1.1" fill="currentColor"/><circle cx="15" cy="10" r="1.1" fill="currentColor"/><path d="M8.5 14.2a4.2 4.2 0 0 0 7 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+
+        <button id="btn-aceno" class="ctrl-btn" type="button" title="Acenar">
+          <svg viewBox="0 0 24 24" width="18" height="18"><path d="M8 12V5.5a1.5 1.5 0 0 1 3 0V11m0-1V4.5a1.5 1.5 0 0 1 3 0V11m0-.5V6a1.5 1.5 0 0 1 3 0v7.5a6.5 6.5 0 0 1-6.5 6.5H11a5 5 0 0 1-5-5v-4a1.5 1.5 0 0 1 2.9-.5" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <canvas id="minimapa" class="minimapa" width="180" height="128"></canvas>
+
+      <div id="palco-remoto" class="palco-remoto" aria-hidden="true"></div>
+
+      <aside id="painel-pessoas" class="painel-pessoas oculto" aria-label="Pessoas na sede">
+        <div class="pessoas-topo">
+          <h2>Pessoas</h2>
+          <span id="pessoas-conta" class="pessoas-conta"></span>
+          <button id="btn-fechar-pessoas" class="btn-fechar-painel" type="button" title="Fechar (Esc)">✕</button>
+        </div>
+        <input id="pessoas-busca" class="pessoas-busca" type="search" placeholder="Buscar pessoa ou sala  (Ctrl+K)" autocomplete="off" aria-label="Buscar pessoa ou sala" />
+        <div id="pessoas-lista" class="pessoas-lista"></div>
+        <div class="pessoas-rodape">Setas e Enter vao ate a pessoa</div>
+      </aside>
+
+      <!-- Diretoria: as ferramentas de quem cuida da sede. Ver js/diretoria.js. -->
+      <aside id="painel-diretoria" class="painel-diretoria oculto" aria-label="Diretoria">
+        <div class="pessoas-topo">
+          <h2>Diretoria</h2>
+          <span class="pessoas-conta">so a diretoria ve</span>
+          <button id="btn-fechar-diretoria" class="btn-fechar-painel" type="button" title="Fechar (Esc)">✕</button>
+        </div>
+        <div class="dir-corpo">
+          <div class="dir-rotulo">Ferramentas</div>
+          <button id="dir-decorar" class="dir-acao" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M4 20l3.5-1 9-9a2.1 2.1 0 0 0-3-3l-9 9L4 20z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M13.5 5.5l3 3" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span><strong>Decorar a sede</strong><small>Moveis, paredes, salas e areas do mapa</small></span>
+          </button>
+          <button id="dir-membros" class="dir-acao" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="9" cy="8.5" r="3" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M3.5 19c0-3 2.5-4.8 5.5-4.8s5.5 1.8 5.5 4.8" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 11.5h5M18.5 9v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            <span><strong>Membros da sede</strong><small>Redefinir senha, dar diretoria, remover quem saiu</small></span>
+          </button>
+
+          <div class="dir-rotulo dir-rotulo-linha">
+            <span>Situacao da sede</span>
+            <button id="dir-atualizar" class="dir-link" type="button">Conferir de novo</button>
+          </div>
+          <p id="dir-contas" class="dir-contas"></p>
+          <ul id="dir-situacao" class="dir-situacao"></ul>
+          <a class="dir-link" href="/diagnostico.html" target="_blank" rel="noopener">Diagnostico completo da hospedagem</a>
+        </div>
+      </aside>
+
+      <!-- Central de avisos. Ver js/central.js. -->
+      <aside id="painel-avisos" class="painel-avisos oculto" aria-label="Avisos">
+        <div class="pessoas-topo">
+          <h2>Avisos</h2>
+          <button id="btn-limpar-avisos" class="dir-link central-limpar" type="button">Limpar</button>
+          <button id="btn-fechar-avisos" class="btn-fechar-painel" type="button" title="Fechar (Esc)">✕</button>
+        </div>
+        <div id="central-lista" class="central-lista"></div>
+        <div class="pessoas-rodape">Os ultimos 50, guardados neste navegador. O que chegou com a sede fechada nao aparece aqui.</div>
+      </aside>
+
+      <!-- Barrinha da coisa selecionada em cima da mesa -->
+      <div id="barra-item" class="barra-item oculto">
+        <button id="btn-item-mover" class="barra-item-btn" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 3v18M3 12h18M12 3l-3 3m3-3l3 3M12 21l-3-3m3 3l3-3M3 12l3-3m-3 3l3 3M21 12l-3-3m3 3l-3 3" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Mover
+        </button>
+        <span class="barra-item-risco"></span>
+        <button id="btn-item-excluir" class="barra-item-btn perigo" type="button">
+          <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Excluir
+        </button>
+      </div>
+
+      <!-- Cartao da mesa, no formato do print 13-menu-largar-mesa.png -->
+      <div id="cartao-mesa" class="cartao-mesa oculto">
+        <button id="btn-fechar-cartao-mesa" class="btn-fechar-painel" type="button" title="Fechar" aria-label="Fechar">
+          <svg viewBox="0 0 24 24" width="14" height="14"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+        <div class="conta-topo">
+          <div class="cartao-mesa-avatar-caixa">
+            <div id="cartao-mesa-avatar" class="conta-avatar"></div>
+            <span id="cartao-mesa-status" class="cartao-mesa-status"></span>
+          </div>
+          <div class="conta-id">
+            <strong id="cartao-mesa-nome"></strong>
+            <span id="cartao-mesa-sub"></span>
+          </div>
+        </div>
+        <div id="cartao-mesa-acoes" class="conta-acoes">
+          <button id="btn-cartao-editar" class="conta-editar" type="button">
+            <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><circle cx="12" cy="8" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5 19.5c0-3.2 3.1-5 7-5s7 1.8 7 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Editar perfil
+          </button>
+          <button id="btn-cartao-personalizar" class="conta-mais" type="button" title="Personalizar a mesa" aria-label="Personalizar a mesa">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M12 20v-7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M12 13c0-3.3 2.4-6 5.5-6 0 3.3-2.4 6-5.5 6z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M12 15c0-3-2.2-5.5-5-5.5 0 3 2.2 5.5 5 5.5z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="btn-cartao-mesa-mais" class="conta-mais" type="button" title="Mais opcoes" aria-label="Mais opcoes">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><circle cx="12" cy="5.5" r="1.6" fill="currentColor"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/><circle cx="12" cy="18.5" r="1.6" fill="currentColor"/></svg>
+          </button>
+        </div>
+        <div id="cartao-mesa-mais" class="menu-suspenso oculto">
+          <button id="btn-cartao-largar" class="menu-suspenso-item" type="button">
+            <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><rect x="3.5" y="6.5" width="17" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.7"/><path d="M6 13.5v4M18 13.5v4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+            Largar minha mesa
+          </button>
+        </div>
+      </div>
+
+      <aside id="painel-decorador" class="painel-decorador oculto">
+        <div class="decor-topo">
+          <h2 id="decor-titulo">Decorador</h2>
+          <button id="btn-fechar-decorador" class="btn-fechar-painel" type="button" title="Fechar">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+        <input id="decor-busca" class="decor-busca" type="text" placeholder="Buscar objeto..." autocomplete="off" />
+        <div id="decor-abas" class="decor-abas"></div>
+        <div id="decor-grade" class="decor-grade"></div>
+        <p id="decor-dica" class="decor-dica"></p>
+        <div class="decor-rodape">
+          <button id="decor-link" class="decor-historico decor-link oculto" type="button" title="Pendurar um link num movel">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M10 14a4 4 0 0 0 5.7 0l3-3a4 4 0 1 0-5.7-5.7l-1.4 1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M14 10a4 4 0 0 0-5.7 0l-3 3a4 4 0 1 0 5.7 5.7l1.4-1.4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            Link
+          </button>
+          <button id="decor-desfazer" class="decor-historico" type="button" title="Desfazer">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M9 7L4.5 11.5 9 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M4.5 11.5H14a5 5 0 0 1 0 10h-2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+          <button id="decor-refazer" class="decor-historico" type="button" title="Refazer">
+            <svg viewBox="0 0 24 24" width="16" height="16"><path d="M15 7l4.5 4.5L15 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M19.5 11.5H10a5 5 0 0 0 0 10h2" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </aside>
+
+      <aside id="painel-calendario" class="painel-calendario oculto">
+        <div class="cal-lateral">
+          <div class="cal-lateral-topo">
+            <h2>Agenda</h2>
+            <button id="btn-fechar-calendario" class="btn-fechar-painel" type="button" title="Fechar">✕</button>
+          </div>
+          <div id="cal-aviso" class="cal-aviso oculto"></div>
+
+          <!-- Reuniao interna da sede: marcada aqui, com sala, e a chamada
+               acontece na propria sala. Ver docs/plano-reunioes.md. -->
+          <button id="cal-nova" class="btn btn-primario cal-nova" type="button">Marcar reuniao</button>
+          <form id="cal-form" class="cal-form oculto">
+            <input id="cal-f-titulo" type="text" maxlength="80" placeholder="Do que e a reuniao?" required />
+            <div class="cal-form-linha">
+              <input id="cal-f-data" type="date" required />
+              <input id="cal-f-hora" type="time" required />
+            </div>
+            <div class="cal-form-linha">
+              <select id="cal-f-sala" aria-label="Sala"></select>
+              <select id="cal-f-dur" aria-label="Duracao">
+                <option value="30">30 min</option>
+                <option value="60" selected>1 h</option>
+                <option value="90">1 h 30</option>
+                <option value="120">2 h</option>
+              </select>
+            </div>
+            <p id="cal-f-erro" class="cal-form-erro oculto" role="alert"></p>
+            <div class="cal-form-acoes">
+              <button id="cal-f-cancelar" class="btn cal-form-cancelar" type="button">Cancelar</button>
+              <button class="btn btn-primario" type="submit">Marcar</button>
+            </div>
+          </form>
+
+          <div class="cal-lateral-rotulo">Reunioes da sede</div>
+          <div id="cal-reunioes" class="cal-lista"></div>
+          <!-- Prazos dos cartoes do Kanban do CRM (server/prazos.js). Some na sede sem o Kanban. -->
+          <div id="cal-prazos-rotulo" class="cal-lateral-rotulo cal-prazos-rotulo oculto">
+            <span>Prazos do Kanban</span>
+            <label class="cal-prazos-meus" title="Os cartoes em que voce e membro, pelo seu nome no CRM">
+              <input id="cal-prazos-meus" type="checkbox" /> So os meus
+            </label>
+          </div>
+          <div id="cal-prazos" class="cal-lista cal-prazos oculto"></div>
+          <div class="cal-lateral-rotulo">Seus proximos compromissos</div>
+          <div id="cal-lista" class="cal-lista"></div>
+          <div id="cal-google" class="cal-google"></div>
+          <div class="cal-lateral-nota">
+            Cada pessoa conecta a propria agenda do Google. So aparece quem
+            conectou, e a sede so le - nunca escreve na sua agenda.
+          </div>
+        </div>
+        <div class="cal-principal">
+          <div class="cal-barra">
+            <button id="cal-anterior" class="cal-nav" type="button" title="Semana anterior">‹</button>
+            <button id="cal-proxima" class="cal-nav" type="button" title="Proxima semana">›</button>
+            <button id="cal-hoje" class="cal-hoje-btn" type="button">Hoje</button>
+            <span id="cal-titulo" class="cal-titulo"></span>
+          </div>
+          <div id="cal-grade" class="cal-grade"></div>
+        </div>
+      </aside>
+
+      <aside id="painel-trello" class="painel-trello oculto">
+        <div class="trello-topo">
+          <h2 id="trello-titulo">Quadro</h2>
+          <a id="trello-link" class="trello-link oculto" target="_blank" rel="noopener noreferrer">Abrir no Trello</a>
+          <div class="trello-topo-acoes">
+            <button id="btn-atualizar-trello" class="btn btn-secundario btn-pequeno" type="button">Atualizar</button>
+            <button id="btn-fechar-trello" class="btn-fechar-painel" type="button" title="Fechar">&#10005;</button>
+          </div>
+        </div>
+        <!-- Um botao por quadro (diretoria): cada uma tem o seu. So aparece com mais de
+             um. Ver js/trello.js. -->
+        <div id="trello-setores" class="trello-setores oculto" role="tablist" aria-label="Quadros das diretorias"></div>
+        <p id="trello-nota" class="trello-nota oculto"></p>
+        <div id="trello-aviso" class="trello-aviso oculto"></div>
+        <div id="trello-colunas" class="trello-colunas"></div>
+      </aside>
+
+      <aside id="painel-discador" class="painel-discador oculto" aria-labelledby="discador-titulo">
+        <div class="discador-topo">
+          <h2 id="discador-titulo">Discador</h2>
+          <button id="btn-fechar-discador" class="btn-fechar-painel" type="button" title="Fechar">&#10005;</button>
+        </div>
+        <div id="discador-corpo" class="discador-corpo"></div>
+      </aside>
+
+      <aside id="painel-estante" class="painel-estante oculto">
+        <header class="estante-topo">
+          <div class="estante-titulo-bloco">
+            <h2>Estante</h2>
+            <span id="estante-conta" class="estante-conta"></span>
+          </div>
+          <button id="btn-fechar-estante" class="btn-fechar-painel" type="button" title="Fechar (Esc)">&#10005;</button>
+        </header>
+        <div id="estante-abas" class="estante-abas" role="tablist" aria-label="Acervo">
+          <button type="button" class="estante-aba ativa" data-aba="digital" role="tab" aria-selected="true">Digitais <span class="estante-aba-n"></span></button>
+          <button type="button" class="estante-aba" data-aba="sala" role="tab" aria-selected="false">Na sala da {{SIGLA_SEDE}} <span class="estante-aba-n"></span></button>
+        </div>
+        <div id="estante-aviso" class="estante-aviso oculto"></div>
+        <div id="estante-busca-linha" class="estante-busca-linha oculto">
+          <input id="estante-busca" class="estante-busca" type="search" autocomplete="off"
+                 placeholder="Buscar por titulo ou setor" aria-label="Buscar livro" />
+          <button id="estante-busca-limpar" class="estante-busca-limpar oculto" type="button"
+                  title="Limpar busca" aria-label="Limpar busca">&#10005;</button>
+        </div>
+        <div id="estante-filtros" class="estante-filtros oculto" role="toolbar" aria-label="Setores"></div>
+        <div id="estante-lista" class="estante-grade"></div>
+        <!-- Ficha do livro de papel: com quem esta, pegar e devolver. -->
+        <section id="estante-detalhe" class="estante-detalhe oculto" aria-live="polite"></section>
+      </aside>
+
+      <aside id="painel-chat" class="painel-chat oculto">
+        <div class="chat-coluna-conversas">
+          <div class="chat-coluna-topo">
+            <h2>Chat</h2>
+            <button id="btn-fechar-chat" class="btn-fechar-painel" type="button" title="Fechar">✕</button>
+          </div>
+          <input id="chat-busca" class="chat-busca" type="text" placeholder="Buscar conversa..." autocomplete="off" />
+          <div id="chat-conversas" class="chat-conversas"></div>
+        </div>
+
+        <div class="chat-coluna-mensagens">
+          <div class="chat-conversa-topo">
+            <button id="chat-voltar" class="chat-voltar" type="button" aria-label="Voltar pras conversas">
+              <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <h3 id="chat-titulo"># geral</h3>
+            <span id="chat-contagem" class="chat-contagem"></span>
+            <!-- Liga pro grupo inteiro, de qualquer canto do mapa. Ver
+                 docs/plano-reunioes.md. -->
+            <button id="chat-ligar" class="chat-ligar oculto" type="button" title="Chamar o grupo">
+              <svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><path d="M4 7.5c0 6.5 6 12.5 12.5 12.5l2.2-2.6-3.6-2.4-1.9 1.6c-1.9-1-3.8-2.9-4.8-4.8l1.6-1.9-2.4-3.6z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+              Ligar
+            </button>
+          </div>
+
+          <div id="chat-lista" class="chat-lista"></div>
+
+          <form id="form-chat" class="chat-form">
+            <!-- Avisos do campo: mandou rapido demais, sem conexao, texto colado
+                 que passou do limite. Ver js/chat.js. -->
+            <p id="chat-aviso" class="chat-aviso oculto" role="status"></p>
+            <div class="chat-form-caixa">
+              <textarea id="chat-input" maxlength="500" rows="1" placeholder="Escreva uma mensagem..."></textarea>
+              <div class="chat-form-barra">
+                <button class="chat-tool" type="button" data-formato="negrito" title="Negrito"><b>B</b></button>
+                <button class="chat-tool" type="button" data-formato="italico" title="Italico"><i>I</i></button>
+                <button class="chat-tool" type="button" data-formato="riscado" title="Riscado"><s>S</s></button>
+                <button class="chat-tool" type="button" data-formato="codigo" title="Codigo">&lt;/&gt;</button>
+                <button class="chat-tool" type="button" data-formato="emoji" title="Emoji">🙂</button>
+                <span id="chat-contador" class="chat-contador oculto" aria-live="polite"></span>
+                <button class="chat-enviar" type="submit" title="Enviar">
+                  <svg viewBox="0 0 24 24" width="16" height="16"><path d="M3.5 20.5l18-8.5-18-8.5 3 8.5-3 8.5z" fill="currentColor"/></svg>
+                </button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </aside>
+
+      <div id="cartao-pessoa" class="cartao-pessoa oculto"></div>
+    </div>
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <!-- O bot de teste entra antes de tudo: ele precisa trocar a camera por um
+       video sintetico ANTES que qualquer tela peca a webcam. Fica inerte sem
+       `?bot=1` na URL. Ver public/js/bot.js. -->
+  <script src="js/bot.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/pathfinding.js"></script>
+  <script src="js/character.js"></script>
+  <script src="js/network.js"></script>
+  <!-- Antes de qualquer painel do trilho: cada um se registra aqui ao carregar. -->
+  <script src="js/paineis.js"></script>
+  <script src="js/calls.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/entrada.js"></script>
+  <script src="js/creator.js"></script>
+  <script src="js/callgrid.js"></script>
+  <script src="js/chat.js"></script>
+  <script src="js/calendario.js"></script>
+  <!-- Chamada marcada, a que funciona de qualquer canto. Ver js/chamada.js. -->
+  <script src="js/chamada.js"></script>
+  <script src="js/visitantes.js"></script>
+  <script src="js/lembretes.js"></script>
+  <!-- Leitor de livros da biblioteca. Ver js/leitor.js e docs/estante.md. -->
+  <div id="leitor" class="leitor oculto" role="dialog" aria-modal="true" aria-labelledby="leitor-titulo">
+    <header class="leitor-barra">
+      <button id="leitor-fechar" class="leitor-btn" type="button" title="Voltar pra sede (Esc)" aria-label="Fechar o livro">
+        <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="leitor-cabeca">
+        <strong id="leitor-titulo"></strong>
+        <span id="leitor-pagina" class="leitor-pagina"></span>
+      </div>
+      <div class="leitor-acoes">
+        <button id="leitor-menos" class="leitor-btn" type="button" title="Diminuir (-)" aria-label="Diminuir">&minus;</button>
+        <span id="leitor-zoom" class="leitor-zoom">100%</span>
+        <button id="leitor-mais" class="leitor-btn" type="button" title="Aumentar (+)" aria-label="Aumentar">+</button>
+        <a id="leitor-baixar" class="leitor-baixar" download>Baixar</a>
+      </div>
+    </header>
+    <div id="leitor-palco" class="leitor-palco">
+      <button id="leitor-anterior" class="leitor-virar esquerda" type="button" aria-label="Pagina anterior">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div class="leitor-folha"><canvas id="leitor-canvas"></canvas></div>
+      <button id="leitor-proxima" class="leitor-virar direita" type="button" aria-label="Proxima pagina">
+        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <div id="leitor-status" class="leitor-status oculto" role="status" aria-live="polite"></div>
+    </div>
+  </div>
+
+  <script src="js/trello.js"></script>
+  <script src="js/discador.js"></script>
+  <!-- Objeto que abre conteudo. Ver docs/plano-conteudo.md. -->
+  <div id="painel-conteudo" class="painel-convite oculto" role="dialog" aria-modal="true" aria-labelledby="conteudo-titulo">
+    <div class="convite-card">
+      <span class="conteudo-etiqueta">Conteudo neste objeto</span>
+      <h2 id="conteudo-titulo"></h2>
+      <p id="conteudo-url" class="conteudo-url"></p>
+      <div class="convite-acoes conteudo-acoes">
+        <button id="btn-fechar-conteudo" class="btn-fechar-painel" type="button">Fechar</button>
+        <button id="btn-abrir-conteudo" class="btn btn-primario" type="button">Abrir em nova aba</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="painel-por-conteudo" class="painel-convite oculto" role="dialog" aria-modal="true" aria-labelledby="por-conteudo-h">
+    <form id="form-por-conteudo" class="convite-card" novalidate>
+      <h2 id="por-conteudo-h">Conteudo neste objeto</h2>
+      <p class="convite-ajuda">
+        Quem clicar neste movel vai ver o nome abaixo e poder abrir o link.
+        Vale pra planilha do projeto, quadro do Miro, pasta no Drive, formulario.
+        <span id="por-conteudo-onde" class="conteudo-onde"></span>
+      </p>
+      <label class="login-campo">
+        <span>Nome</span>
+        <input id="por-conteudo-titulo" type="text" maxlength="40" placeholder="Planilha de horas" autocomplete="off" />
+      </label>
+      <label class="login-campo">
+        <span>Link</span>
+        <input id="por-conteudo-url" type="url" placeholder="https://..." autocomplete="off" />
+      </label>
+      <p id="por-conteudo-erro" class="login-erro conteudo-erro oculto" role="alert"></p>
+      <div class="convite-acoes">
+        <button id="btn-tirar-conteudo" class="convite-revogar oculto" type="button">Tirar o link</button>
+        <span class="conteudo-espaco"></span>
+        <button id="btn-cancelar-conteudo" class="btn" type="button">Cancelar</button>
+        <button class="btn btn-primario" type="submit">Salvar</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Pedido de permissao pros avisos: so num clique da pessoa. Ver js/avisos.js. -->
+  <div id="aviso-permissao" class="aviso-permissao oculto" role="dialog" aria-labelledby="aviso-permissao-texto">
+    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M6 16.5h12l-1.6-2.2V10a4.4 4.4 0 0 0-8.8 0v4.3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M10 19a2 2 0 0 0 4 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    <p id="aviso-permissao-texto">Quer ser avisado quando alguem te chamar, mesmo com a sede em outra aba?</p>
+    <button id="btn-permitir-avisos" class="btn btn-primario btn-pequeno" type="button">Ativar avisos</button>
+    <button id="btn-dispensar-avisos" class="aviso-permissao-dispensar" type="button">Agora nao</button>
+  </div>
+
+  <!-- Numero de WhatsApp opcional. Ver js/whatsapp.js. -->
+  <div id="painel-whatsapp" class="painel-convite oculto" role="dialog" aria-modal="true" aria-labelledby="whatsapp-titulo">
+    <form id="form-whatsapp" class="convite-card" novalidate>
+      <h2 id="whatsapp-titulo">Meu WhatsApp</h2>
+      <p class="convite-ajuda">
+        Com o numero aqui, aparece <strong>WhatsApp</strong> no seu cartao e os colegas
+        te chamam com um clique. So quem e membro da sede ve o botao.
+        E opcional: pra tirar, e so apagar.
+      </p>
+      <label class="senha-campo">
+        <span>Numero com DDD</span>
+        <input id="whatsapp-numero" type="tel" inputmode="tel" autocomplete="tel" placeholder="(85) 99999-9999" />
+      </label>
+      <p id="whatsapp-erro" class="login-erro oculto" role="alert"></p>
+      <div class="convite-acoes">
+        <button id="btn-tirar-whatsapp" class="convite-revogar oculto" type="button">Tirar meu numero</button>
+        <span class="whatsapp-acoes-direita">
+          <button id="btn-fechar-whatsapp" class="btn" type="button">Cancelar</button>
+          <button class="btn btn-primario" type="submit">Salvar</button>
+        </span>
+      </div>
+    </form>
+  </div>
+
+  <!-- Trocar a propria senha. Ver js/membros.js. -->
+  <div id="painel-senha" class="painel-convite oculto" role="dialog" aria-modal="true" aria-labelledby="senha-titulo">
+    <form id="form-senha" class="convite-card" novalidate>
+      <h2 id="senha-titulo">Trocar senha</h2>
+      <p id="senha-ajuda" class="convite-ajuda">
+        Trocar a senha desconecta a sua conta dos outros aparelhos.
+      </p>
+      <label class="senha-campo">
+        <span id="senha-rotulo-atual">Senha atual</span>
+        <input id="senha-atual" type="password" autocomplete="current-password" required />
+      </label>
+      <label class="senha-campo">
+        <span>Senha nova</span>
+        <input id="senha-nova" type="password" autocomplete="new-password" minlength="8" placeholder="Pelo menos 8 caracteres" required />
+      </label>
+      <label class="senha-campo">
+        <span>Repita a senha nova</span>
+        <input id="senha-repetir" type="password" autocomplete="new-password" required />
+      </label>
+      <p id="senha-erro" class="login-erro oculto" role="alert"></p>
+      <div class="convite-acoes">
+        <button id="btn-fechar-senha" class="btn-fechar-painel" type="button">Cancelar</button>
+        <button id="btn-salvar-senha" class="btn btn-primario" type="submit">Trocar senha</button>
+      </div>
+    </form>
+  </div>
+
+  <!-- Membros da sede, so diretoria. Ver js/membros.js. -->
+  <div id="painel-membros" class="painel-convite oculto" role="dialog" aria-modal="true" aria-labelledby="membros-titulo">
+    <div class="convite-card membros-card">
+      <div class="membros-topo">
+        <h2 id="membros-titulo">Membros da sede</h2>
+        <span id="membros-conta" class="membros-conta"></span>
+      </div>
+      <p class="convite-ajuda">
+        Quem saiu da {{SIGLA_SEDE}}: <strong>remova</strong> - a pessoa sai da sede na hora e a
+        mesa dela fica livre. Quem esqueceu a senha: <strong>redefina</strong> e passe
+        a senha provisoria pra ela.
+      </p>
+      <div id="membros-provisoria" class="membros-provisoria oculto" role="status">
+        <p id="membros-provisoria-texto"></p>
+        <div class="convite-linha">
+          <input id="membros-provisoria-senha" type="text" readonly aria-label="Senha provisoria" />
+          <button id="btn-copiar-provisoria" class="btn btn-primario" type="button">Copiar</button>
+        </div>
+      </div>
+      <p id="membros-erro" class="login-erro oculto" role="alert"></p>
+      <ul id="membros-lista" class="membros-lista"></ul>
+      <div class="convite-acoes">
+        <span></span>
+        <button id="btn-fechar-membros" class="btn-fechar-painel" type="button">Fechar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/leitor.js"></script>
+  <script src="js/estante.js"></script>
+  <script src="js/areas.js"></script>
+  <script src="js/decorador.js"></script>
+  <script src="js/cartaomesa.js"></script>
+  <script src="js/itemmesa.js"></script>
+  <script src="js/pessoas.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/membros.js"></script>
+  <script src="js/diretoria.js"></script>
+  <script src="js/janela.js"></script>
+  <script src="js/whatsapp.js"></script>
+  <script src="js/spotify.js"></script>
+  <script src="js/avisos.js"></script>
+  <script src="js/central.js"></script>
+  <script src="js/conteudo.js"></script>
+  <script src="js/main.js"></script>
+  <!-- Era um <script> inline aqui. Virou arquivo pra a CSP poder recusar script
+       inline sem excecao. Ver js/instalar.js. -->
+  <script src="js/instalar.js"></script>
+</body>
+</html>

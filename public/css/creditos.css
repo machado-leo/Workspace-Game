@@ -1,0 +1,44 @@
+/* Pagina de creditos da arte (public/creditos.html). Arquivo proprio pra nao
+   pesar no CSS que a sede carrega em toda visita. */
+.pagina-creditos {
+  background: var(--fundo);
+  color: var(--texto);
+  padding: 24px 16px 48px;
+  overflow: auto;
+}
+
+.creditos { max-width: 920px; margin: 0 auto; }
+.creditos-topo h1 { margin: 0 0 8px; font-size: 22px; }
+.creditos-topo p { margin: 0 0 8px; color: var(--texto-fraco); font-size: 13.5px; line-height: 1.5; }
+.creditos a { color: var(--indigo); }
+
+.creditos-secao {
+  margin-top: 20px;
+  padding: 16px;
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  background: var(--painel);
+}
+.creditos-grupo { margin: 0 0 6px; font-size: 16px; color: var(--indigo-escuro); }
+.creditos-secao h2:not(.creditos-grupo) { font-size: 15px; margin: 14px 0 6px; }
+.creditos-secao h3 { font-size: 14px; margin: 14px 0 6px; }
+.creditos-secao p, .creditos-secao blockquote { font-size: 13px; line-height: 1.5; color: var(--texto-fraco); }
+.creditos-secao blockquote { margin: 8px 0; padding-left: 12px; border-left: 3px solid var(--borda-forte); }
+.creditos-secao code { font-size: 12px; background: var(--painel-alt); padding: 1px 4px; border-radius: 4px; }
+
+/* Tabela larga (origem + autores) rola dentro da propria caixa - a pagina nao. */
+.creditos-tabela { overflow-x: auto; margin: 8px 0 4px; }
+.creditos-tabela table { border-collapse: collapse; width: 100%; font-size: 12.5px; }
+.creditos-tabela th, .creditos-tabela td {
+  text-align: left;
+  vertical-align: top;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--borda);
+}
+.creditos-tabela th { color: var(--texto-fraco); font-weight: 600; white-space: nowrap; }
+.creditos-carregando { color: var(--texto-fraco); }
+
+@media (max-width: 640px) {
+  .pagina-creditos { padding: 16px 12px 40px; }
+  .creditos-secao { padding: 12px; }
+}

@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Auditoria do muro</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0; padding: 24px; background: #eceaf6; color: #2c3240;
+      font: 14px/1.6 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    h1 { margin: 0 0 4px; font-size: 20px; }
+    .aviso { margin: 0 0 18px; color: #666f80; font-size: 13px; max-width: 720px; }
+    .caixa {
+      background: #fff; border-radius: 12px; padding: 16px 18px;
+      box-shadow: 0 6px 18px rgba(30,34,48,.10); max-width: 720px;
+    }
+    .placar { font-size: 15px; margin: 0 0 10px; }
+    .bom { color: #1c7a4a; font-weight: 700; }
+    .ruim { color: #b3261e; font-weight: 700; }
+    ul { margin: 6px 0 0; padding-left: 20px; }
+    li { font-family: ui-monospace, Consolas, monospace; font-size: 12.5px; }
+    canvas { display: none; }
+  </style>
+</head>
+<body>
+  <h1>Auditoria do muro</h1>
+  <p class="aviso">
+    Mede o mapa <strong>ja desenhado</strong>, pixel a pixel: em toda parede
+    deitada e em todo movel que o mapa encosta na linha dela, confere se a faixa
+    de cima do muro continua visivel. E o teste da regra "movel nunca apaga o
+    muro" &mdash; sem depender de ninguem olhar print.
+  </p>
+  <div class="caixa" id="saida">medindo...</div>
+
+  <script src="js/map.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/paginas/sem-jogo.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/paginas/auditoria.js"></script>
+</body>
+</html>

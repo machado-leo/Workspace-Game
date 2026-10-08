@@ -1,0 +1,742 @@
+[
+ {
+  "origem": "Structure/Bridges/Credits.txt",
+  "local": "structure-bridges/credits.txt",
+  "bytes": 1014
+ },
+ {
+  "origem": "Structure/Bridges/Drawbridge A.png",
+  "local": "structure-bridges/drawbridge-a.png",
+  "bytes": 2103
+ },
+ {
+  "origem": "Structure/Bridges/Rope Bridge A - No Rails.png",
+  "local": "structure-bridges/rope-bridge-a-no-rails.png",
+  "bytes": 2265
+ },
+ {
+  "origem": "Structure/Bridges/Rope Bridge A - Rails.png",
+  "local": "structure-bridges/rope-bridge-a-rails.png",
+  "bytes": 6034
+ },
+ {
+  "origem": "Structure/Bridges/Wood Bridge A - No Rails.png",
+  "local": "structure-bridges/wood-bridge-a-no-rails.png",
+  "bytes": 9943
+ },
+ {
+  "origem": "Structure/Bridges/Wood Bridge A - Rails.png",
+  "local": "structure-bridges/wood-bridge-a-rails.png",
+  "bytes": 13743
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/12 Panel Door A.png",
+  "local": "structure-doors-32x48px-doors/12-panel-door-a.png",
+  "bytes": 53094
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/12 Panel Door B.png",
+  "local": "structure-doors-32x48px-doors/12-panel-door-b.png",
+  "bytes": 54735
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/Barred Prison Door A.png",
+  "local": "structure-doors-32x48px-doors/barred-prison-door-a.png",
+  "bytes": 2924
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/Doorframe A Shadows.png",
+  "local": "structure-doors-32x48px-doors/doorframe-a-shadows.png",
+  "bytes": 389
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/Doorframe A.png",
+  "local": "structure-doors-32x48px-doors/doorframe-a.png",
+  "bytes": 4609
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/DoorFrame B Shadows.png",
+  "local": "structure-doors-32x48px-doors/doorframe-b-shadows.png",
+  "bytes": 442
+ },
+ {
+  "origem": "Structure/Doors/32x48px Doors/Doorframe B.png",
+  "local": "structure-doors-32x48px-doors/doorframe-b.png",
+  "bytes": 392
+ },
+ {
+  "origem": "Structure/Doors/32x64px Doors/15 Panel Door A.png",
+  "local": "structure-doors-32x64px-doors/15-panel-door-a.png",
+  "bytes": 61040
+ },
+ {
+  "origem": "Structure/Doors/32x64px Doors/Doorframe A Shadows.png",
+  "local": "structure-doors-32x64px-doors/doorframe-a-shadows.png",
+  "bytes": 420
+ },
+ {
+  "origem": "Structure/Doors/32x64px Doors/Doorframe A.png",
+  "local": "structure-doors-32x64px-doors/doorframe-a.png",
+  "bytes": 4664
+ },
+ {
+  "origem": "Structure/Doors/64x64px Arched Doors/Arched Doorway A Shadows.png",
+  "local": "structure-doors-64x64px-arched-doors/arched-doorway-a-shadows.png",
+  "bytes": 820
+ },
+ {
+  "origem": "Structure/Doors/64x64px Arched Doors/Arched Doorway A.png",
+  "local": "structure-doors-64x64px-arched-doors/arched-doorway-a.png",
+  "bytes": 3093
+ },
+ {
+  "origem": "Structure/Doors/64x64px Arched Doors/Arched Double Doors A.png",
+  "local": "structure-doors-64x64px-arched-doors/arched-double-doors-a.png",
+  "bytes": 14077
+ },
+ {
+  "origem": "Structure/Doors/Credits.txt",
+  "local": "structure-doors/credits.txt",
+  "bytes": 1757
+ },
+ {
+  "origem": "Structure/Fences/Credits.txt",
+  "local": "structure-fences/credits.txt",
+  "bytes": 740
+ },
+ {
+  "origem": "Structure/Fences/Ornamental Fence A.png",
+  "local": "structure-fences/ornamental-fence-a.png",
+  "bytes": 1946
+ },
+ {
+  "origem": "Structure/Fences/Ornamental Fence B.png",
+  "local": "structure-fences/ornamental-fence-b.png",
+  "bytes": 1304
+ },
+ {
+  "origem": "Structure/Fences/Plain Fence A.png",
+  "local": "structure-fences/plain-fence-a.png",
+  "bytes": 1410
+ },
+ {
+  "origem": "Structure/Floor/Credits.txt",
+  "local": "structure-floor/credits.txt",
+  "bytes": 3051
+ },
+ {
+  "origem": "Structure/Floor/Diamond Tile A.png",
+  "local": "structure-floor/diamond-tile-a.png",
+  "bytes": 8946
+ },
+ {
+  "origem": "Structure/Floor/Diamond Tile B.png",
+  "local": "structure-floor/diamond-tile-b.png",
+  "bytes": 7672
+ },
+ {
+  "origem": "Structure/Floor/Diamond Tile C.png",
+  "local": "structure-floor/diamond-tile-c.png",
+  "bytes": 4683
+ },
+ {
+  "origem": "Structure/Floor/Floral Carpet A.png",
+  "local": "structure-floor/floral-carpet-a.png",
+  "bytes": 51579
+ },
+ {
+  "origem": "Structure/Floor/Floral Carpet B.png",
+  "local": "structure-floor/floral-carpet-b.png",
+  "bytes": 81763
+ },
+ {
+  "origem": "Structure/Floor/Geometric Carpet A.png",
+  "local": "structure-floor/geometric-carpet-a.png",
+  "bytes": 129575
+ },
+ {
+  "origem": "Structure/Floor/Geometric Carpet B.png",
+  "local": "structure-floor/geometric-carpet-b.png",
+  "bytes": 131229
+ },
+ {
+  "origem": "Structure/Floor/Geometric Carpet C.png",
+  "local": "structure-floor/geometric-carpet-c.png",
+  "bytes": 10655
+ },
+ {
+  "origem": "Structure/Floor/Gritty Dirt.png",
+  "local": "structure-floor/gritty-dirt.png",
+  "bytes": 3019
+ },
+ {
+  "origem": "Structure/Floor/Herringbone A.png",
+  "local": "structure-floor/herringbone-a.png",
+  "bytes": 2165
+ },
+ {
+  "origem": "Structure/Floor/Subfloor.png",
+  "local": "structure-floor/subfloor.png",
+  "bytes": 852
+ },
+ {
+  "origem": "Structure/Floor/Tile A.png",
+  "local": "structure-floor/tile-a.png",
+  "bytes": 1395
+ },
+ {
+  "origem": "Structure/Floor/Tile B.png",
+  "local": "structure-floor/tile-b.png",
+  "bytes": 1078
+ },
+ {
+  "origem": "Structure/Floor/Tile C.png",
+  "local": "structure-floor/tile-c.png",
+  "bytes": 5642
+ },
+ {
+  "origem": "Structure/Floor/Wood Floor A.png",
+  "local": "structure-floor/wood-floor-a.png",
+  "bytes": 2036
+ },
+ {
+  "origem": "Structure/Floor/Wood Floor B.png",
+  "local": "structure-floor/wood-floor-b.png",
+  "bytes": 1183
+ },
+ {
+  "origem": "Structure/Misc/Credits.txt",
+  "local": "structure-misc/credits.txt",
+  "bytes": 1314
+ },
+ {
+  "origem": "Structure/Misc/Drain A.png",
+  "local": "structure-misc/drain-a.png",
+  "bytes": 1319
+ },
+ {
+  "origem": "Structure/Misc/Fountain A.png",
+  "local": "structure-misc/fountain-a.png",
+  "bytes": 3305
+ },
+ {
+  "origem": "Structure/Misc/Pool A.png",
+  "local": "structure-misc/pool-a.png",
+  "bytes": 995
+ },
+ {
+  "origem": "Structure/Misc/Prison A.png",
+  "local": "structure-misc/prison-a.png",
+  "bytes": 1292
+ },
+ {
+  "origem": "Structure/Misc/Trellis A.png",
+  "local": "structure-misc/trellis-a.png",
+  "bytes": 7422
+ },
+ {
+  "origem": "Structure/Pillars/Credits.txt",
+  "local": "structure-pillars/credits.txt",
+  "bytes": 571
+ },
+ {
+  "origem": "Structure/Pillars/Floral Pillar A.png",
+  "local": "structure-pillars/floral-pillar-a.png",
+  "bytes": 26789
+ },
+ {
+  "origem": "Structure/Pillars/Stone Pillar A.png",
+  "local": "structure-pillars/stone-pillar-a.png",
+  "bytes": 20711
+ },
+ {
+  "origem": "Structure/Platforms/Cement Platform A.png",
+  "local": "structure-platforms/cement-platform-a.png",
+  "bytes": 4915
+ },
+ {
+  "origem": "Structure/Platforms/Credits.txt",
+  "local": "structure-platforms/credits.txt",
+  "bytes": 568
+ },
+ {
+  "origem": "Structure/Platforms/Dias with Steps A.png",
+  "local": "structure-platforms/dias-with-steps-a.png",
+  "bytes": 679
+ },
+ {
+  "origem": "Structure/Roofing/Adobe Brick Roof.png",
+  "local": "structure-roofing/adobe-brick-roof.png",
+  "bytes": 8686
+ },
+ {
+  "origem": "Structure/Roofing/Adobe Stucco Roof.png",
+  "local": "structure-roofing/adobe-stucco-roof.png",
+  "bytes": 3945
+ },
+ {
+  "origem": "Structure/Roofing/Brick Chimney A.png",
+  "local": "structure-roofing/brick-chimney-a.png",
+  "bytes": 5861
+ },
+ {
+  "origem": "Structure/Roofing/Credits.txt",
+  "local": "structure-roofing/credits.txt",
+  "bytes": 1991
+ },
+ {
+  "origem": "Structure/Roofing/Flat Shingle Roof A.png",
+  "local": "structure-roofing/flat-shingle-roof-a.png",
+  "bytes": 18157
+ },
+ {
+  "origem": "Structure/Roofing/Gable Shingle Roof A.png",
+  "local": "structure-roofing/gable-shingle-roof-a.png",
+  "bytes": 38326
+ },
+ {
+  "origem": "Structure/Roofing/Hipped Shingle Roof A.png",
+  "local": "structure-roofing/hipped-shingle-roof-a.png",
+  "bytes": 71222
+ },
+ {
+  "origem": "Structure/Roofing/Roof Trim.png",
+  "local": "structure-roofing/roof-trim.png",
+  "bytes": 14679
+ },
+ {
+  "origem": "Structure/Signs/Credits.txt",
+  "local": "structure-signs/credits.txt",
+  "bytes": 639
+ },
+ {
+  "origem": "Structure/Signs/Sign Backgrounds A.png",
+  "local": "structure-signs/sign-backgrounds-a.png",
+  "bytes": 794
+ },
+ {
+  "origem": "Structure/Signs/Sign Icons A.png",
+  "local": "structure-signs/sign-icons-a.png",
+  "bytes": 2133
+ },
+ {
+  "origem": "Structure/Stairs/Cement Stairs A.png",
+  "local": "structure-stairs/cement-stairs-a.png",
+  "bytes": 4886
+ },
+ {
+  "origem": "Structure/Stairs/Credits.txt",
+  "local": "structure-stairs/credits.txt",
+  "bytes": 1697
+ },
+ {
+  "origem": "Structure/Stairs/Formal Interior Stairs A.png",
+  "local": "structure-stairs/formal-interior-stairs-a.png",
+  "bytes": 12343
+ },
+ {
+  "origem": "Structure/Stairs/Short Steps A.png",
+  "local": "structure-stairs/short-steps-a.png",
+  "bytes": 2432
+ },
+ {
+  "origem": "Structure/Stairs/Wood Interior Stairs A.png",
+  "local": "structure-stairs/wood-interior-stairs-a.png",
+  "bytes": 9179
+ },
+ {
+  "origem": "Structure/Stairs/Wood Interior Stairs B.png",
+  "local": "structure-stairs/wood-interior-stairs-b.png",
+  "bytes": 12014
+ },
+ {
+  "origem": "Structure/Stairs/Wood Interior Stairs Wall.png",
+  "local": "structure-stairs/wood-interior-stairs-wall.png",
+  "bytes": 1999
+ },
+ {
+  "origem": "Structure/Structures/Brick House A.png",
+  "local": "structure-structures/brick-house-a.png",
+  "bytes": 7940
+ },
+ {
+  "origem": "Structure/Structures/Brick House B.png",
+  "local": "structure-structures/brick-house-b.png",
+  "bytes": 4764
+ },
+ {
+  "origem": "Structure/Structures/Credits.txt",
+  "local": "structure-structures/credits.txt",
+  "bytes": 1003
+ },
+ {
+  "origem": "Structure/Structures/Paneled House A.png",
+  "local": "structure-structures/paneled-house-a.png",
+  "bytes": 3545
+ },
+ {
+  "origem": "Structure/Wall Borders/Credits.txt",
+  "local": "structure-wall-borders/credits.txt",
+  "bytes": 1594
+ },
+ {
+  "origem": "Structure/Wall Borders/Decorative Border A.png",
+  "local": "structure-wall-borders/decorative-border-a.png",
+  "bytes": 2125
+ },
+ {
+  "origem": "Structure/Wall Borders/Formal Crown Molding.png",
+  "local": "structure-wall-borders/formal-crown-molding.png",
+  "bytes": 1217
+ },
+ {
+  "origem": "Structure/Wall Borders/Pillar Crown Molding.png",
+  "local": "structure-wall-borders/pillar-crown-molding.png",
+  "bytes": 2561
+ },
+ {
+  "origem": "Structure/Wall Borders/Plain Edged Border - A.png",
+  "local": "structure-wall-borders/plain-edged-border-a.png",
+  "bytes": 1631
+ },
+ {
+  "origem": "Structure/Wall Borders/Plain Edged Border.png",
+  "local": "structure-wall-borders/plain-edged-border.png",
+  "bytes": 8982
+ },
+ {
+  "origem": "Structure/Wall Borders/Plain Smooth Border.png",
+  "local": "structure-wall-borders/plain-smooth-border.png",
+  "bytes": 11713
+ },
+ {
+  "origem": "Structure/Wall Borders/Textured Wood Border.png",
+  "local": "structure-wall-borders/textured-wood-border.png",
+  "bytes": 20359
+ },
+ {
+  "origem": "Structure/Walls/Adobe Brick Wall.png",
+  "local": "structure-walls/adobe-brick-wall.png",
+  "bytes": 1976
+ },
+ {
+  "origem": "Structure/Walls/Adobe Stucco Wall.png",
+  "local": "structure-walls/adobe-stucco-wall.png",
+  "bytes": 4509
+ },
+ {
+  "origem": "Structure/Walls/Brick Wall A.png",
+  "local": "structure-walls/brick-wall-a.png",
+  "bytes": 3900
+ },
+ {
+  "origem": "Structure/Walls/Brick Wall B.png",
+  "local": "structure-walls/brick-wall-b.png",
+  "bytes": 7730
+ },
+ {
+  "origem": "Structure/Walls/Brick Wall Block Edging.png",
+  "local": "structure-walls/brick-wall-block-edging.png",
+  "bytes": 7468
+ },
+ {
+  "origem": "Structure/Walls/Credits.txt",
+  "local": "structure-walls/credits.txt",
+  "bytes": 4312
+ },
+ {
+  "origem": "Structure/Walls/CutawayOverlay.png",
+  "local": "structure-walls/cutawayoverlay.png",
+  "bytes": 359
+ },
+ {
+  "origem": "Structure/Walls/Diamond Wallpaper.png",
+  "local": "structure-walls/diamond-wallpaper.png",
+  "bytes": 154078
+ },
+ {
+  "origem": "Structure/Walls/Drywall.png",
+  "local": "structure-walls/drywall.png",
+  "bytes": 1832
+ },
+ {
+  "origem": "Structure/Walls/Floral Wallpaper A.png",
+  "local": "structure-walls/floral-wallpaper-a.png",
+  "bytes": 71050
+ },
+ {
+  "origem": "Structure/Walls/Floral Wallpaper B.png",
+  "local": "structure-walls/floral-wallpaper-b.png",
+  "bytes": 4362
+ },
+ {
+  "origem": "Structure/Walls/Grainy Plain Wall.png",
+  "local": "structure-walls/grainy-plain-wall.png",
+  "bytes": 7101
+ },
+ {
+  "origem": "Structure/Walls/Half-Wall Paneling A.png",
+  "local": "structure-walls/half-wall-paneling-a.png",
+  "bytes": 1371
+ },
+ {
+  "origem": "Structure/Walls/Jagged Stone Walls.png",
+  "local": "structure-walls/jagged-stone-walls.png",
+  "bytes": 5523
+ },
+ {
+  "origem": "Structure/Walls/Molding.png",
+  "local": "structure-walls/molding.png",
+  "bytes": 1073
+ },
+ {
+  "origem": "Structure/Walls/Painted Walls.png",
+  "local": "structure-walls/painted-walls.png",
+  "bytes": 11791
+ },
+ {
+  "origem": "Structure/Walls/Panels A.png",
+  "local": "structure-walls/panels-a.png",
+  "bytes": 1761
+ },
+ {
+  "origem": "Structure/Walls/Siding, Plain.png",
+  "local": "structure-walls/siding-plain.png",
+  "bytes": 43801
+ },
+ {
+  "origem": "Structure/Walls/Striped Wallpaper A.png",
+  "local": "structure-walls/striped-wallpaper-a.png",
+  "bytes": 9490
+ },
+ {
+  "origem": "Structure/Walls/Striped Wallpaper B.png",
+  "local": "structure-walls/striped-wallpaper-b.png",
+  "bytes": 9162
+ },
+ {
+  "origem": "Structure/Walls/Striped Wallpaper C.png",
+  "local": "structure-walls/striped-wallpaper-c.png",
+  "bytes": 10977
+ },
+ {
+  "origem": "Structure/Windows/Credits.txt",
+  "local": "structure-windows/credits.txt",
+  "bytes": 1288
+ },
+ {
+  "origem": "Structure/Windows/Ornamental Windows A - Emission.png",
+  "local": "structure-windows/ornamental-windows-a-emission.png",
+  "bytes": 504
+ },
+ {
+  "origem": "Structure/Windows/Ornamental Windows A.png",
+  "local": "structure-windows/ornamental-windows-a.png",
+  "bytes": 1512
+ },
+ {
+  "origem": "Structure/Windows/Ornamental Windows B - Emission.png",
+  "local": "structure-windows/ornamental-windows-b-emission.png",
+  "bytes": 667
+ },
+ {
+  "origem": "Structure/Windows/Ornamental Windows B.png",
+  "local": "structure-windows/ornamental-windows-b.png",
+  "bytes": 1697
+ },
+ {
+  "origem": "Structure/Windows/Stone Windows A - Emission.png",
+  "local": "structure-windows/stone-windows-a-emission.png",
+  "bytes": 502
+ },
+ {
+  "origem": "Structure/Windows/Stone Windows A.png",
+  "local": "structure-windows/stone-windows-a.png",
+  "bytes": 1357
+ },
+ {
+  "origem": "Structure/Windows/Window Awnings A.png",
+  "local": "structure-windows/window-awnings-a.png",
+  "bytes": 12732
+ },
+ {
+  "origem": "Terrain/cliff_autumn.png",
+  "local": "terrain/cliff-autumn.png",
+  "bytes": 73667
+ },
+ {
+  "origem": "Terrain/cliff_spring.png",
+  "local": "terrain/cliff-spring.png",
+  "bytes": 74056
+ },
+ {
+  "origem": "Terrain/cliff_summer.png",
+  "local": "terrain/cliff-summer.png",
+  "bytes": 73503
+ },
+ {
+  "origem": "Terrain/cliff_winter.png",
+  "local": "terrain/cliff-winter.png",
+  "bytes": 73122
+ },
+ {
+  "origem": "Terrain/cliff_winter_ice.png",
+  "local": "terrain/cliff-winter-ice.png",
+  "bytes": 70181
+ },
+ {
+  "origem": "Terrain/Credits.txt",
+  "local": "terrain/credits.txt",
+  "bytes": 3405
+ },
+ {
+  "origem": "Terrain/flowers.png",
+  "local": "terrain/flowers.png",
+  "bytes": 30094
+ },
+ {
+  "origem": "Terrain/ice-shallows.png",
+  "local": "terrain/ice-shallows.png",
+  "bytes": 5644
+ },
+ {
+  "origem": "Terrain/mushrooms.png",
+  "local": "terrain/mushrooms.png",
+  "bytes": 6915
+ },
+ {
+  "origem": "Terrain/plants_autumn.png",
+  "local": "terrain/plants-autumn.png",
+  "bytes": 26604
+ },
+ {
+  "origem": "Terrain/plants_spring.png",
+  "local": "terrain/plants-spring.png",
+  "bytes": 26878
+ },
+ {
+  "origem": "Terrain/plants_summer.png",
+  "local": "terrain/plants-summer.png",
+  "bytes": 26593
+ },
+ {
+  "origem": "Terrain/plants_winter.png",
+  "local": "terrain/plants-winter.png",
+  "bytes": 20124
+ },
+ {
+  "origem": "Terrain/Rocks, Cliffs.png",
+  "local": "terrain/rocks-cliffs.png",
+  "bytes": 9774
+ },
+ {
+  "origem": "Terrain/Rocks, Grasslands.png",
+  "local": "terrain/rocks-grasslands.png",
+  "bytes": 29365
+ },
+ {
+  "origem": "Terrain/terrain_autumn.png",
+  "local": "terrain/terrain-autumn.png",
+  "bytes": 71855
+ },
+ {
+  "origem": "Terrain/terrain_spring.png",
+  "local": "terrain/terrain-spring.png",
+  "bytes": 72987
+ },
+ {
+  "origem": "Terrain/terrain_summer.png",
+  "local": "terrain/terrain-summer.png",
+  "bytes": 71578
+ },
+ {
+  "origem": "Terrain/terrain_winter.png",
+  "local": "terrain/terrain-winter.png",
+  "bytes": 70557
+ },
+ {
+  "origem": "Terrain/terrain_winter_ice.png",
+  "local": "terrain/terrain-winter-ice.png",
+  "bytes": 63175
+ },
+ {
+  "origem": "Terrain/tilled_soil.png",
+  "local": "terrain/tilled-soil.png",
+  "bytes": 18243
+ },
+ {
+  "origem": "Terrain/trees_autumn.png",
+  "local": "terrain/trees-autumn.png",
+  "bytes": 46176
+ },
+ {
+  "origem": "Terrain/trees_spring.png",
+  "local": "terrain/trees-spring.png",
+  "bytes": 50440
+ },
+ {
+  "origem": "Terrain/trees_summer.png",
+  "local": "terrain/trees-summer.png",
+  "bytes": 46291
+ },
+ {
+  "origem": "Terrain/trees_winter.png",
+  "local": "terrain/trees-winter.png",
+  "bytes": 49345
+ },
+ {
+  "origem": "Terrain/Waterfall.png",
+  "local": "terrain/waterfall.png",
+  "bytes": 49349
+ },
+ {
+  "origem": "Terrain/wildflowers_autumn.png",
+  "local": "terrain/wildflowers-autumn.png",
+  "bytes": 3812
+ },
+ {
+  "origem": "Terrain/wildflowers_spring.png",
+  "local": "terrain/wildflowers-spring.png",
+  "bytes": 3826
+ },
+ {
+  "origem": "Terrain/wildflowers_summer.png",
+  "local": "terrain/wildflowers-summer.png",
+  "bytes": 3924
+ },
+ {
+  "origem": "Terrain/wildflowers_winter.png",
+  "local": "terrain/wildflowers-winter.png",
+  "bytes": 1914
+ },
+ {
+  "origem": "FX/Credits.txt",
+  "local": "fx/credits.txt",
+  "bytes": 695
+ },
+ {
+  "origem": "FX/Splash.png",
+  "local": "fx/splash.png",
+  "bytes": 1093
+ },
+ {
+  "origem": "FX/Splash_Back.png",
+  "local": "fx/splash-back.png",
+  "bytes": 1356
+ },
+ {
+  "origem": "FX/Water Reflections.png",
+  "local": "fx/water-reflections.png",
+  "bytes": 751
+ },
+ {
+  "origem": "FX/WaterRipple.png",
+  "local": "fx/waterripple.png",
+  "bytes": 375
+ },
+ {
+  "origem": "FX/WaterRipple_Back.png",
+  "local": "fx/waterripple-back.png",
+  "bytes": 471
+ }
+]

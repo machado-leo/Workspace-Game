@@ -1,0 +1,9 @@
+node_modules/
+npm-debug.log*
+.env
+# o modelo so tem NOMES de variavel, sem valor - esse pode ir pro git
+!.env.example
+server/data/
+
+# backups de server/data (hashes de senha, segredo de sessao) - nunca versionar
+server/data-backup-*/

@@ -1,0 +1,1002 @@
+[
+ {
+  "origem": "Objects/Furniture/Barrel.png",
+  "local": "furniture/barrel.png",
+  "bytes": 5452
+ },
+ {
+  "origem": "Objects/Furniture/Bin.png",
+  "local": "furniture/bin.png",
+  "bytes": 3501
+ },
+ {
+  "origem": "Objects/Furniture/Cabinet.png",
+  "local": "furniture/cabinet.png",
+  "bytes": 8996
+ },
+ {
+  "origem": "Objects/Furniture/Cauldron.png",
+  "local": "furniture/cauldron.png",
+  "bytes": 3333
+ },
+ {
+  "origem": "Objects/Furniture/Chest.png",
+  "local": "furniture/chest.png",
+  "bytes": 4556
+ },
+ {
+  "origem": "Objects/Furniture/Christmas Tree.png",
+  "local": "furniture/christmas-tree.png",
+  "bytes": 7197
+ },
+ {
+  "origem": "Objects/Furniture/Clock, Grandfather.png",
+  "local": "furniture/clock-grandfather.png",
+  "bytes": 1240
+ },
+ {
+  "origem": "Objects/Furniture/Copy Machine.png",
+  "local": "furniture/copy-machine.png",
+  "bytes": 1404
+ },
+ {
+  "origem": "Objects/Furniture/Countertop.png",
+  "local": "furniture/countertop.png",
+  "bytes": 4796
+ },
+ {
+  "origem": "Objects/Furniture/Crate.png",
+  "local": "furniture/crate.png",
+  "bytes": 5872
+ },
+ {
+  "origem": "Objects/Furniture/Credits.txt",
+  "local": "furniture/credits.txt",
+  "bytes": 9397
+ },
+ {
+  "origem": "Objects/Furniture/Desk, Office.png",
+  "local": "furniture/desk-office.png",
+  "bytes": 2742
+ },
+ {
+  "origem": "Objects/Furniture/Desk, Vanity.png",
+  "local": "furniture/desk-vanity.png",
+  "bytes": 1178
+ },
+ {
+  "origem": "Objects/Furniture/Dresser.png",
+  "local": "furniture/dresser.png",
+  "bytes": 8034
+ },
+ {
+  "origem": "Objects/Furniture/End Table.png",
+  "local": "furniture/end-table.png",
+  "bytes": 2939
+ },
+ {
+  "origem": "Objects/Furniture/Fireplace, Cast Iron.png",
+  "local": "furniture/fireplace-cast-iron.png",
+  "bytes": 2143
+ },
+ {
+  "origem": "Objects/Furniture/Fireplace.png",
+  "local": "furniture/fireplace.png",
+  "bytes": 4864
+ },
+ {
+  "origem": "Objects/Furniture/Fridge.png",
+  "local": "furniture/fridge.png",
+  "bytes": 1132
+ },
+ {
+  "origem": "Objects/Furniture/Ladder.png",
+  "local": "furniture/ladder.png",
+  "bytes": 1225
+ },
+ {
+  "origem": "Objects/Furniture/Lighting, Floor.png",
+  "local": "furniture/lighting-floor.png",
+  "bytes": 7654
+ },
+ {
+  "origem": "Objects/Furniture/Lighting, Outdoors.png",
+  "local": "furniture/lighting-outdoors.png",
+  "bytes": 1301
+ },
+ {
+  "origem": "Objects/Furniture/Mirror, Standing.png",
+  "local": "furniture/mirror-standing.png",
+  "bytes": 3190
+ },
+ {
+  "origem": "Objects/Furniture/Oven, Modern.png",
+  "local": "furniture/oven-modern.png",
+  "bytes": 580
+ },
+ {
+  "origem": "Objects/Furniture/Planter.png",
+  "local": "furniture/planter.png",
+  "bytes": 8570
+ },
+ {
+  "origem": "Objects/Furniture/Sawhorse.png",
+  "local": "furniture/sawhorse.png",
+  "bytes": 1697
+ },
+ {
+  "origem": "Objects/Furniture/Shavehorse.png",
+  "local": "furniture/shavehorse.png",
+  "bytes": 1770
+ },
+ {
+  "origem": "Objects/Furniture/Shelf.png",
+  "local": "furniture/shelf.png",
+  "bytes": 1735
+ },
+ {
+  "origem": "Objects/Furniture/Sink, Countertop.png",
+  "local": "furniture/sink-countertop.png",
+  "bytes": 1760
+ },
+ {
+  "origem": "Objects/Furniture/Sink, Pedestal.png",
+  "local": "furniture/sink-pedestal.png",
+  "bytes": 4338
+ },
+ {
+  "origem": "Objects/Furniture/Standing Screen.png",
+  "local": "furniture/standing-screen.png",
+  "bytes": 4726
+ },
+ {
+  "origem": "Objects/Furniture/Stone Slab.png",
+  "local": "furniture/stone-slab.png",
+  "bytes": 2043
+ },
+ {
+  "origem": "Objects/Furniture/TV, Widescreen - No Service.png",
+  "local": "furniture/tv-widescreen-no-service.png",
+  "bytes": 42513
+ },
+ {
+  "origem": "Objects/Furniture/TV, Widescreen.png",
+  "local": "furniture/tv-widescreen.png",
+  "bytes": 986
+ },
+ {
+  "origem": "Objects/Furniture/Table, Card.png",
+  "local": "furniture/table-card.png",
+  "bytes": 2201
+ },
+ {
+  "origem": "Objects/Furniture/Table, Ornate Wood.png",
+  "local": "furniture/table-ornate-wood.png",
+  "bytes": 4129
+ },
+ {
+  "origem": "Objects/Furniture/Table, Rough Wood.png",
+  "local": "furniture/table-rough-wood.png",
+  "bytes": 5826
+ },
+ {
+  "origem": "Objects/Furniture/Table, Workshop.png",
+  "local": "furniture/table-workshop.png",
+  "bytes": 2525
+ },
+ {
+  "origem": "Objects/Furniture/Trough.png",
+  "local": "furniture/trough.png",
+  "bytes": 21683
+ },
+ {
+  "origem": "Objects/Furniture/Vase-Studies.png",
+  "local": "furniture/vase-studies.png",
+  "bytes": 6740
+ },
+ {
+  "origem": "Objects/Furniture/Vending Machine.png",
+  "local": "furniture/vending-machine.png",
+  "bytes": 2284
+ },
+ {
+  "origem": "Objects/Furniture/Water Cooler.png",
+  "local": "furniture/water-cooler.png",
+  "bytes": 1391
+ },
+ {
+  "origem": "Objects/Furniture/Wolf Stone.png",
+  "local": "furniture/wolf-stone.png",
+  "bytes": 7382
+ },
+ {
+  "origem": "Objects/Furniture/Workbench, Carpentry.png",
+  "local": "furniture/workbench-carpentry.png",
+  "bytes": 3303
+ },
+ {
+  "origem": "Objects/Furniture/Workbench, Wire Drawing.png",
+  "local": "furniture/workbench-wire-drawing.png",
+  "bytes": 2277
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Child Headboards.png",
+  "local": "furniture-beds/beds-child-headboards.png",
+  "bytes": 5353
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Child Mattresses.png",
+  "local": "furniture-beds/beds-child-mattresses.png",
+  "bytes": 1645
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Child.png",
+  "local": "furniture-beds/beds-child.png",
+  "bytes": 28006
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Double B.png",
+  "local": "furniture-beds/beds-double-b.png",
+  "bytes": 38057
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Double C - Overlays.png",
+  "local": "furniture-beds/beds-double-c-overlays.png",
+  "bytes": 4060
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Double C.png",
+  "local": "furniture-beds/beds-double-c.png",
+  "bytes": 38455
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Double Headboards.png",
+  "local": "furniture-beds/beds-double-headboards.png",
+  "bytes": 3549
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Double Mattresses.png",
+  "local": "furniture-beds/beds-double-mattresses.png",
+  "bytes": 2218
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Double.png",
+  "local": "furniture-beds/beds-double.png",
+  "bytes": 22361
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Single  A.png",
+  "local": "furniture-beds/beds-single-a.png",
+  "bytes": 31746
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Single B.png",
+  "local": "furniture-beds/beds-single-b.png",
+  "bytes": 32465
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Single C.png",
+  "local": "furniture-beds/beds-single-c.png",
+  "bytes": 9887
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Single Headboards.png",
+  "local": "furniture-beds/beds-single-headboards.png",
+  "bytes": 5807
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Beds, Single Mattresses.png",
+  "local": "furniture-beds/beds-single-mattresses.png",
+  "bytes": 2099
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Credits.txt",
+  "local": "furniture-beds/credits.txt",
+  "bytes": 2969
+ },
+ {
+  "origem": "Objects/Furniture/Beds/Single Beds B.png",
+  "local": "furniture-beds/single-beds-b.png",
+  "bytes": 43260
+ },
+ {
+  "origem": "Objects/Furniture/Rugs/Credits.txt",
+  "local": "furniture-rugs/credits.txt",
+  "bytes": 539
+ },
+ {
+  "origem": "Objects/Furniture/Rugs/Diamond Rug, tiling.png",
+  "local": "furniture-rugs/diamond-rug-tiling.png",
+  "bytes": 5815
+ },
+ {
+  "origem": "Objects/Furniture/Rugs/Rainbow Checkered Rug.png",
+  "local": "furniture-rugs/rainbow-checkered-rug.png",
+  "bytes": 1396
+ },
+ {
+  "origem": "Objects/Furniture/Rugs/Rainbow Rug.png",
+  "local": "furniture-rugs/rainbow-rug.png",
+  "bytes": 6145
+ },
+ {
+  "origem": "Objects/Furniture/Rugs/Swirling Vine Rug.png",
+  "local": "furniture-rugs/swirling-vine-rug.png",
+  "bytes": 6843
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Bar Stools.png",
+  "local": "furniture-seating/bar-stools.png",
+  "bytes": 2399
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Dining A.png",
+  "local": "furniture-seating/chair-dining-a.png",
+  "bytes": 8567
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Dining B.png",
+  "local": "furniture-seating/chair-dining-b.png",
+  "bytes": 8437
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Dining C.png",
+  "local": "furniture-seating/chair-dining-c.png",
+  "bytes": 5595
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Dining D.png",
+  "local": "furniture-seating/chair-dining-d.png",
+  "bytes": 7682
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Dining E.png",
+  "local": "furniture-seating/chair-dining-e.png",
+  "bytes": 6501
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Dining F.png",
+  "local": "furniture-seating/chair-dining-f.png",
+  "bytes": 7779
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Office.png",
+  "local": "furniture-seating/chair-office.png",
+  "bytes": 2088
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa A.png",
+  "local": "furniture-seating/chair-sofa-a.png",
+  "bytes": 6588
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa B.png",
+  "local": "furniture-seating/chair-sofa-b.png",
+  "bytes": 12611
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa C.png",
+  "local": "furniture-seating/chair-sofa-c.png",
+  "bytes": 27134
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa D.png",
+  "local": "furniture-seating/chair-sofa-d.png",
+  "bytes": 17142
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa E.png",
+  "local": "furniture-seating/chair-sofa-e.png",
+  "bytes": 13357
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa F.png",
+  "local": "furniture-seating/chair-sofa-f.png",
+  "bytes": 12893
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Chair, Sofa G.png",
+  "local": "furniture-seating/chair-sofa-g.png",
+  "bytes": 17319
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Credits.txt",
+  "local": "furniture-seating/credits.txt",
+  "bytes": 2497
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Patterned A.png",
+  "local": "furniture-seating/loveseat-small-casual-patterned-a.png",
+  "bytes": 25006
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Patterned B.png",
+  "local": "furniture-seating/loveseat-small-casual-patterned-b.png",
+  "bytes": 15461
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Patterned C.png",
+  "local": "furniture-seating/loveseat-small-casual-patterned-c.png",
+  "bytes": 14991
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Patterned D.png",
+  "local": "furniture-seating/loveseat-small-casual-patterned-d.png",
+  "bytes": 24301
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Solid A.png",
+  "local": "furniture-seating/loveseat-small-casual-solid-a.png",
+  "bytes": 15860
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Solid B.png",
+  "local": "furniture-seating/loveseat-small-casual-solid-b.png",
+  "bytes": 14793
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Casual Solid C.png",
+  "local": "furniture-seating/loveseat-small-casual-solid-c.png",
+  "bytes": 13902
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Loveseat, Small - Formal A.png",
+  "local": "furniture-seating/loveseat-small-formal-a.png",
+  "bytes": 19892
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Ottoman, Long A.png",
+  "local": "furniture-seating/ottoman-long-a.png",
+  "bytes": 4954
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Ottoman, Medium A.png",
+  "local": "furniture-seating/ottoman-medium-a.png",
+  "bytes": 4501
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Ottoman, Small A.png",
+  "local": "furniture-seating/ottoman-small-a.png",
+  "bytes": 1871
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Ottoman, Small B.png",
+  "local": "furniture-seating/ottoman-small-b.png",
+  "bytes": 2493
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Sofa Set, Casual A.png",
+  "local": "furniture-seating/sofa-set-casual-a.png",
+  "bytes": 4240
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Sofa, Casual A.png",
+  "local": "furniture-seating/sofa-casual-a.png",
+  "bytes": 17278
+ },
+ {
+  "origem": "Objects/Furniture/Seating/Thrones.png",
+  "local": "furniture-seating/thrones.png",
+  "bytes": 6204
+ },
+ {
+  "origem": "Objects/Furniture/Sewing & Weaving/Credits.txt",
+  "local": "furniture-sewing-e-weaving/credits.txt",
+  "bytes": 1192
+ },
+ {
+  "origem": "Objects/Furniture/Sewing & Weaving/Dress Form.png",
+  "local": "furniture-sewing-e-weaving/dress-form.png",
+  "bytes": 3768
+ },
+ {
+  "origem": "Objects/Furniture/Sewing & Weaving/Loom.png",
+  "local": "furniture-sewing-e-weaving/loom.png",
+  "bytes": 6897
+ },
+ {
+  "origem": "Objects/Furniture/Sewing & Weaving/Spinning Wheel.png",
+  "local": "furniture-sewing-e-weaving/spinning-wheel.png",
+  "bytes": 3689
+ },
+ {
+  "origem": "Objects/Furniture/Sewing & Weaving/Workbench, Sewing Machine.png",
+  "local": "furniture-sewing-e-weaving/workbench-sewing-machine.png",
+  "bytes": 1330
+ },
+ {
+  "origem": "Objects/Furniture/Sewing & Weaving/Workbench, Sewing.png",
+  "local": "furniture-sewing-e-weaving/workbench-sewing.png",
+  "bytes": 3833
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Anvils.png",
+  "local": "furniture-smithing/anvils.png",
+  "bytes": 2040
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Bellows.png",
+  "local": "furniture-smithing/bellows.png",
+  "bytes": 2128
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Coal Piles.png",
+  "local": "furniture-smithing/coal-piles.png",
+  "bytes": 10839
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Credits.txt",
+  "local": "furniture-smithing/credits.txt",
+  "bytes": 1711
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Forge A.png",
+  "local": "furniture-smithing/forge-a.png",
+  "bytes": 19990
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Furnace A.png",
+  "local": "furniture-smithing/furnace-a.png",
+  "bytes": 8984
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Grindstone.png",
+  "local": "furniture-smithing/grindstone.png",
+  "bytes": 1423
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Smelter.png",
+  "local": "furniture-smithing/smelter.png",
+  "bytes": 3188
+ },
+ {
+  "origem": "Objects/Furniture/Smithing/Workbench, Smith.png",
+  "local": "furniture-smithing/workbench-smith.png",
+  "bytes": 8043
+ },
+ {
+  "origem": "Objects/Moveable/Credits.txt",
+  "local": "moveable/credits.txt",
+  "bytes": 264
+ },
+ {
+  "origem": "Objects/Moveable/Shopping Cart.png",
+  "local": "moveable/shopping-cart.png",
+  "bytes": 1405
+ },
+ {
+  "origem": "Objects/Moveable/Wheelchair, Black.png",
+  "local": "moveable/wheelchair-black.png",
+  "bytes": 5602
+ },
+ {
+  "origem": "Objects/Moveable/Wheelchair, Blue.png",
+  "local": "moveable/wheelchair-blue.png",
+  "bytes": 5904
+ },
+ {
+  "origem": "Objects/Moveable/Wheelchair, Pink.png",
+  "local": "moveable/wheelchair-pink.png",
+  "bytes": 5809
+ },
+ {
+  "origem": "Objects/Moveable/Wheelchair, Tan.png",
+  "local": "moveable/wheelchair-tan.png",
+  "bytes": 5911
+ },
+ {
+  "origem": "Objects/Moveable/Wheelchair, White.png",
+  "local": "moveable/wheelchair-white.png",
+  "bytes": 5929
+ },
+ {
+  "origem": "Objects/Small Items/Baskets A.png",
+  "local": "small-items/baskets-a.png",
+  "bytes": 3945
+ },
+ {
+  "origem": "Objects/Small Items/Boxes.png",
+  "local": "small-items/boxes.png",
+  "bytes": 1251
+ },
+ {
+  "origem": "Objects/Small Items/Buckets.png",
+  "local": "small-items/buckets.png",
+  "bytes": 4062
+ },
+ {
+  "origem": "Objects/Small Items/Coffee Maker.png",
+  "local": "small-items/coffee-maker.png",
+  "bytes": 1373
+ },
+ {
+  "origem": "Objects/Small Items/Credits.txt",
+  "local": "small-items/credits.txt",
+  "bytes": 6153
+ },
+ {
+  "origem": "Objects/Small Items/Dishes A.png",
+  "local": "small-items/dishes-a.png",
+  "bytes": 2539
+ },
+ {
+  "origem": "Objects/Small Items/Dungeon Elements.png",
+  "local": "small-items/dungeon-elements.png",
+  "bytes": 2543
+ },
+ {
+  "origem": "Objects/Small Items/Fire, Camp.png",
+  "local": "small-items/fire-camp.png",
+  "bytes": 3310
+ },
+ {
+  "origem": "Objects/Small Items/Fire, Fireplace.png",
+  "local": "small-items/fire-fireplace.png",
+  "bytes": 4546
+ },
+ {
+  "origem": "Objects/Small Items/Fireplace, Accessories A.png",
+  "local": "small-items/fireplace-accessories-a.png",
+  "bytes": 903
+ },
+ {
+  "origem": "Objects/Small Items/Flowers.png",
+  "local": "small-items/flowers.png",
+  "bytes": 4029
+ },
+ {
+  "origem": "Objects/Small Items/Games.png",
+  "local": "small-items/games.png",
+  "bytes": 350
+ },
+ {
+  "origem": "Objects/Small Items/Hay & Straw.png",
+  "local": "small-items/hay-e-straw.png",
+  "bytes": 4759
+ },
+ {
+  "origem": "Objects/Small Items/Kitchen Clutter A.png",
+  "local": "small-items/kitchen-clutter-a.png",
+  "bytes": 8494
+ },
+ {
+  "origem": "Objects/Small Items/Laptop.png",
+  "local": "small-items/laptop.png",
+  "bytes": 2448
+ },
+ {
+  "origem": "Objects/Small Items/Lighting, Table.png",
+  "local": "small-items/lighting-table.png",
+  "bytes": 6959
+ },
+ {
+  "origem": "Objects/Small Items/Loose Paper.png",
+  "local": "small-items/loose-paper.png",
+  "bytes": 1584
+ },
+ {
+  "origem": "Objects/Small Items/Lumber.png",
+  "local": "small-items/lumber.png",
+  "bytes": 4915
+ },
+ {
+  "origem": "Objects/Small Items/Pillows.png",
+  "local": "small-items/pillows.png",
+  "bytes": 7585
+ },
+ {
+  "origem": "Objects/Small Items/Presents.png",
+  "local": "small-items/presents.png",
+  "bytes": 7438
+ },
+ {
+  "origem": "Objects/Small Items/Rotary Phones.png",
+  "local": "small-items/rotary-phones.png",
+  "bytes": 2759
+ },
+ {
+  "origem": "Objects/Small Items/Sawdust.png",
+  "local": "small-items/sawdust.png",
+  "bytes": 613
+ },
+ {
+  "origem": "Objects/Small Items/Skeletons A.png",
+  "local": "small-items/skeletons-a.png",
+  "bytes": 3585
+ },
+ {
+  "origem": "Objects/Small Items/Tabletop Portraits.png",
+  "local": "small-items/tabletop-portraits.png",
+  "bytes": 1458
+ },
+ {
+  "origem": "Objects/Small Items/Tools, Carpentry.png",
+  "local": "small-items/tools-carpentry.png",
+  "bytes": 14190
+ },
+ {
+  "origem": "Objects/Small Items/Tools, Sewing.png",
+  "local": "small-items/tools-sewing.png",
+  "bytes": 9036
+ },
+ {
+  "origem": "Objects/Small Items/Tools, Smithing.png",
+  "local": "small-items/tools-smithing.png",
+  "bytes": 8584
+ },
+ {
+  "origem": "Objects/Small Items/Fabric/Blankets, Crumpled.png",
+  "local": "small-items-fabric/blankets-crumpled.png",
+  "bytes": 18870
+ },
+ {
+  "origem": "Objects/Small Items/Fabric/Credits.txt",
+  "local": "small-items-fabric/credits.txt",
+  "bytes": 996
+ },
+ {
+  "origem": "Objects/Small Items/Fabric/Fabric Baskets.png",
+  "local": "small-items-fabric/fabric-baskets.png",
+  "bytes": 9145
+ },
+ {
+  "origem": "Objects/Small Items/Fabric/Fabric Rolls, Groups.png",
+  "local": "small-items-fabric/fabric-rolls-groups.png",
+  "bytes": 4524
+ },
+ {
+  "origem": "Objects/Small Items/Fabric/Fabric Rolls.png",
+  "local": "small-items-fabric/fabric-rolls.png",
+  "bytes": 22475
+ },
+ {
+  "origem": "Objects/Small Items/Fabric/Fabril Rolls, Mounted.png",
+  "local": "small-items-fabric/fabril-rolls-mounted.png",
+  "bytes": 3922
+ },
+ {
+  "origem": "Objects/Small Items/Food/Bread A.png",
+  "local": "small-items-food/bread-a.png",
+  "bytes": 1444
+ },
+ {
+  "origem": "Objects/Small Items/Food/Bread B.png",
+  "local": "small-items-food/bread-b.png",
+  "bytes": 5426
+ },
+ {
+  "origem": "Objects/Small Items/Food/Bread C.png",
+  "local": "small-items-food/bread-c.png",
+  "bytes": 5048
+ },
+ {
+  "origem": "Objects/Small Items/Food/Butter.png",
+  "local": "small-items-food/butter.png",
+  "bytes": 1119
+ },
+ {
+  "origem": "Objects/Small Items/Food/Cheese A.png",
+  "local": "small-items-food/cheese-a.png",
+  "bytes": 2621
+ },
+ {
+  "origem": "Objects/Small Items/Food/Cheese B.png",
+  "local": "small-items-food/cheese-b.png",
+  "bytes": 3529
+ },
+ {
+  "origem": "Objects/Small Items/Food/Credits.txt",
+  "local": "small-items-food/credits.txt",
+  "bytes": 8647
+ },
+ {
+  "origem": "Objects/Small Items/Food/Dessert.png",
+  "local": "small-items-food/dessert.png",
+  "bytes": 2520
+ },
+ {
+  "origem": "Objects/Small Items/Food/Eggs.png",
+  "local": "small-items-food/eggs.png",
+  "bytes": 2473
+ },
+ {
+  "origem": "Objects/Small Items/Food/Fruit A.png",
+  "local": "small-items-food/fruit-a.png",
+  "bytes": 7873
+ },
+ {
+  "origem": "Objects/Small Items/Food/Fruit B.png",
+  "local": "small-items-food/fruit-b.png",
+  "bytes": 99979
+ },
+ {
+  "origem": "Objects/Small Items/Food/Grains, Grasses.png",
+  "local": "small-items-food/grains-grasses.png",
+  "bytes": 6594
+ },
+ {
+  "origem": "Objects/Small Items/Food/Grains, Rice, Noodles.png",
+  "local": "small-items-food/grains-rice-noodles.png",
+  "bytes": 2678
+ },
+ {
+  "origem": "Objects/Small Items/Food/Hamburgers.png",
+  "local": "small-items-food/hamburgers.png",
+  "bytes": 3998
+ },
+ {
+  "origem": "Objects/Small Items/Food/Herbs & Spices.png",
+  "local": "small-items-food/herbs-e-spices.png",
+  "bytes": 71104
+ },
+ {
+  "origem": "Objects/Small Items/Food/Meals.png",
+  "local": "small-items-food/meals.png",
+  "bytes": 8115
+ },
+ {
+  "origem": "Objects/Small Items/Food/Meats A.png",
+  "local": "small-items-food/meats-a.png",
+  "bytes": 4028
+ },
+ {
+  "origem": "Objects/Small Items/Food/Meats B.png",
+  "local": "small-items-food/meats-b.png",
+  "bytes": 5170
+ },
+ {
+  "origem": "Objects/Small Items/Food/Mushrooms.png",
+  "local": "small-items-food/mushrooms.png",
+  "bytes": 5398
+ },
+ {
+  "origem": "Objects/Small Items/Food/Nuts.png",
+  "local": "small-items-food/nuts.png",
+  "bytes": 18685
+ },
+ {
+  "origem": "Objects/Small Items/Food/Seafood A.png",
+  "local": "small-items-food/seafood-a.png",
+  "bytes": 23604
+ },
+ {
+  "origem": "Objects/Small Items/Food/Tea, Coffee, Medicinal Herbs.png",
+  "local": "small-items-food/tea-coffee-medicinal-herbs.png",
+  "bytes": 5484
+ },
+ {
+  "origem": "Objects/Small Items/Food/Tortillas.png",
+  "local": "small-items-food/tortillas.png",
+  "bytes": 1199
+ },
+ {
+  "origem": "Objects/Small Items/Food/Vegetables A.png",
+  "local": "small-items-food/vegetables-a.png",
+  "bytes": 11498
+ },
+ {
+  "origem": "Objects/Small Items/Food/Vegetables B.png",
+  "local": "small-items-food/vegetables-b.png",
+  "bytes": 5628
+ },
+ {
+  "origem": "Objects/Small Items/Food/Vegetables C.png",
+  "local": "small-items-food/vegetables-c.png",
+  "bytes": 106858
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Alloys.png",
+  "local": "small-items-ores-e-ingots/alloys.png",
+  "bytes": 2317
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Credits.txt",
+  "local": "small-items-ores-e-ingots/credits.txt",
+  "bytes": 203
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Coal.png",
+  "local": "small-items-ores-e-ingots/ore-coal.png",
+  "bytes": 4232
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Copper.png",
+  "local": "small-items-ores-e-ingots/ore-copper.png",
+  "bytes": 7146
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Gold.png",
+  "local": "small-items-ores-e-ingots/ore-gold.png",
+  "bytes": 6859
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Iron.png",
+  "local": "small-items-ores-e-ingots/ore-iron.png",
+  "bytes": 5266
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Silver.png",
+  "local": "small-items-ores-e-ingots/ore-silver.png",
+  "bytes": 7273
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Stone.png",
+  "local": "small-items-ores-e-ingots/ore-stone.png",
+  "bytes": 3937
+ },
+ {
+  "origem": "Objects/Small Items/Ores & Ingots/Ore, Tin.png",
+  "local": "small-items-ores-e-ingots/ore-tin.png",
+  "bytes": 6378
+ },
+ {
+  "origem": "Objects/Wall Items/Christmas Wall Decor.png",
+  "local": "wall-items/christmas-wall-decor.png",
+  "bytes": 6088
+ },
+ {
+  "origem": "Objects/Wall Items/Credits.txt",
+  "local": "wall-items/credits.txt",
+  "bytes": 2661
+ },
+ {
+  "origem": "Objects/Wall Items/Curtains.png",
+  "local": "wall-items/curtains.png",
+  "bytes": 36055
+ },
+ {
+  "origem": "Objects/Wall Items/Graffiti Elements.png",
+  "local": "wall-items/graffiti-elements.png",
+  "bytes": 9121
+ },
+ {
+  "origem": "Objects/Wall Items/Graffiti.png",
+  "local": "wall-items/graffiti.png",
+  "bytes": 10544
+ },
+ {
+  "origem": "Objects/Wall Items/Lighting, Wall.png",
+  "local": "wall-items/lighting-wall.png",
+  "bytes": 2844
+ },
+ {
+  "origem": "Objects/Wall Items/Mailboxes (tiling).png",
+  "local": "wall-items/mailboxes-tiling.png",
+  "bytes": 527
+ },
+ {
+  "origem": "Objects/Wall Items/Mirrors.png",
+  "local": "wall-items/mirrors.png",
+  "bytes": 1915
+ },
+ {
+  "origem": "Objects/Wall Items/Paintings, Abstract.png",
+  "local": "wall-items/paintings-abstract.png",
+  "bytes": 6432
+ },
+ {
+  "origem": "Objects/Wall Items/Paintings, Landscape.png",
+  "local": "wall-items/paintings-landscape.png",
+  "bytes": 8258
+ },
+ {
+  "origem": "Objects/Wall Items/Paintings, Portraits.png",
+  "local": "wall-items/paintings-portraits.png",
+  "bytes": 7110
+ },
+ {
+  "origem": "Objects/Wall Items/Paintings, Still Life.png",
+  "local": "wall-items/paintings-still-life.png",
+  "bytes": 5194
+ },
+ {
+  "origem": "Objects/Wall Items/Posters.png",
+  "local": "wall-items/posters.png",
+  "bytes": 3936
+ },
+ {
+  "origem": "Objects/Wall Items/Pride Flags.png",
+  "local": "wall-items/pride-flags.png",
+  "bytes": 1556
+ }
+]

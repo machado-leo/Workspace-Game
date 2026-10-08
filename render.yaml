@@ -1,0 +1,147 @@
+# Deploy no Render. Importe como Blueprint e ele sobe com tudo configurado.
+#
+# Este arquivo esta no plano **free**: nao pede cartao, mas tem duas trocas que
+# valem pra um teste e nao pra producao:
+#
+#   1. O servico DORME depois de ~15 min sem ninguem. A primeira visita depois
+#      disso demora ~1 min pra acordar. Avise quem for testar.
+#   2. NAO tem disco persistente: server/data/ some a cada restart ou deploy,
+#      ou seja, **as contas e a decoracao do escritorio somem junto**. Pra um
+#      teste tudo bem: e so cadastrar de novo.
+#
+# Pra guardar contas de verdade, troque `plan: free` por `plan: starter` e
+# descomente o bloco `disk` no fim. Ver docs/deploy.md.
+services:
+  - type: web
+    name: escritorio-virtual-adm
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm ci
+    startCommand: npm start
+    # Precisa responder 200 SEM login: /api/eu responde 401 de proposito.
+    healthCheckPath: /api/saude
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # Codigo que a pessoa digita pra criar conta na sede.
+      - key: CODIGO_SEDE
+        generateValue: true
+      # Codigo que marca a conta como diretoria (pode decorar o escritorio).
+      - key: ADMIN_CODE
+        generateValue: true
+      # Sem isso, o segredo das sessoes seria sorteado a cada restart e todo
+      # mundo cairia pra tela de login sem motivo.
+      - key: SESSION_SECRET
+        generateValue: true
+      # SEM_LOGIN nao entra aqui de proposito: e so pra desenvolvimento, e o
+      # codigo ja ignora a flag quando NODE_ENV=production.
+      #
+      # As de baixo ligam o CALENDARIO e o TRELLO. Ficam com `sync: false`, ou
+      # seja: o Render pergunta o valor na hora de criar e nao guarda segredo no
+      # repositorio. Deixar em branco nao quebra nada - as duas abas so aparecem
+      # com um aviso de "nao configurado".
+      #
+      # Google: ENTRAR NA SEDE com a conta da ADM e o CALENDARIO (Google Cloud >
+      # APIs e servicos > Credenciais > ID do cliente OAuth, tipo "Aplicativo da
+      # Web"). No campo "URIs de redirecionamento autorizados" ponha:
+      #   https://escritorio-virtual-adm.onrender.com/api/google/callback
+      # Com as duas preenchidas, e-mail da ADM so entra pelo botao do Google.
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      # Quem entra com o Google e ja vira diretoria (separados por virgula).
+      # Vazio: vira diretoria a primeira pessoa com Google numa sede sem
+      # diretoria - e no plano free a sede fica sem ninguem a cada deploy.
+      - key: DIRETORIA_EMAILS
+        sync: false
+      # SITE_URL nao precisa aqui: o codigo usa RENDER_EXTERNAL_URL sozinho.
+      # So defina se um dia a sede ganhar dominio proprio.
+      #
+      # Discador do CRM dentro da sede (docs/discador.md). CRM_URL e o endereco
+      # do CRM, sem barra no fim; CRM_CHAVE_DISCADOR e a MESMA chave que o CRM
+      # guarda em DISCADOR_CHAVE_ESCRITORIO. Em branco, o botao do discador nem
+      # aparece - e o que acontece nas sedes de cliente.
+      - key: CRM_URL
+        sync: false
+      - key: CRM_CHAVE_DISCADOR
+        sync: false
+      #
+      # Kanban do CRM na aba de quadros (docs/plano-kanban-crm.md): usa o mesmo CRM_URL e uma
+      # chave propria, a MESMA que o CRM guarda em KANBAN_CHAVE_ESCRITORIO. Em branco, a aba
+      # mostra so os quadros do Trello listados em TRELLO_QUADROS.
+      - key: CRM_CHAVE_KANBAN
+        sync: false
+      #
+      # Trello (https://trello.com/power-ups/admin - key e token) e os quadros, UM POR
+      # SETOR: TRELLO_QUADROS="Comercial=AbCdEfGh; Direx=QrStUvWx|diretoria" (o
+      # codigo curto ta na URL do quadro: trello.com/b/AbCdEfGh/...). Detalhes e as
+      # opcoes em docs/plano-trello.md. TRELLO_BOARD_ID (um quadro so, de todos)
+      # continua valendo se TRELLO_QUADROS ficar vazio.
+      - key: TRELLO_API_KEY
+        sync: false
+      - key: TRELLO_TOKEN
+        sync: false
+      - key: TRELLO_QUADROS
+        sync: false
+      - key: TRELLO_BOARD_ID
+        sync: false
+      #
+      # Biblioteca (a estante le a pasta de livros do Drive). Passo a passo em
+      # docs/estante.md. Em branco, a estante mostra o que estiver em
+      # DATA_DIR/livros - que no plano free some a cada deploy.
+      #   GOOGLE_DRIVE_PASTA   - link da pasta ou so o id dela
+      #   GOOGLE_CONTA_SERVICO - JSON da chave da conta de servico (ou em base64)
+      - key: GOOGLE_DRIVE_PASTA
+        sync: false
+      - key: GOOGLE_CONTA_SERVICO
+        sync: false
+      #
+      # Chamada de video em rede de faculdade/empresa/4G: TURN da Cloudflare.
+      # Em branco a chamada usa so STUN e nao fecha nessas redes. Ver
+      # docs/deploy.md, secao 4.
+      - key: CLOUDFLARE_TURN_KEY_ID
+        sync: false
+      - key: CLOUDFLARE_TURN_TOKEN
+        sync: false
+      #
+      # Backup automatico criptografado no Drive (docs/backup.md). Com os dois,
+      # o site restaura sozinho as contas quando sobe vazio - que no plano free
+      # acontece toda vez que ele dorme ou atualiza.
+      # BACKUP_CHAVE NAO usa generateValue de proposito: se o servico for recriado
+      # o Render sortearia outra, e nenhum backup antigo abriria mais.
+      - key: BACKUP_DRIVE_PASTA
+        sync: false
+      - key: BACKUP_CHAVE
+        sync: false
+      #
+      # E-mail: confirmar o e-mail de quem se cadastra com senha e o "esqueci
+      # minha senha" por link (docs/email.md). Os tres, ou nenhum: em branco, o
+      # cadastro entra na hora e quem esquece a senha pede pra diretoria.
+      #   EMAIL_PROVEDOR  - resend ou brevo
+      #   EMAIL_CHAVE     - a API key do provedor
+      #   EMAIL_REMETENTE - endereco num dominio verificado no provedor
+      - key: EMAIL_PROVEDOR
+        sync: false
+      - key: EMAIL_CHAVE
+        sync: false
+      - key: EMAIL_REMETENTE
+        sync: false
+
+      # DISCO PERSISTENTE - descomente as tres linhas abaixo JUNTO com o bloco
+      # `disk` do fim do arquivo e com `plan: starter`. Sem isso, server/data/
+      # (contas, chat, decoracao do mapa, mesas) some a cada deploy.
+      #
+      # DATA_DIR manda o servidor guardar os JSONs no ponto de montagem do disco
+      # em vez da pasta do codigo. E o jeito certo: montar um volume POR CIMA de
+      # um caminho que existe dentro do checkout (server/data) depende da
+      # hospedagem nao mexer naquele diretorio no deploy, e e fragil.
+      # - key: DATA_DIR
+      #   value: /var/dados
+
+    # Descomente junto com `plan: starter` e com DATA_DIR acima:
+    # disk:
+    #   name: dados
+    #   mountPath: /var/dados
+    #   sizeGB: 1

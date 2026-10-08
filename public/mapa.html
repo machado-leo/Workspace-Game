@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Planta da sede - ADM Solucoes</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      padding: 20px;
+      background: #eceaf6;
+      font: 14px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+      color: #2c3240;
+      box-sizing: border-box;
+    }
+    h1 { margin: 0; font-size: 17px; font-weight: 700; }
+    p { margin: 0; color: #666f80; font-size: 13px; text-align: center; }
+    .quadro {
+      max-width: 100%;
+      overflow: auto;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(30, 34, 48, 0.18);
+      background: #fff;
+      line-height: 0;
+    }
+    /* 2x cabe na tela; 4x fica em tamanho real e o quadro rola. Sem esta
+       distincao o `max-width` encolhia o 4x de volta e o botao nao fazia nada. */
+    canvas { display: block; image-rendering: pixelated; }
+    canvas.cabe { max-width: 100%; height: auto; }
+    .botoes { display: flex; gap: 8px; }
+    button {
+      padding: 8px 14px;
+      border: 1px solid #d4d7e2;
+      border-radius: 9px;
+      background: #fff;
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #f4f5fa; }
+    button.ativo { background: #5b45c8; border-color: #5b45c8; color: #fff; }
+  </style>
+</head>
+<body>
+  <h1>Planta da sede</h1>
+  <p>
+    O andar inteiro numa tela so, pra conferir o mapa sem andar por ele.
+    Esta pagina nao entra no jogo: so desenha.
+  </p>
+  <div class="botoes">
+    <button id="btn-esquema" class="ativo" type="button">Planta</button>
+    <button id="btn-2" type="button">Arte 2x</button>
+    <button id="btn-4" type="button">Arte 4x</button>
+  </div>
+  <div class="quadro"><canvas id="planta"></canvas></div>
+
+  <script src="js/map.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/paginas/mapa.js"></script>
+</body>
+</html>

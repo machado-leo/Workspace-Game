@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sem conexao - Escritorio virtual</title>
+  <style>
+    body {
+      margin: 0; min-height: 100vh; display: flex; align-items: center;
+      justify-content: center; background: #f4f4f6; color: #1f2430;
+      font-family: Inter, system-ui, sans-serif; text-align: center; padding: 24px;
+    }
+    .caixa { max-width: 360px; }
+    .marca {
+      width: 56px; height: 56px; margin: 0 auto 18px; border-radius: 16px;
+      background: #4f46e5; display: flex; align-items: center; justify-content: center;
+    }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    p { font-size: 14px; line-height: 1.5; color: #6b7280; margin: 0 0 20px; }
+    .botao {
+      display: inline-block; padding: 11px 22px; border-radius: 10px; background: #4f46e5;
+      color: #fff; font-size: 14px; font-weight: 700; text-decoration: none;
+    }
+    .botao:focus-visible { outline: 3px solid #a5b4fc; outline-offset: 2px; }
+  </style>
+</head>
+<body>
+  <div class="caixa">
+    <div class="marca">
+      <svg viewBox="0 0 24 24" width="26" height="26" fill="#fff" aria-hidden="true">
+        <circle cx="8" cy="8" r="2.6"/><circle cx="16" cy="8" r="2.6"/>
+        <circle cx="8" cy="16" r="2.6"/><circle cx="16" cy="16" r="2.6"/>
+      </svg>
+    </div>
+    <h1>Sem conexao com a sede</h1>
+    <p>O escritorio precisa de internet pra mostrar quem esta online e abrir as chamadas. Confira a conexao e tente de novo.</p>
+    <!-- Link, e nao botao com script. A CSP recusa onclick="..." (e recusava:
+         o botao ficou morto desde o commit 7fd97a6), e um script em arquivo
+         tambem nao serviria - sem internet, o service worker so tem ESTA pagina
+         no cache, entao o .js nem carregaria. href="" navega pro proprio
+         endereco, com a query junto (o link de uma reuniao continua valendo), e o
+         service worker tenta a rede de novo. -->
+    <a class="botao" href="">Tentar de novo</a>
+  </div>
+</body>
+</html>

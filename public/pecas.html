@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cada peca como ela aparece no mapa</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0; padding: 18px; background: #23283a; color: #eceaf4;
+      font: 13px/1.45 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    h1 { margin: 0 0 4px; font-size: 18px; }
+    .aviso { margin: 0 0 16px; color: #a9aec0; font-size: 12.5px; max-width: 760px; }
+    .grade { display: flex; flex-wrap: wrap; gap: 12px; }
+    .cel { background: #1c1e28; border-radius: 8px; padding: 7px; }
+    .cel b { display: block; font-size: 11.5px; margin-top: 6px; color: #eceaf4; }
+    .cel span { display: block; font-size: 10px; color: #7c8296; }
+    canvas { display: block; image-rendering: pixelated; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Cada peca como ela aparece no mapa</h1>
+  <p class="aviso">
+    Nao e a folha do pacote nem um cenario montado: e um recorte do mapa JA
+    DESENHADO, em volta de uma ocorrencia real de cada tipo de peca. O que
+    aparece aqui e exatamente o que a pessoa ve andando pela sede.
+  </p>
+  <div class="grade" id="grade">montando...</div>
+
+  <script src="js/map.js"></script>
+  <script src="js/sprites.js"></script>
+  <script src="js/paginas/sem-jogo.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/paginas/pecas.js"></script>
+</body>
+</html>

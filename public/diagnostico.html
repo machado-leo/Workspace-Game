@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Diagnostico da sede</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/diagnostico.css" />
+</head>
+<body class="pagina-diag">
+  <!-- Pagina de MUDANCA DE HOSPEDAGEM: abre ela logo depois de subir a sede num
+       lugar novo, ANTES de sair chamando o pessoal. Ver docs/hospedar-na-hostinger.md.
+
+       Ela responde as quatro coisas que so aparecem fora do localhost, e que
+       falham caladas: a versao do Node, se a chamada de video/chat consegue
+       manter a conexao viva (WebSocket), se o proxy da hospedagem nao apagou os
+       cabecalhos de seguranca, e se o servidor enxerga o IP de cada pessoa.
+
+       Nao tem <script> inline de proposito: a CSP recusa (e recusar e o ponto).
+       O JS esta em js/diagnostico.js. -->
+  <main class="diag">
+    <header class="diag-topo">
+      <h1>Diagnostico da sede</h1>
+      <p>Abra esta pagina no endereco novo, logo depois de subir. Cada item diz
+        <strong>o que quebra</strong> se ele estiver vermelho.</p>
+      <p class="diag-onde">Endereco: <code id="diag-endereco">-</code></p>
+    </header>
+
+    <section class="diag-grupo" id="grupo-servidor">
+      <h2>1. O servidor</h2>
+      <ul class="diag-lista" id="lista-servidor">
+        <li class="diag-carregando">Perguntando pro servidor...</li>
+      </ul>
+    </section>
+
+    <section class="diag-grupo" id="grupo-conexao">
+      <h2>2. A conexao que nao pode cair (WebSocket)</h2>
+      <p class="diag-nota">E o que segura chat, presenca e chamada. Este teste
+        abre um WebSocket <strong>cru</strong>: sem a biblioteca do socket.io no
+        meio, que e justamente quem esconde a falha caindo pra outro modo, lento
+        e pesado, sem avisar ninguem.</p>
+      <ul class="diag-lista" id="lista-conexao">
+        <li class="diag-carregando">Testando...</li>
+      </ul>
+    </section>
+
+    <section class="diag-grupo" id="grupo-cabecalhos">
+      <h2>3. Os cabecalhos de seguranca chegaram?</h2>
+      <p class="diag-nota">O servidor manda; proxy de hospedagem as vezes
+        limpa. Se sumirem, a sede fica sem as protecoes e ninguem percebe.</p>
+      <ul class="diag-lista" id="lista-cabecalhos">
+        <li class="diag-carregando">Conferindo...</li>
+      </ul>
+    </section>
+
+    <footer class="diag-rodape">
+      <button id="diag-refazer" class="btn btn-primario" type="button">Testar de novo</button>
+      <a class="diag-voltar" href="/">Voltar pra sede</a>
+    </footer>
+  </main>
+
+  <script src="js/diagnostico.js"></script>
+</body>
+</html>

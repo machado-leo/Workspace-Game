@@ -1,0 +1,4461 @@
+/* Tema claro no padrao do Gather 2.0 (ver referencias/): fundo claro, paineis
+   brancos, botao primario indigo, e as barras flutuantes sobre o mapa escuras. */
+:root {
+  --fundo: #f6f7f9;
+  --painel: #ffffff;
+  --painel-alt: #f3f4f6;
+  --borda: #e5e7eb;
+  --borda-forte: #d6d9e0;
+  --texto: #111827;
+  --texto-fraco: #6b7280;
+
+  --indigo: #4f46e5;
+  --indigo-escuro: #4338ca;
+  --indigo-claro: #eef0ff;
+  --roxo: #7c5cd4;
+
+  --verde: #22c55e;
+  --ambar: #f0a91e;
+  --vermelho: #e0362c;
+
+  --barra: rgba(38, 41, 50, 0.92);
+  --barra-item: rgba(255, 255, 255, 0.10);
+  --sombra-flutuante: 0 8px 28px rgba(15, 18, 25, 0.18);
+  --sombra-painel: 0 16px 48px rgba(15, 18, 25, 0.16);
+
+  /* usado pelo canvas via getComputedStyle nao - so referencia de cor do piso */
+  --piso: #f3e9db;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+.tela {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.oculto { display: none !important; }
+
+button { font-family: inherit; }
+
+.btn {
+  font-weight: 700;
+  border: none;
+  border-radius: 10px;
+  padding: 11px 20px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background 0.15s ease, transform 0.08s ease;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primario { background: var(--indigo); color: #fff; }
+.btn-primario:hover { background: var(--indigo-escuro); }
+.btn-secundario {
+  background: var(--painel);
+  color: var(--texto);
+  border: 1px solid var(--borda-forte);
+}
+.btn-secundario:hover { background: var(--painel-alt); }
+.btn-pequeno { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
+
+/* ============ Login ============ */
+#tela-login { background: rgba(17, 24, 39, 0.45); }
+
+.login-card {
+  background: var(--painel);
+  border-radius: 16px;
+  width: 92%;
+  max-width: 400px;
+  padding: 28px 28px 24px;
+  box-shadow: var(--sombra-painel);
+}
+
+.login-topo { text-align: center; margin-bottom: 20px; }
+.login-marca {
+  width: 44px;
+  height: 44px;
+  margin: 0 auto 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--indigo);
+  color: #fff;
+}
+.login-topo h1 { margin: 0; font-size: 20px; font-weight: 800; letter-spacing: -0.2px; }
+.login-topo p { margin: 4px 0 0; font-size: 13px; color: var(--texto-fraco); }
+
+.login-abas {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 10px;
+  background: var(--painel-alt);
+  margin-bottom: 18px;
+}
+.login-aba {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--texto-fraco);
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.login-aba.ativa { background: var(--painel); color: var(--texto); box-shadow: 0 1px 2px rgba(17, 24, 39, 0.08); }
+
+.login-form { display: flex; flex-direction: column; gap: 12px; }
+.login-campo { display: flex; flex-direction: column; gap: 5px; }
+.login-campo span { font-size: 12px; font-weight: 700; color: var(--texto-fraco); }
+/* A dica embaixo do campo do codigo: ela explica por que o campo APARECEU, que
+   e a unica duvida que alguem tem ao ve-lo surgir do nada. */
+.login-dica { font-size: 11.5px; line-height: 1.35; color: var(--texto-fraco); }
+.login-campo input {
+  padding: 10px 12px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--texto);
+  background: var(--painel);
+}
+.login-campo input:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+}
+
+.login-erro {
+  margin: 0;
+  padding: 9px 11px;
+  border-radius: 9px;
+  background: #fdeceb;
+  color: #b42318;
+  font-size: 13px;
+}
+
+/* Entrar com o Google: a porta principal de quem e da ADM, entao vem antes das
+   abas de e-mail e senha. Botao branco com o G colorido, que e como todo mundo
+   reconhece esse botao. */
+.login-google { display: flex; flex-direction: column; gap: 8px; margin-bottom: 14px; }
+.login-btn-google {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 11px 14px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 10px;
+  background: var(--painel);
+  color: var(--texto);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.15s, border-color 0.15s;
+}
+.login-btn-google:hover { background: var(--painel-alt); border-color: #c4c8d2; }
+.login-btn-google:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.login-dica-google { text-align: center; margin: 0; }
+.login-ou {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+  color: var(--texto-fraco);
+  font-size: 11.5px;
+}
+.login-ou::before, .login-ou::after { content: ''; flex: 1; height: 1px; background: var(--borda); }
+.login-dica-aviso {
+  margin: 0;
+  padding: 8px 10px;
+  border-radius: 9px;
+  background: var(--indigo-claro);
+  color: #3730a3;
+  font-size: 12.5px;
+}
+
+/* O mesmo lugar do erro, pra aviso bom ("mandamos o link pro seu e-mail"). */
+.login-erro.login-info { background: #ecfdf3; color: #067647; }
+#esqueci-por-email p { margin: 6px 0 8px; }
+
+.login-enviar { justify-content: center; margin-top: 4px; }
+.login-enviar:disabled { opacity: 0.6; cursor: default; }
+
+/* ============ Menu da conta (trilho) ============ */
+.menu-conta {
+  position: absolute;
+  left: 58px;
+  bottom: 12px;
+  z-index: 40;
+  /* larga o bastante pro "Entrou em 07/09/2026" caber numa linha so */
+  width: 236px;
+  padding: 6px;
+  border-radius: 12px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  box-shadow: var(--sombra-painel);
+}
+.conta-topo {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 10px 12px;
+}
+/* Bolinha com a inicial, como no cartao de perfil da referencia. */
+.conta-avatar {
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 700;
+  font-size: 15px;
+  color: #fff;
+  background: var(--roxo);
+}
+.conta-id {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.conta-id strong {
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.conta-id span {
+  font-size: 11px;
+  color: var(--texto-fraco);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.conta-acoes {
+  display: flex;
+  gap: 6px;
+  padding: 0 10px 10px;
+}
+.conta-editar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--roxo);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+}
+.conta-editar:hover { filter: brightness(1.08); }
+.conta-mais {
+  flex: none;
+  width: 36px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--borda);
+  border-radius: 9px;
+  background: transparent;
+  color: var(--texto);
+  cursor: pointer;
+}
+.conta-mais:hover { background: var(--hover); }
+
+/* Barrinha escura que sai em cima da coisa selecionada, como a barra de objeto
+   selecionado do Gather (referencias/9x-ui-gather-111539.png). */
+.barra-item {
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 62;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  border-radius: 10px;
+  background: #2b3040;
+  box-shadow: 0 8px 22px rgba(20, 22, 30, 0.34);
+}
+.barra-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #eef0f6;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.barra-item-btn:hover { background: rgba(255, 255, 255, 0.10); }
+.barra-item-btn.perigo { color: #ff9a90; }
+.barra-item-btn.perigo:hover { background: rgba(255, 120, 108, 0.16); }
+.barra-item-risco {
+  width: 1px;
+  height: 18px;
+  background: rgba(255, 255, 255, 0.16);
+}
+
+/* Cartao da mesa: o mesmo desenho do cartao da conta, mas solto na tela - ele
+   nasce no ponto onde a mesa foi clicada. */
+/* Canto superior direito, fixo. Ver o porque em public/js/cartaomesa.js:
+   seguindo o clique, ele tapava a propria mesa de que fala e pulava de lugar a
+   cada clique. */
+.cartao-mesa {
+  position: fixed;
+  right: 16px;
+  top: 16px;
+  z-index: 60;
+  width: 250px;
+  padding-top: 4px;
+  border-radius: 14px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  box-shadow: var(--sombra-painel);
+}
+.cartao-mesa-fechar {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+.cartao-mesa-fechar:hover { background: var(--hover); }
+.cartao-mesa-avatar-caixa { position: relative; flex: none; }
+/* bolinha de status encostada na borda do avatar, como no print */
+.cartao-mesa-status {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid var(--painel);
+  background: #63d9c4;
+}
+.cartao-mesa .conta-topo { padding-right: 34px; }
+
+/* O menuzinho escuro que sai do "..." - e o do print da referencia. */
+/* Sai encostado no cartao, nunca POR CIMA da fileira de botoes - senao ele
+   cobre a plantinha e o proprio "..." e o clique seguinte bate nele. O cartao
+   da conta vive colado no rodape, entao o dele abre pra cima. */
+.menu-suspenso {
+  position: absolute;
+  right: 10px;
+  bottom: auto;
+  top: calc(100% + 6px);
+  z-index: 5;
+  min-width: 178px;
+  padding: 5px;
+  border-radius: 10px;
+  background: #2b3040;
+  box-shadow: 0 10px 26px rgba(20, 22, 30, 0.34);
+}
+.menu-suspenso-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: #eef0f6;
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.menu-suspenso-item:hover { background: rgba(255, 255, 255, 0.10); }
+.menu-conta .menu-suspenso {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
+/* ============ Tela de entrada (o "Welcome to..." da referencia) ============ */
+#tela-entrada {
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  background: linear-gradient(140deg, #f4f4f6 0%, #e9e9ed 55%, #dedee3 100%);
+}
+
+.entrada-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 26px;
+}
+.entrada-marca { display: flex; align-items: center; gap: 12px; }
+.entrada-marca strong { font-size: 17px; font-weight: 700; }
+.entrada-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--indigo);
+  color: #fff;
+}
+.entrada-conta { display: flex; align-items: center; gap: 9px; font-size: 14px; color: var(--texto); }
+.entrada-inicial {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f2a08c;
+  color: #4a2a20;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.entrada-corpo {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 56px;
+  padding: 0 40px 60px;
+  flex-wrap: wrap;
+}
+
+.entrada-palco {
+  position: relative;
+  width: min(640px, 92vw);
+  aspect-ratio: 16 / 10;
+  border-radius: 16px;
+  background: #232323;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.entrada-palco video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scaleX(-1); /* espelhado, como todo preview de camera */
+}
+.entrada-vazio { margin: 0; color: #e6e6e6; font-size: 16px; }
+.entrada-aviso {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: 88%;
+  margin: 0;
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.66);
+  color: #ffd9d4;
+  font-size: 12px;
+  text-align: center;
+}
+
+.entrada-controles {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+}
+.entrada-toggle {
+  position: relative;
+  width: 44px;
+  height: 44px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.entrada-toggle:hover { background: rgba(255, 255, 255, 0.26); }
+/* Riscado em vermelho quando desligado, igual a referencia. */
+.entrada-corte { display: none; }
+.entrada-toggle.desligado .entrada-corte {
+  display: block;
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  height: 2px;
+  background: #ef4444;
+  transform: rotate(-45deg);
+  border-radius: 2px;
+}
+.entrada-toggle.desligado { color: #f3f3f3; }
+
+.entrada-lado {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: min(390px, 92vw);
+}
+.entrada-lado h2 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.3px;
+}
+.entrada-lado input {
+  padding: 13px 15px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 11px;
+  font-family: inherit;
+  font-size: 15px;
+  background: var(--painel);
+  color: var(--texto);
+}
+.entrada-lado input:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+}
+.entrada-enviar { justify-content: center; padding: 13px; font-size: 15px; border-radius: 11px; }
+.entrada-link {
+  align-self: center;
+  border: none;
+  background: transparent;
+  color: var(--texto-fraco);
+  font-family: inherit;
+  font-size: 13px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.entrada-link:hover { color: var(--texto); }
+
+/* ============ Editor de avatar (modal "Edit Avatar" da referencia) ============ */
+#tela-criador { background: rgba(17, 24, 39, 0.45); }
+
+.editor-card {
+  background: var(--painel);
+  border-radius: 16px;
+  width: 96%;
+  max-width: 940px;
+  box-shadow: var(--sombra-painel);
+  overflow: hidden;
+}
+
+.editor-topo {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--borda);
+}
+.editor-topo h1 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.2px;
+}
+.editor-espaco-nome { color: var(--texto-fraco); font-size: 13px; }
+
+.editor-corpo {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  min-height: 420px;
+}
+
+.editor-categorias {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 190px;
+  flex-shrink: 0;
+  padding: 14px 12px;
+  border-right: 1px solid var(--borda);
+  background: #fbfbfc;
+  overflow-y: auto;
+  max-height: 460px;
+}
+.editor-categoria {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  color: var(--texto);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.editor-categoria:hover { background: var(--painel-alt); }
+.editor-categoria.ativa { background: var(--indigo); color: #fff; }
+.editor-categoria canvas {
+  width: 30px;
+  height: 34px;
+  flex-shrink: 0;
+  image-rendering: pixelated;
+}
+
+.editor-meio {
+  flex: 1;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 18px;
+}
+
+.editor-opcoes {
+  flex: 1;
+  background: var(--painel-alt);
+  border-radius: 12px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  align-content: start;
+  overflow-y: auto;
+  max-height: 330px;
+}
+.editor-opcao {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px;
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background: transparent;
+  color: var(--texto-fraco);
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.editor-opcao:hover { background: rgba(255,255,255,0.75); }
+.editor-opcao.selecionada {
+  border-color: var(--indigo);
+  background: #fff;
+  color: var(--texto);
+}
+.editor-opcao canvas { image-rendering: pixelated; }
+
+.editor-paleta {
+  background: var(--painel-alt);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid rgba(0,0,0,0.12);
+  cursor: pointer;
+  padding: 0;
+}
+.swatch.selecionado {
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 2px #fff inset;
+}
+
+.editor-preview {
+  position: relative;
+  width: 300px;
+  flex-shrink: 0;
+  margin: 18px 18px 18px 0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #eceaf6 0%, #eceaf6 62%, #dbead9 62%, #dbead9 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+#canvas-preview { image-rendering: pixelated; }
+.btn-dado {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--borda-forte);
+  background: #fff;
+  color: var(--texto);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-dado:hover { background: var(--painel-alt); }
+
+.editor-rodape {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 24px;
+  border-top: 1px solid var(--borda);
+  background: #fbfbfc;
+}
+.editor-rodape-campos { display: flex; align-items: center; gap: 12px; flex: 1; }
+.editor-rodape input[type="text"],
+.editor-rodape input[type="password"] {
+  background: #fff;
+  border: 1px solid var(--borda-forte);
+  border-radius: 9px;
+  padding: 10px 12px;
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 14px;
+  max-width: 260px;
+}
+.editor-rodape input:focus { outline: none; border-color: var(--indigo); }
+.campo-admin { font-size: 13px; color: var(--texto-fraco); }
+.campo-admin summary { cursor: pointer; font-weight: 600; user-select: none; }
+.campo-admin summary:hover { color: var(--indigo); }
+.campo-admin input { margin-top: 8px; }
+
+/* ============ Tela do escritorio ============ */
+#tela-jogo {
+  width: 100%;
+  height: 100vh;
+  padding: 0;
+  overflow: hidden;
+}
+
+.area-jogo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #cfd3da;
+  overflow: hidden;
+}
+
+#canvas-jogo {
+  image-rendering: pixelated;
+  display: block;
+}
+
+.vinheta {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0) 62%, rgba(20,24,32,0.22) 100%);
+}
+
+/* ---- trilho de icones a esquerda ---- */
+.trilho {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 62px;
+  background: var(--painel);
+  border-right: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+  z-index: 6;
+}
+.trilho-logo {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  background: #1f2430;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+.trilho-btn {
+  position: relative;
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  border: none;
+  background: transparent;
+  color: #4b5563;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.trilho-btn:hover { background: var(--painel-alt); color: var(--texto); }
+.trilho-btn.ativo {
+  background: #fff;
+  color: var(--indigo);
+  box-shadow: 0 2px 8px rgba(15,18,25,0.12);
+}
+.trilho-atalho {
+  font-size: 8px;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.3px;
+  margin-top: 1px;
+}
+.trilho-espaco { flex: 1; }
+/* Nome curto embaixo de cada icone: so o desenho nao dizia o que cada botao faz, e a
+   dica do mouse (title) nao existe no celular. A largura do trilho continua 62 px. */
+.trilho-btn { width: 56px; height: 50px; gap: 3px; flex-shrink: 0; }
+.trilho-nome {
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1.1;
+  max-width: 54px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* No computador o grupo do "Mais" nao existe: os botoes ficam no trilho, na ordem. */
+.trilho-mais-grupo { display: contents; }
+.trilho-so-celular { display: none; }
+/* Janela baixa: os nomes saem e os botoes voltam ao tamanho de antes, pra caber tudo.
+   (Sem rolagem no trilho: o menu da conta mora dentro dele e seria cortado.) */
+@media (min-width: 641px) and (max-height: 660px) {
+  .trilho { gap: 4px; }
+  .trilho-btn { width: 42px; height: 42px; }
+  .trilho-nome { display: none; }
+}
+.chat-badge {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--vermelho);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- cantos superiores ---- */
+.topo-esq {
+  position: absolute;
+  top: 16px;
+  left: 78px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+}
+.topo-dir {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 5;
+}
+
+.badge-sala {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--barra);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  box-shadow: var(--sombra-flutuante);
+}
+
+.indicador {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  color: var(--texto-fraco);
+  box-shadow: var(--sombra-flutuante);
+}
+.bolinha { width: 8px; height: 8px; border-radius: 50%; background: currentColor; }
+.indicador-conectado { color: #15803d; }
+.indicador-conectado .bolinha { background: var(--verde); }
+.indicador-conectando { color: #b45309; }
+.indicador-conectando .bolinha { background: var(--ambar); animation: pulsar 1s infinite; }
+@keyframes pulsar { 0%,100% { opacity: 1; } 50% { opacity: 0.35; } }
+
+.seletor-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 7px 14px;
+  border-radius: 999px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  cursor: pointer;
+  box-shadow: var(--sombra-flutuante);
+}
+.seletor-status .bolinha { width: 9px; height: 9px; border-radius: 50%; }
+.status-livre { color: #15803d; }
+.status-livre .bolinha { background: var(--verde); }
+.status-focado { color: #b45309; }
+.status-focado .bolinha { background: var(--ambar); }
+.status-reuniao { color: #b91c1c; }
+.status-reuniao .bolinha { background: var(--vermelho); }
+
+/* ---- zoom ---- */
+.zoom-controles {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--sombra-flutuante);
+  z-index: 5;
+}
+.zoom-btn {
+  width: 38px;
+  height: 38px;
+  border: none;
+  background: var(--painel);
+  color: var(--texto);
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.zoom-btn:hover { background: var(--painel-alt); }
+
+/* ---- barra de controle inferior ---- */
+.barra-controle {
+  position: absolute;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
+  background: var(--barra);
+  box-shadow: var(--sombra-flutuante);
+  z-index: 6;
+}
+.ctrl-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  border: none;
+  background: var(--barra-item);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ctrl-btn:hover { background: rgba(255,255,255,0.18); }
+.ctrl-btn .risco { display: none; }
+.ctrl-btn.desativado { color: #ff8b8b; }
+.ctrl-btn.desativado .risco { display: block; }
+.ctrl-entrar.ativo { background: var(--verde); color: #06240f; }
+/* Dividindo a tela o botao fica aceso, e num tom diferente do "camera ligada":
+   sao dois estados que convivem, e confundir os dois faz a pessoa achar que
+   parou de dividir quando so desligou o video. */
+.ctrl-btn.ativo { background: var(--roxo, #5b45c8); color: #fff; }
+
+.preview-local {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 4px;
+}
+.preview-local video {
+  width: 54px;
+  height: 40px;
+  border-radius: 999px;
+  object-fit: cover;
+  transform: scaleX(-1);
+  background: #111;
+}
+.preview-local.dividindo-tela video { width: 72px; }
+.preview-local.sem-video video { display: none; }
+.preview-local.sem-video::before {
+  content: '🎙️';
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: var(--barra-item);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+}
+.preview-local-controles { display: flex; gap: 6px; }
+
+/* reacoes: popover acima da barra */
+.barra-reacoes {
+  position: absolute;
+  bottom: 76px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 4px;
+  padding: 6px;
+  border-radius: 999px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  box-shadow: var(--sombra-flutuante);
+  z-index: 6;
+}
+.btn-reacao {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-size: 18px;
+  cursor: pointer;
+}
+.btn-reacao:hover { background: var(--painel-alt); transform: scale(1.1); }
+
+.dica-controles {
+  position: absolute;
+  bottom: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 12px;
+  color: #fff;
+  background: var(--barra);
+  padding: 5px 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+  z-index: 4;
+  pointer-events: none;
+}
+
+.aviso-camera {
+  position: absolute;
+  top: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  max-width: min(440px, 88vw);
+  text-align: center;
+  font-size: 13px;
+  color: #7f1d1d;
+  background: #fee2e2;
+  border: 1px solid #fca5a5;
+  padding: 9px 16px;
+  border-radius: 10px;
+  z-index: 7;
+}
+
+/* ---- minimapa (canto inferior esquerdo, como na referencia) ---- */
+.minimapa {
+  position: absolute;
+  bottom: 18px;
+  left: 78px;
+  border-radius: 12px;
+  background: rgba(38, 41, 50, 0.92);
+  box-shadow: var(--sombra-flutuante);
+  z-index: 5;
+}
+
+.palco-remoto { position: absolute; width: 0; height: 0; overflow: hidden; }
+
+/* ---- grade de chamada ---- */
+.grade-chamada {
+  position: absolute;
+  inset: 12px 12px 92px 74px;
+  background: #1f2430;
+  border-radius: 16px;
+  padding: 14px;
+  z-index: 8;
+  box-shadow: var(--sombra-painel);
+}
+.grade-chamada-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  height: 100%;
+  align-content: center;
+}
+.chamada-tile {
+  position: relative;
+  background: #12151c;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+.chamada-tile video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.chamada-tile-self video { transform: scaleX(-1); }
+
+/* A previa do proprio video e espelhada porque e o seu rosto: gente espera se
+   ver como no espelho. Tela dividida NAO pode ser espelhada - o texto sairia ao
+   contrario e voce nao conseguiria conferir o que esta mostrando.
+
+   A classe vai no proprio <video>, e nao no quadro em volta, porque a grade de
+   chamada MOVE esse mesmo elemento pra dentro do tile: uma regra presa ao
+   container pararia de valer na hora que a chamada abre. E fica depois das duas
+   regras que ela desfaz (.preview-local video e .chamada-tile-self video), que
+   tem a mesma especificidade - quem vem por ultimo ganha. */
+video.mostrando-tela {
+  transform: none;
+  object-fit: contain;
+  background: #0d1117;
+}
+.chamada-nome {
+  position: absolute;
+  /* Acima do video: no quadro de VOCE o <video> entra na grade depois do nome (e
+     tem transform), e cobria o proprio nome - a pessoa nao via como aparece. */
+  z-index: 2;
+  left: 10px;
+  bottom: 10px;
+  padding: 4px 10px;
+  border-radius: 8px;
+  background: rgba(15,18,25,0.72);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+}
+.chamada-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 34px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.9);
+}
+.chamada-tile-self .preview-local-controles {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  display: flex;
+  gap: 6px;
+}
+
+/* ---- Pessoas: quem esta na sede, agrupado por sala (js/pessoas.js) ----
+   A Diretoria (js/diretoria.js) e os Avisos (js/central.js) usam a mesma casca. */
+.painel-pessoas,
+.painel-diretoria,
+.painel-avisos {
+  position: absolute;
+  top: 0;
+  left: 62px;
+  bottom: 0;
+  width: min(360px, calc(100vw - 62px));
+  background: var(--painel);
+  border-right: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+  z-index: 9;
+  box-shadow: var(--sombra-painel);
+}
+.pessoas-topo {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 16px 14px 10px;
+}
+.pessoas-topo h2 { margin: 0; font-size: 19px; font-weight: 800; }
+.pessoas-conta { color: var(--texto-fraco); font-size: 12px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pessoas-topo .btn-fechar-painel { margin-left: auto; align-self: center; }
+.pessoas-busca {
+  margin: 0 14px 8px;
+  border: 1px solid var(--borda);
+  background: var(--painel-alt);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--texto);
+}
+.pessoas-busca:focus { outline: none; border-color: var(--indigo); background: var(--painel); }
+.pessoas-lista { flex: 1; overflow-y: auto; padding: 0 8px 12px; }
+.pessoas-grupo + .pessoas-grupo { margin-top: 4px; }
+.pessoas-sala {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 12px 6px 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+.pessoas-sala-ponto { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.pessoas-sala-nome { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pessoas-sala-conta { margin-left: auto; font-variant-numeric: tabular-nums; }
+.pessoa-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 6px;
+  border-radius: 10px;
+}
+.pessoa-linha:hover, .pessoa-linha.destacada { background: var(--indigo-claro); }
+.pessoa-avatar {
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  border: 2.5px solid var(--verde);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 800;
+  color: #1f2430;
+}
+.pessoa-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+.pessoa-nome {
+  font-size: 14px;
+  font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pessoa-voce {
+  margin-left: 6px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--painel-alt);
+  color: var(--texto-fraco);
+  font-size: 10.5px;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+.pessoa-status {
+  font-size: 12px;
+  color: var(--texto-fraco);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pessoa-acoes { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.pessoa-acao {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+.pessoa-acao:hover { background: var(--painel); color: var(--texto); }
+.pessoa-acao.feito { color: var(--verde); }
+.pessoa-acao.espera { color: var(--texto-fraco); opacity: 0.5; }
+.pessoa-ir {
+  margin-left: 2px;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  background: var(--indigo);
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pessoa-ir:hover { background: var(--indigo-escuro); }
+.pessoa-acao:focus-visible, .pessoa-ir:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
+.pessoas-vazio { margin: 14px 6px; color: var(--texto-fraco); font-size: 13px; }
+.pessoas-livres { margin: 14px 6px 0; color: var(--texto-fraco); font-size: 12px; line-height: 1.45; }
+.pessoas-rodape {
+  padding: 9px 14px;
+  border-top: 1px solid var(--borda);
+  color: var(--texto-fraco);
+  font-size: 11.5px;
+}
+
+/* ---- Diretoria (js/diretoria.js) ---- */
+.dir-corpo { flex: 1; overflow-y: auto; padding: 0 14px 16px; display: flex; flex-direction: column; gap: 8px; }
+.dir-rotulo {
+  padding-top: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+.dir-rotulo-linha { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-top: 14px; }
+.dir-acao {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--painel);
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.dir-acao:hover { border-color: var(--indigo); background: var(--indigo-claro); }
+.dir-acao:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
+.dir-acao svg { flex-shrink: 0; color: var(--indigo); }
+.dir-acao span { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.dir-acao strong { font-size: 14px; }
+.dir-acao small { font-size: 12px; color: var(--texto-fraco); }
+.dir-link {
+  border: none;
+  background: none;
+  padding: 0;
+  color: var(--indigo);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  text-decoration: none;
+  cursor: pointer;
+}
+.dir-link:hover { text-decoration: underline; }
+.dir-contas { margin: 0; font-size: 12.5px; color: var(--texto-fraco); font-variant-numeric: tabular-nums; }
+.dir-contas:empty { display: none; }
+.dir-situacao { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.dir-linha { display: flex; align-items: flex-start; gap: 10px; padding: 7px 2px; border-bottom: 1px solid var(--borda); }
+.dir-marca {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  background: var(--painel-alt);
+  color: var(--texto-fraco);
+}
+.dir-linha.ligado .dir-marca { background: #dcf5e7; color: #1c7c4a; }
+.dir-linha-texto { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.dir-linha-nome { font-size: 13px; font-weight: 650; }
+.dir-linha-sub { font-size: 11.5px; color: var(--texto-fraco); overflow-wrap: anywhere; }
+.dir-alerta {
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fdecec;
+  color: #9b1c1c;
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+.dir-carregando { font-size: 12.5px; color: var(--texto-fraco); padding: 6px 2px; }
+
+/* ---- Spotify de cada um, no canto do escritorio (js/spotify.js) ----
+   Escuro como os outros controles que flutuam sobre o mapa (a barra da chamada, os
+   lembretes); os paineis sao brancos. Embaixo a direita, que e o canto livre. */
+.spotify-mini {
+  --sp-fundo: #16181f;
+  --sp-elevado: #22252e;
+  --sp-hover: #2c303a;
+  --sp-borda: rgba(255, 255, 255, 0.08);
+  --sp-texto: #f4f5f8;
+  --sp-fraco: #a0a5b1;
+  position: absolute;
+  right: 16px;
+  bottom: 18px;
+  width: min(340px, calc(100% - 32px));
+  z-index: 28;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  background: var(--sp-fundo);
+  color: var(--sp-texto);
+  border: 1px solid var(--sp-borda);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(8, 10, 16, 0.38);
+}
+.spotify-topo { display: flex; align-items: center; gap: 2px; cursor: grab; touch-action: none; user-select: none; }
+/* a alca de pontinhos: diz "da pra arrastar" (e move pelo teclado) */
+.spotify-alca {
+  width: 18px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 6px;
+  background: transparent;
+  color: #5d6270;
+  cursor: grab;
+}
+.spotify-alca:hover { color: var(--sp-texto); background: var(--sp-elevado); }
+.spotify-mini.arrastando { box-shadow: 0 26px 64px rgba(8, 10, 16, 0.5); }
+.spotify-mini.arrastando, .spotify-mini.arrastando * { cursor: grabbing; }
+/* com o iframe por baixo do ponteiro, o arraste "cai" dentro do Spotify */
+.spotify-mini.arrastando .spotify-player iframe { pointer-events: none; }
+.spotify-atual {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 4px 8px 4px 4px;
+  border: none;
+  border-radius: 12px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.spotify-atual:hover { background: var(--sp-elevado); }
+.spotify-capa-caixa {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: var(--sp-elevado);
+  color: var(--sp-fraco);
+  overflow: hidden;
+}
+.spotify-capa { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.spotify-textos { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.spotify-nome { font-size: 13.5px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotify-tipo { font-size: 11.5px; color: var(--sp-fraco); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotify-seta { margin-left: auto; flex-shrink: 0; color: var(--sp-fraco); transition: transform 0.15s ease; }
+.spotify-atual[aria-expanded="true"] .spotify-seta { transform: rotate(180deg); }
+.spotify-mini.vazio .spotify-seta { display: none; }
+.spotify-icone {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--sp-fraco);
+  cursor: pointer;
+}
+.spotify-icone:hover { background: var(--sp-elevado); color: var(--sp-texto); }
+.spotify-mini button:focus-visible, .spotify-form input:focus-visible { outline: 2px solid #ffffff; outline-offset: 1px; }
+
+/* o menu do nome: trocar, adicionar, tirar */
+.spotify-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 4px;
+  max-height: 264px;
+  overflow-y: auto;
+  border-radius: 12px;
+  background: var(--sp-elevado);
+}
+.spotify-menu-itens { display: flex; flex-direction: column; gap: 2px; }
+.spotify-menu-itens:empty { display: none; }
+.spotify-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.spotify-menu-item:hover, .spotify-menu-item.atual { background: var(--sp-hover); }
+.spotify-menu-capa { width: 30px; height: 30px; flex-shrink: 0; border-radius: 6px; object-fit: cover; }
+.spotify-sem-capa { display: flex; align-items: center; justify-content: center; background: var(--sp-hover); color: var(--sp-fraco); font-size: 13px; }
+.spotify-menu-texto { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.spotify-menu-nome { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.spotify-menu-tipo { font-size: 11px; color: var(--sp-fraco); }
+.spotify-menu-acao {
+  padding: 9px 8px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--sp-texto);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-align: left;
+  cursor: pointer;
+}
+.spotify-menu-acao:hover { background: var(--sp-hover); }
+.spotify-menu-tirar { color: #ff9f9f; font-weight: 500; }
+
+/* o player: fundo proprio enquanto o do Spotify carrega */
+.spotify-player { position: relative; height: 152px; border-radius: 12px; background: var(--sp-elevado); overflow: hidden; }
+.spotify-player iframe { position: relative; display: block; border: 0; border-radius: 12px; }
+.spotify-carregando { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 12px; color: var(--sp-fraco); }
+.spotify-mini.vazio .spotify-player { display: none; }
+
+/* colar um link: so quando nao tem musica ou quando a pessoa pede "+ Adicionar" */
+.spotify-form { display: none; flex-direction: column; gap: 8px; padding: 2px 4px 0; }
+.spotify-mini.vazio .spotify-form, .spotify-mini.adicionando .spotify-form { display: flex; }
+.spotify-dica { font-size: 12px; color: var(--sp-fraco); line-height: 1.45; }
+.spotify-dica b { color: var(--sp-texto); font-weight: 600; }
+.spotify-form-linha { display: flex; gap: 6px; }
+.spotify-form input {
+  flex: 1;
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid var(--sp-borda);
+  border-radius: 10px;
+  background: var(--sp-elevado);
+  color: var(--sp-texto);
+  font: inherit;
+  font-size: 13px;
+}
+.spotify-form input::placeholder { color: #6f7481; }
+.spotify-form input:focus { outline: none; border-color: rgba(255, 255, 255, 0.35); }
+.spotify-tocar {
+  padding: 0 16px;
+  border: none;
+  border-radius: 10px;
+  background: #ffffff;
+  color: #111318;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.spotify-tocar:hover { background: #e6e7ec; }
+.spotify-erro { margin: 0; font-size: 12px; color: #ff9f9f; line-height: 1.4; }
+.spotify-cancelar {
+  display: none;
+  align-self: flex-start;
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--sp-fraco);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.spotify-mini.adicionando:not(.vazio) .spotify-cancelar { display: inline; }
+.spotify-cancelar:hover { color: var(--sp-texto); }
+
+/* o Spotify completo da pessoa: sempre a um clique */
+.spotify-completo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--sp-texto);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.spotify-completo:hover { background: var(--sp-elevado); border-color: rgba(255, 255, 255, 0.3); }
+.spotify-nota-rodape { display: none; margin: 0 4px 2px; font-size: 11px; color: var(--sp-fraco); line-height: 1.45; }
+.spotify-mini.vazio .spotify-nota-rodape, .spotify-mini.adicionando .spotify-nota-rodape { display: block; }
+
+/* minimizado: so a pilula com a capa e o nome. O player fica na pagina (altura
+   zero), entao a musica continua. */
+.spotify-mini.minimizado { width: auto; max-width: min(300px, calc(100% - 32px)); gap: 0; padding: 5px; border-radius: 16px; }
+.spotify-mini.minimizado .spotify-so-aberto:not(.spotify-player) { display: none; }
+.spotify-mini.minimizado .spotify-player { height: 0; }
+.spotify-mini.minimizado .spotify-seta { transform: rotate(180deg); }
+.spotify-mini.minimizado .spotify-atual { padding-right: 10px; }
+@media (prefers-reduced-motion: reduce) { .spotify-seta { transition: none; } }
+/* tela estreita de computador: a barra da chamada (no meio, embaixo) chega ate aqui -
+   o Spotify sobe e fica em cima dela */
+@media (min-width: 641px) and (max-width: 1100px) { .spotify-mini { bottom: 86px; } }
+
+/* ---- Central de avisos (js/central.js) ---- */
+.central-limpar { margin-left: auto; align-self: center; }
+.painel-avisos .pessoas-topo .btn-fechar-painel { margin-left: 6px; }
+.central-lista { flex: 1; overflow-y: auto; padding: 0 8px 12px; display: flex; flex-direction: column; gap: 2px; }
+.central-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 8px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.central-item:hover { background: var(--painel-alt); }
+.central-item:focus-visible { outline: 2px solid var(--indigo); outline-offset: -2px; }
+.central-item.nao-lido { background: var(--indigo-claro); }
+.central-icone {
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--painel-alt);
+  color: var(--texto-fraco);
+  font-size: 14px;
+  font-weight: 800;
+}
+.central-mencao, .central-dm { background: var(--indigo); color: #fff; }
+.central-chamada, .central-reuniao { background: #dcf5e7; color: #1c7c4a; }
+.central-texto { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.central-titulo { font-size: 13.5px; font-weight: 700; overflow-wrap: anywhere; }
+.central-corpo {
+  font-size: 12.5px;
+  color: var(--texto-fraco);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+}
+.central-quando { font-size: 11px; color: var(--texto-fraco); font-variant-numeric: tabular-nums; }
+.central-vazio { margin: 14px 8px; color: var(--texto-fraco); font-size: 13px; line-height: 1.5; }
+
+/* ---- chat: duas colunas (conversas + mensagens), no formato da referencia ---- */
+/* ============ Decorador (painel "Decorator" da referencia) ============ */
+.painel-decorador {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(340px, 100vw);
+  padding: 14px;
+  background: var(--painel);
+  border-left: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 9;
+  box-shadow: var(--sombra-painel);
+}
+.decor-topo { display: flex; align-items: center; justify-content: space-between; }
+.decor-topo h2 { margin: 0; font-size: 17px; font-weight: 700; }
+
+.decor-busca {
+  padding: 9px 12px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 9px;
+  font-family: inherit;
+  font-size: 13px;
+  background: var(--painel);
+  color: var(--texto);
+}
+.decor-busca:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+}
+
+.decor-abas {
+  display: flex;
+  gap: 4px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--borda);
+}
+.decor-aba {
+  flex: 1;
+  padding: 7px 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.decor-aba:hover { background: var(--painel-alt); }
+.decor-aba.ativa { background: #e9eaee; }
+
+/* A grade segue o painel do Gather (referencias/42-decorator-mesas.png): so a
+   arte, grande, solta no branco - sem legenda embaixo e sem caixinha em volta.
+   O nome fica no tooltip. Antes eram miniaturas de 40px com o nome debaixo, e
+   o texto ocupava mais espaco que o desenho. */
+.decor-grade {
+  flex: 1;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  align-content: start;
+}
+.decor-item {
+  position: relative;   /* o selo de girar se pendura no canto */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 14px 6px;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  background: transparent;
+  cursor: pointer;
+}
+.decor-item:hover { background: var(--painel-alt); }
+.decor-item.ativa { border-color: var(--indigo); background: rgba(79, 70, 229, 0.07); }
+.decor-item canvas {
+  width: 64px;
+  height: 64px;
+  image-rendering: pixelated;
+}
+/* Selo de girar, no canto de cima a direita da celula - e ele que avisa que a
+   peca tem outras direcoes, sem precisar seleciona-la pra descobrir. */
+.decor-girar {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border: 1px solid var(--borda);
+  border-radius: 50%;
+  background: var(--painel);
+  color: var(--texto-fraco);
+}
+.decor-girar:hover { color: var(--indigo); border-color: var(--indigo); }
+.decor-vazio { grid-column: 1 / -1; margin: 12px 0; color: var(--texto-fraco); font-size: 13px; text-align: center; }
+
+.decor-dica { margin: 0; font-size: 11px; color: var(--texto-fraco); line-height: 1.4; }
+
+/* Aba "Areas" do decorador (public/js/areas.js, docs/areas.md): no lugar da
+   grade de objetos, a lista das areas - cor, nome e tamanho em tiles. */
+.decor-grade.decor-grade-areas { display: flex; flex-direction: column; gap: 6px; }
+.areas-lista { display: flex; flex-direction: column; gap: 2px; }
+.area-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 7px 10px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+}
+.area-item:hover { background: var(--painel-alt); }
+.area-item.ativa { border-color: var(--indigo); background: rgba(79, 70, 229, 0.07); }
+.area-ponto { flex: none; width: 10px; height: 10px; border-radius: 50%; }
+.area-nome { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.area-tamanho { flex: none; color: var(--texto-fraco); font-size: 12px; font-variant-numeric: tabular-nums; }
+/* Nome e piso da area selecionada (docs/areas.md). */
+.area-identidade { display: flex; flex-direction: column; gap: 8px; }
+.area-campo { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.area-campo > span { flex: none; width: 42px; color: var(--texto-fraco); }
+.area-campo input, .area-campo select {
+  flex: 1;
+  min-width: 0;
+  padding: 7px 9px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font: inherit;
+  font-size: 12.5px;
+  background: var(--painel);
+}
+.area-nova { width: 100%; justify-content: center; font-size: 12.5px; }
+.area-apagar { width: 100%; justify-content: center; font-size: 12.5px; color: #b42318; border-color: #f0c6c2; }
+.area-apagar:hover:not(:disabled) { background: #fef3f2; }
+
+/* A regra de som da area selecionada (docs/areas.md). */
+.area-som {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--painel-alt);
+}
+.area-som h4 {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+.area-som-modos { display: flex; gap: 4px; }
+.area-som-modo {
+  flex: 1;
+  padding: 7px 4px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  background: var(--painel);
+  color: var(--texto-fraco);
+  font: inherit;
+  font-size: 11.5px;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.area-som-modo:hover:not(:disabled) { border-color: var(--indigo); color: var(--texto); }
+.area-som-modo.ativo { border-color: var(--indigo); background: rgba(79, 70, 229, 0.1); color: var(--indigo); font-weight: 700; }
+.area-som-modo:disabled { opacity: .6; cursor: default; }
+.area-som-alcance { display: flex; align-items: center; gap: 8px; font-size: 12.5px; }
+.area-som-alcance input {
+  width: 62px;
+  padding: 6px 8px;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  font: inherit;
+  font-variant-numeric: tabular-nums;
+}
+.area-som-unidade { color: var(--texto-fraco); font-size: 12px; }
+.area-som-explica { margin: 0; font-size: 12px; line-height: 1.45; color: var(--texto-fraco); }
+.area-restaurar { width: 100%; justify-content: center; font-size: 12.5px; }
+.area-status { margin: 0; font-size: 12px; color: var(--texto-fraco); }
+.area-aviso { margin: 0; padding: 8px 10px; border-radius: 8px; background: #fef3f2; color: #b42318; font-size: 12.5px; line-height: 1.4; }
+.decor-rodape { display: flex; gap: 6px; padding-top: 10px; border-top: 1px solid var(--borda); }
+.decor-historico {
+  width: 34px;
+  height: 30px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 8px;
+  background: var(--painel);
+  color: var(--texto);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.decor-historico:hover { background: var(--painel-alt); }
+
+/* ---------- calendario ---------- */
+.painel-calendario {
+  position: absolute;
+  inset: 0;
+  z-index: 26;
+  display: flex;
+  background: var(--painel);
+}
+
+.cal-lateral {
+  width: 240px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  gap: 12px;
+}
+.cal-lateral-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cal-lateral-topo h2 {
+  font-size: 17px;
+  font-weight: 800;
+  margin: 0;
+}
+.cal-lateral-rotulo {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--texto-fraco);
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+}
+.cal-lista { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 8px; }
+
+/* ---- reuniao interna da sede ---- */
+.cal-nova { width: 100%; }
+.cal-form { display: flex; flex-direction: column; gap: 8px; }
+.cal-form input[type="text"],
+.cal-form input[type="date"],
+.cal-form input[type="time"],
+.cal-form select {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border: 1px solid var(--borda);
+  border-radius: 9px;
+  background: var(--painel);
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+}
+.cal-form-linha { display: flex; gap: 8px; }
+.cal-form-linha > * { flex: 1; min-width: 0; }
+.cal-form-acoes { display: flex; gap: 8px; }
+.cal-form-acoes .btn { flex: 1; }
+.cal-form-cancelar { background: var(--painel-alt); color: var(--texto); }
+.cal-form-erro {
+  margin: 0;
+  padding: 7px 9px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #8a1f16;
+  font-size: 12.5px;
+}
+
+.cal-reuniao {
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--borda);
+  background: var(--painel);
+}
+/* Acontecendo AGORA muda a borda, nao a cor de fundo: o que importa ler no
+   meio da lista e "essa e a de agora", e uma borda marcada diz isso sem
+   transformar o item num bloco colorido que rouba a lista inteira. */
+.cal-reuniao.agora { border-color: #2f5d4a; box-shadow: inset 3px 0 0 #2f5d4a; }
+.cal-reuniao-titulo { font-size: 13px; font-weight: 650; }
+.cal-reuniao-quando { margin-top: 2px; font-size: 12px; color: var(--texto-fraco); }
+/* Quebra linha: com "Copiar link" e "Novo link" sao ate quatro botoes numa lateral estreita */
+.cal-reuniao-acoes { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px 8px; }
+.cal-reuniao-entrar {
+  border: 0;
+  border-radius: 7px;
+  padding: 5px 10px;
+  background: #2f5d4a;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.cal-reuniao-entrar:hover { background: #264c3c; }
+.cal-reuniao-desmarcar,
+.cal-reuniao-link {
+  border: 0;
+  border-radius: 7px;
+  padding: 5px 8px;
+  background: transparent;
+  color: var(--texto-fraco);
+  font: inherit;
+  font-size: 12px;
+  cursor: pointer;
+}
+.cal-reuniao-desmarcar:hover,
+.cal-reuniao-link:hover { background: var(--painel-alt); color: var(--texto); }
+.cal-vazio { margin: 0; font-size: 12.5px; color: var(--texto-fraco); }
+.cal-reuniao-sino.ligado { color: #2f5d4a; font-weight: 650; }
+
+/* ---- lembrete de reuniao: por cima do escritorio, com a agenda fechada ----
+   Embaixo e no meio, acima da barra de controle: e onde o olho ja esta na hora de
+   entrar numa chamada, e nao briga com a barra "no ar" nem com o painel de
+   visitantes, que moram no alto. */
+.lembretes-reuniao {
+  position: absolute;
+  bottom: 86px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 29;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(460px, calc(100% - 28px));
+  pointer-events: none;
+}
+.lembretes-reuniao:empty { display: none; }
+.lembrete {
+  pointer-events: auto;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  padding: 10px 12px 10px 14px;
+  border-radius: 14px;
+  background: rgba(24, 34, 29, 0.96);
+  color: #eaf3ee;
+  font-size: 12.5px;
+  box-shadow: 0 6px 20px rgba(12, 18, 15, 0.3);
+}
+.lembrete-titulo { font-weight: 650; overflow-wrap: anywhere; }
+.lembrete-quando { opacity: 0.78; flex: 1; min-width: 0; }
+.lembrete-entrar {
+  border: 0;
+  border-radius: 999px;
+  padding: 5px 12px;
+  background: #2f9d63;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.lembrete-entrar:hover { background: #38b273; }
+/* segunda acao do aviso (o "Mensagem" do aceno): mesma forma, sem disputar com a principal */
+.lembrete-secundario { background: rgba(255, 255, 255, 0.12); }
+.lembrete-secundario:hover { background: rgba(255, 255, 255, 0.2); }
+.lembrete-fechar {
+  border: 0;
+  background: transparent;
+  color: inherit;
+  opacity: 0.7;
+  cursor: pointer;
+  padding: 2px 4px;
+  font: inherit;
+}
+.lembrete-fechar:hover { opacity: 1; }
+.lembrete-entrar:focus-visible, .lembrete-fechar:focus-visible { outline: 2px solid #9be3bd; outline-offset: 2px; }
+
+/* ---- chamada marcada: a barra que fica por cima do mapa ---- */
+/* Em cima e no meio: a pessoa continua ANDANDO pela sede durante a chamada, e
+   precisa saber que esta no ar sem abrir painel nenhum. No canto ela sumiria
+   junto com os outros avisos. */
+.barra-chamada {
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 7px 8px 7px 14px;
+  border-radius: 999px;
+  background: rgba(24, 34, 29, 0.94);
+  color: #eaf3ee;
+  font-size: 12.5px;
+  box-shadow: 0 6px 20px rgba(12, 18, 15, 0.3);
+}
+/* O ponto pisca porque "no ar" e estado, nao aviso: piscando ele continua
+   dizendo a mesma coisa depois de cinco minutos na tela. */
+.barra-chamada-ponto {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #58d08b;
+  animation: chamada-pulso 1.8s ease-in-out infinite;
+}
+@keyframes chamada-pulso { 0%, 100% { opacity: 1; } 50% { opacity: 0.35; } }
+@media (prefers-reduced-motion: reduce) {
+  .barra-chamada-ponto { animation: none; }
+}
+.barra-chamada-titulo { font-weight: 650; }
+.barra-chamada-gente { opacity: 0.72; }
+.barra-chamada-sair {
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 11px;
+  background: rgba(255, 255, 255, 0.14);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.barra-chamada-sair:hover { background: rgba(255, 255, 255, 0.24); }
+
+/* ---- visitantes da reuniao: pedido de entrada e quem ja esta la ----
+   Abaixo da barra de chamada e da mesma familia (verde escuro): e a mesma
+   coisa, a chamada, so que com gente de fora batendo na porta. */
+.painel-visitantes {
+  position: absolute;
+  top: 58px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 30;
+  width: min(560px, calc(100% - 28px));
+  border-radius: 14px;
+  background: rgba(24, 34, 29, 0.96);
+  color: #eaf3ee;
+  font-size: 12.5px;
+  box-shadow: 0 6px 20px rgba(12, 18, 15, 0.3);
+}
+.painel-visitantes-lista { list-style: none; margin: 0; padding: 4px 0; }
+.visitantes-linha {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+}
+.visitantes-linha + .visitantes-linha { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.visitantes-nome { font-weight: 650; overflow-wrap: anywhere; }
+.visitantes-sufixo { flex: 1; min-width: 0; opacity: 0.72; overflow-wrap: anywhere; }
+.visitantes-acoes { margin-left: auto; display: flex; gap: 6px; flex-shrink: 0; }
+.visitantes-botao {
+  border: 0;
+  border-radius: 999px;
+  padding: 4px 11px;
+  background: rgba(255, 255, 255, 0.14);
+  color: inherit;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.visitantes-botao:hover { background: rgba(255, 255, 255, 0.24); }
+.visitantes-botao.primario { background: #2f9d63; color: #fff; }
+.visitantes-botao.primario:hover { background: #38b273; }
+.visitantes-botao:focus-visible { outline: 2px solid #9be3bd; outline-offset: 2px; }
+
+/* "Ligar" no topo do canal */
+.chat-ligar {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 11px;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  background: var(--painel);
+  color: var(--texto);
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.chat-ligar:hover { border-color: #2f5d4a; color: #2f5d4a; }
+
+/* O "Entrar" que vem junto com o convite, na propria mensagem */
+.chat-msg-entrar {
+  margin-left: 8px;
+  border: 0;
+  border-radius: 7px;
+  padding: 3px 10px;
+  background: #2f5d4a;
+  color: #fff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  font-style: normal;
+  cursor: pointer;
+}
+.chat-msg-entrar:hover { background: #264c3c; }
+
+/* Reuniao da sede na grade e CLICAVEL (leva pra sala); compromisso do Google
+   nao e. O cursor tem que contar isso antes do clique. */
+.cal-evento-interno { cursor: pointer; border: 0; text-align: left; font: inherit; }
+.cal-evento-interno:hover { filter: brightness(1.12); }
+.cal-item {
+  display: flex;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 10px;
+  background: var(--painel-alt);
+  border: 1px solid var(--borda);
+}
+.cal-item-cor { width: 4px; border-radius: 2px; flex-shrink: 0; }
+.cal-item-titulo { font-size: 13px; font-weight: 700; }
+.cal-item-quando { font-size: 11px; color: var(--texto-fraco); margin-top: 2px; }
+.cal-vazio { font-size: 13px; color: var(--texto-fraco); padding: 10px 0; }
+.cal-google { display: flex; flex-direction: column; gap: 6px; font-size: 12px; color: var(--texto-fraco); }
+.cal-google-btn {
+  display: block;
+  text-align: center;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: var(--roxo);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  text-decoration: none;
+}
+.cal-google-btn:hover { background: var(--indigo-escuro); }
+.cal-google-ok { color: var(--verde); font-weight: 600; }
+.cal-google-sair {
+  background: transparent;
+  border: 1px solid var(--borda);
+  color: var(--texto-fraco);
+  border-radius: 8px;
+  padding: 5px 10px;
+  font-size: 11px;
+  cursor: pointer;
+  align-self: flex-start;
+}
+
+.cal-lateral-nota {
+  font-size: 11px;
+  color: var(--texto-fraco);
+  line-height: 1.5;
+  border-top: 1px solid var(--borda);
+  padding-top: 10px;
+}
+.cal-aviso {
+  position: relative;
+  background: var(--indigo-claro);
+  border: 1px solid var(--roxo);
+  border-radius: 10px;
+  padding: 10px 30px 10px 12px;
+  font-size: 12px;
+}
+.cal-aviso-fechar {
+  position: absolute;
+  top: 6px; right: 6px;
+  border: none; background: transparent;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+
+.cal-principal { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.cal-barra {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--borda);
+}
+.cal-nav, .cal-hoje-btn {
+  background: var(--painel-alt);
+  border: 1px solid var(--borda);
+  color: var(--texto);
+  border-radius: 8px;
+  padding: 5px 12px;
+  cursor: pointer;
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 13px;
+}
+.cal-nav:hover, .cal-hoje-btn:hover { border-color: var(--indigo); }
+.cal-titulo { font-size: 15px; font-weight: 700; margin-left: 6px; }
+
+.cal-grade { flex: 1; overflow: auto; padding: 0 18px 18px; }
+.cal-cabecalho, .cal-corpo {
+  display: grid;
+  grid-template-columns: 44px repeat(7, 1fr);
+}
+.cal-cabecalho { position: sticky; top: 0; background: var(--painel); z-index: 2; }
+.cal-dia-topo {
+  min-width: 0;
+  overflow: hidden;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 12px;
+  color: var(--texto-fraco);
+  border-bottom: 1px solid var(--borda);
+}
+.cal-dia-topo b { display: block; font-size: 15px; color: var(--texto); margin-top: 2px; }
+.cal-dia-topo b.cal-hoje {
+  background: var(--vermelho);
+  color: #fff;
+  border-radius: 50%;
+  width: 24px; height: 24px;
+  line-height: 24px;
+  margin: 2px auto 0;
+}
+
+/* ---- prazos do Kanban do CRM (js/calendario.js, server/prazos.js) ----
+   Faixa de "dia inteiro" logo abaixo dos dias: o prazo do cartao e um dia, sem hora. */
+.cal-prazos-faixa {
+  display: grid;
+  grid-template-columns: 44px repeat(7, 1fr);
+  border-bottom: 1px solid var(--borda);
+  background: var(--painel);
+}
+.cal-prazos-faixa-rotulo {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--texto-fraco);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  padding: 7px 4px 0 0;
+  text-align: right;
+}
+.cal-prazos-dia {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 5px 3px;
+  border-left: 1px solid var(--borda);
+}
+.cal-prazo {
+  display: block;
+  padding: 2px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--borda-forte);
+  background: var(--painel-alt);
+  color: var(--texto);
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.35;
+  text-decoration: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cal-prazo:hover { border-color: var(--indigo); }
+.cal-prazo.meu { border-color: var(--indigo); background: var(--indigo-claro); }
+.cal-prazo.atrasado { border-color: var(--vermelho); color: var(--vermelho); background: var(--painel); }
+.cal-prazo.feito { color: var(--texto-fraco); text-decoration: line-through; background: var(--painel); }
+.cal-prazo-mais { font-size: 10.5px; color: var(--texto-fraco); padding-left: 4px; cursor: default; }
+
+.cal-prazos-rotulo { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+.cal-prazos-meus {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: none;
+  letter-spacing: 0;
+  cursor: pointer;
+}
+.cal-prazos { flex: none; max-height: 260px; }
+.cal-prazo-item { color: inherit; text-decoration: none; }
+.cal-prazo-item:hover { border-color: var(--indigo); }
+.cal-prazo-item .cal-item-cor { background: var(--borda-forte); }
+.cal-prazo-item.meu .cal-item-cor { background: var(--indigo); }
+.cal-prazo-item.atrasado .cal-item-cor { background: var(--vermelho); }
+.cal-prazo-item.atrasado .cal-item-quando { color: var(--vermelho); font-weight: 600; }
+
+.cal-corpo { position: relative; }
+.cal-regua { display: flex; flex-direction: column; }
+.cal-hora {
+  font-size: 10px;
+  color: var(--texto-fraco);
+  text-align: right;
+  padding-right: 6px;
+  transform: translateY(-6px);
+}
+.cal-coluna { min-width: 0; position: relative; border-left: 1px solid var(--borda); }
+.cal-faixa { border-bottom: 1px dashed rgba(17,24,39,0.07); }
+
+.cal-evento {
+  position: absolute;
+  left: 3px; right: 3px;
+  border-radius: 6px;
+  padding: 3px 6px;
+  overflow: hidden;
+  color: #fff;
+}
+.cal-evento-titulo { font-size: 11px; font-weight: 700; line-height: 1.2; }
+.cal-evento-pessoa { font-size: 10px; opacity: 0.85; }
+
+.cal-agora {
+  position: absolute;
+  left: 44px; right: 0;
+  height: 2px;
+  background: var(--vermelho);
+  z-index: 3;
+}
+.cal-agora span {
+  position: absolute;
+  left: -42px; top: -8px;
+  background: var(--vermelho);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 5px;
+  border-radius: 4px;
+}
+
+
+/* ---------- Trello ---------- */
+.painel-trello {
+  position: absolute;
+  inset: 0;
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  background: var(--painel);
+}
+.trello-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--borda);
+}
+.trello-topo h2 { margin: 0; font-size: 17px; font-weight: 800; }
+.trello-link { font-size: 12px; color: var(--indigo); text-decoration: none; }
+.trello-link:hover { text-decoration: underline; }
+.trello-topo-acoes { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+
+/* Os setores: um botao por diretoria, em fileira que rola de lado se nao couber */
+.trello-setores {
+  display: flex;
+  gap: 6px;
+  padding: 10px 18px 0;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+.trello-setor {
+  flex-shrink: 0;
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: var(--painel);
+  color: var(--texto-fraco);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.trello-setor:hover { color: var(--texto); border-color: var(--borda-forte); }
+.trello-setor.ativo {
+  background: var(--indigo);
+  border-color: var(--indigo);
+  color: #fff;
+}
+.trello-setor.restrito::after { content: ' 🔒'; font-size: 11px; }
+.trello-setor:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+.trello-nota { margin: 8px 18px 0; font-size: 12px; color: var(--texto-fraco); }
+.trello-vazio-geral { padding: 8px 4px; }
+
+.trello-aviso {
+  margin: 10px 18px 0;
+  padding: 9px 12px;
+  border-radius: 9px;
+  background: var(--indigo-claro);
+  border: 1px solid var(--borda);
+  font-size: 12px;
+  color: var(--texto-fraco);
+}
+
+.trello-colunas {
+  flex: 1;
+  display: flex;
+  gap: 12px;
+  padding: 14px 18px;
+  overflow-x: auto;
+  align-items: flex-start;
+}
+.trello-coluna {
+  width: 232px;
+  flex-shrink: 0;
+  max-height: 100%;
+  display: flex;
+  flex-direction: column;
+  border-radius: 12px;
+  background: var(--painel-alt);
+  border: 1px solid var(--borda);
+}
+.trello-coluna-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--borda);
+}
+.trello-coluna-topo b {
+  font-size: 11px;
+  color: var(--texto-fraco);
+  background: var(--painel);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.trello-coluna-corpo {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow-y: auto;
+}
+.trello-vazio { font-size: 12px; color: var(--texto-fraco); font-style: italic; padding: 4px; }
+
+.trello-cartao {
+  display: block;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  text-decoration: none;
+  color: var(--texto);
+}
+.trello-cartao:hover { border-color: var(--indigo); }
+.trello-etiquetas { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
+.trello-etiqueta {
+  font-size: 10px;
+  font-weight: 700;
+  color: #fff;
+  border-radius: 4px;
+  padding: 1px 6px;
+}
+.trello-cartao-nome { font-size: 13px; line-height: 1.35; }
+.trello-cartao-rodape {
+  display: flex;
+  align-items: center;
+  gap: 4px 8px;
+  flex-wrap: wrap;
+  margin-top: 7px;
+  font-size: 11px;
+  color: var(--texto-fraco);
+}
+.trello-prazo {
+  border-radius: 5px;
+  padding: 1px 6px;
+  background: var(--painel-alt);
+}
+.trello-prazo.atrasado { background: #fdeceb; color: #b42318; font-weight: 700; }
+.trello-prazo.concluido { background: #e7f7ee; color: #11704a; }
+.trello-membros { margin-left: auto; font-weight: 700; white-space: nowrap; }
+/* Selinhos do Kanban do CRM: descricao, checklist, comentarios, anexos */
+.trello-selo { font-weight: 600; white-space: nowrap; }
+.trello-selo.completo { color: #11704a; }
+/* Coluna grande: a tela recebe so os primeiros cartoes, e este link leva ao resto */
+.trello-mais {
+  display: block;
+  padding: 6px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--indigo);
+  text-decoration: none;
+}
+.trello-mais:hover { text-decoration: underline; }
+
+.painel-chat {
+  position: absolute;
+  top: 0;
+  left: 62px;
+  bottom: 0;
+  width: min(680px, calc(100vw - 62px));
+  background: var(--painel);
+  border-right: 1px solid var(--borda);
+  display: flex;
+  z-index: 9;
+  box-shadow: var(--sombra-painel);
+}
+
+.chat-coluna-conversas {
+  width: 236px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--borda);
+  background: #fbfbfc;
+  display: flex;
+  flex-direction: column;
+}
+.chat-coluna-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 14px 10px;
+}
+.chat-coluna-topo h2 { margin: 0; font-size: 19px; font-weight: 800; }
+.chat-busca {
+  margin: 0 14px 10px;
+  border: 1px solid var(--borda);
+  background: var(--painel-alt);
+  border-radius: 9px;
+  padding: 9px 12px;
+  font-family: inherit;
+  font-size: 13px;
+  color: var(--texto);
+}
+.chat-busca:focus { outline: none; border-color: var(--indigo); background: #fff; }
+.chat-conversas { flex: 1; overflow-y: auto; padding: 0 8px 12px; }
+
+.chat-secao {
+  /* `display: block` porque quem monta isso (textoEl, em chat.js) devolve um
+     <span>, e span e inline: "MENSAGENS DIRETAS" e "Ninguem mais online agora."
+     caiam na MESMA linha, o segundo quebrando por cima do primeiro. O padding
+     tambem nao empurrava nada, pelo mesmo motivo. */
+  display: block;
+  padding: 12px 6px 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #9ca3af;
+}
+.chat-conversa-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 8px;
+  border: none;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--texto);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: left;
+}
+.chat-conversa-item:hover { background: var(--painel-alt); }
+.chat-conversa-item.ativa { background: #e9eaee; }
+.chat-conversa-cerquilha { color: #9ca3af; font-weight: 700; }
+.chat-conversa-nome { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.chat-conversa-avatar {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 800;
+  color: #1f2430;
+  position: relative;
+  flex-shrink: 0;
+}
+.chat-conversa-presenca {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  border: 1.5px solid #fbfbfc;
+}
+/* Conversa antiga de quem nao esta online agora: fica apagada, mas continua ali. */
+.chat-conversa-item.offline .chat-conversa-nome { color: var(--texto-fraco); }
+.chat-conversa-item.offline .chat-conversa-avatar { opacity: 0.6; }
+.chat-nao-lidas {
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: var(--vermelho);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chat-vazio-lista { display: block; padding: 4px 8px 10px; color: #9ca3af; font-size: 13px; }
+
+.chat-coluna-mensagens { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+.chat-conversa-topo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--borda);
+}
+.chat-conversa-topo h3 { margin: 0; font-size: 16px; font-weight: 800; }
+.chat-contagem {
+  border: 1px solid var(--borda);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--texto-fraco);
+}
+
+.chat-lista {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.chat-abertura { padding: 8px 0 18px; }
+.chat-abertura h4 { margin: 0 0 6px; font-size: 18px; font-weight: 800; }
+.chat-abertura p { margin: 0; color: var(--texto-fraco); font-size: 14px; }
+
+.chat-msg {
+  position: relative;
+  display: flex;
+  gap: 10px;
+  padding: 4px 8px 4px 0;
+  border-radius: 8px;
+  font-size: 14px;
+}
+.chat-msg:hover { background: #fafafb; }
+.chat-msg-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #1f2430;
+}
+.chat-msg-corpo { flex: 1; min-width: 0; }
+.chat-msg-cabecalho { display: flex; align-items: baseline; gap: 8px; }
+.chat-msg-nome { font-weight: 800; }
+.chat-msg-hora { font-size: 11px; color: #9ca3af; }
+.chat-msg-texto { margin-top: 1px; line-height: 1.45; word-break: break-word; }
+.chat-msg-texto code {
+  background: var(--painel-alt);
+  border: 1px solid var(--borda);
+  border-radius: 5px;
+  padding: 1px 5px;
+  font-size: 12.5px;
+}
+.chat-msg-texto a { color: var(--indigo); }
+
+/* mensagens seguidas da mesma pessoa nao repetem avatar/nome */
+.chat-msg.agrupada { padding-top: 0; }
+.chat-msg.agrupada .chat-msg-avatar { visibility: hidden; height: 0; }
+
+.chat-msg-sistema {
+  padding: 6px 0;
+  color: #9ca3af;
+  font-size: 12.5px;
+  font-style: italic;
+  text-align: center;
+}
+
+.chat-reacoes { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.chat-reacao-pilula {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1px solid var(--borda-forte);
+  background: #fff;
+  border-radius: 999px;
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+.chat-reacao-pilula.minha { border-color: var(--indigo); background: var(--indigo-claro); color: var(--indigo); }
+
+.chat-msg-acoes {
+  position: absolute;
+  top: -12px;
+  right: 6px;
+  display: none;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--borda);
+  box-shadow: var(--sombra-flutuante);
+}
+.chat-msg:hover .chat-msg-acoes { display: flex; }
+.chat-msg-acoes button {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: transparent;
+  border-radius: 999px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.chat-msg-acoes button:hover { background: var(--painel-alt); }
+
+.chat-form { padding: 12px 14px 14px; }
+.chat-form-caixa {
+  border: 1px solid var(--borda-forte);
+  border-radius: 12px;
+  background: #fff;
+  padding: 10px 12px 8px;
+}
+.chat-form-caixa:focus-within { border-color: var(--indigo); }
+.chat-form-caixa textarea {
+  width: 100%;
+  border: none;
+  resize: none;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--texto);
+  max-height: 140px;
+}
+.chat-form-caixa textarea:focus { outline: none; }
+.chat-form-barra { display: flex; align-items: center; gap: 2px; margin-top: 6px; }
+.chat-tool {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  color: var(--texto-fraco);
+  font-size: 13px;
+  cursor: pointer;
+}
+.chat-tool:hover { background: var(--painel-alt); color: var(--texto); }
+.chat-enviar {
+  margin-left: auto;
+  width: 34px;
+  height: 30px;
+  border: none;
+  border-radius: 8px;
+  background: var(--indigo);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.chat-enviar:hover { background: var(--indigo-escuro); }
+/* O contador so aparece perto do limite (ver chat.js) e pega a folga que era do
+   botao de enviar, que continua no canto. */
+.chat-contador {
+  margin-left: auto;
+  margin-right: 8px;
+  font-size: 11px;
+  color: var(--texto-fraco);
+  font-variant-numeric: tabular-nums;
+}
+.chat-contador:not(.oculto) + .chat-enviar { margin-left: 0; }
+.chat-contador.no-limite { color: var(--vermelho); font-weight: 700; }
+.chat-aviso {
+  margin: 0 0 8px;
+  padding: 7px 10px;
+  border-radius: 9px;
+  background: #fff4e5;
+  border: 1px solid #f3d29b;
+  color: #7a4a00;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.btn-icone-pequeno {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: none;
+  background: var(--painel-alt);
+  color: var(--texto);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.btn-icone-pequeno:hover { background: var(--borda); }
+
+/* UM SO botao de fechar painel.
+   Tinha quatro: `btn-icone-pequeno` (quadrado cheio de 32px, a mesma classe do
+   botao de ENVIAR do chat - por isso nao deu pra so aliviar ela), um do cartao
+   da mesa, um da estante e um do decorador. Quatro pesos diferentes pro mesmo
+   gesto, e e esse tipo de descuido repetido que faz o conjunto parecer amador,
+   mesmo quando cada tela sozinha esta boa.
+   Fechar e acao secundaria: sem fundo parado, so o contorno do foco e um fundo
+   leve no hover. O peso fica pro que a tela faz, nao pra sair dela. */
+.btn-fechar-painel {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--texto-fraco);
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  flex: none;
+}
+.btn-fechar-painel:hover { background: var(--painel-alt); color: var(--texto); }
+.btn-fechar-painel:focus-visible { outline: 2px solid var(--indigo); outline-offset: 2px; }
+/* A estante e o unico painel em fundo creme: mesmo botao, tom da casa. */
+.painel-estante .btn-fechar-painel { color: #9a938a; }
+.painel-estante .btn-fechar-painel:hover { background: #efece5; color: var(--texto); }
+.chat-form .btn-icone-pequeno { background: var(--indigo); color: #fff; width: 42px; }
+.chat-form .btn-icone-pequeno:hover { background: var(--indigo-escuro); }
+
+/* ---- cartao de pessoa e busca ---- */
+.cartao-pessoa {
+  position: absolute;
+  width: 260px;
+  background: var(--painel);
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: var(--sombra-painel);
+  z-index: 11;
+}
+.cartao-topo { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.cartao-avatar {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  color: #1f2430;
+}
+.cartao-nome { font-weight: 800; font-size: 15px; }
+.cartao-sub { color: var(--texto-fraco); font-size: 12px; }
+.cartao-acoes { display: flex; gap: 8px; }
+.cartao-acoes .btn { flex: 1; }
+
+@media (max-width: 820px) {
+  .editor-corpo { flex-wrap: wrap; }
+  .editor-preview { width: 100%; margin: 0 18px 18px; height: 220px; }
+  .topo-esq { left: 70px; }
+  .minimapa { display: none; }
+}
+
+/* ---------- estante: o acervo de livros da sede ---------- */
+/* O painel mostra CAPA e mais nada. Titulo e autor entram no passar do mouse.
+   E a forma de procurar livro na vida: bate o olho na lombada e reconhece.
+
+   Painel lateral, nao tela cheia: mesmo abrindo no clique, o mapa continua
+   visivel atras - clicar no chao fecha a estante e leva a pessoa embora. */
+.painel-estante {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(392px, 92%);
+  z-index: 26;
+  display: flex;
+  flex-direction: column;
+  background: #fbfaf7;
+  border-left: 1px solid var(--borda);
+  box-shadow: -18px 0 44px rgba(15, 18, 25, 0.13);
+}
+
+.estante-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px 12px;
+  border-bottom: 1px solid #eae7e0;
+}
+.estante-titulo-bloco {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 9px;
+}
+.estante-topo h2 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+}
+.estante-conta {
+  font-size: 12px;
+  color: #9a938a;
+  font-variant-numeric: tabular-nums;
+}
+.estante-fechar {
+  border: 0;
+  background: transparent;
+  color: #9a938a;
+  font-size: 13px;
+  line-height: 1;
+  padding: 5px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.estante-fechar:hover { background: #efece5; color: var(--texto); }
+
+.estante-aviso {
+  margin: 12px 18px 0;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fdecea;
+  color: #8a1f16;
+  font-size: 13px;
+}
+
+/* Busca, no TOPO do painel.
+   Veio da referencia: no painel lateral do Gather a busca e o PRIMEIRO
+   elemento, antes dos grupos - nao um extra escondido. Faz sentido aqui pelo
+   mesmo motivo: com o acervo crescendo, rolar quatro setores procurando uma
+   capa e pior que digitar tres letras. */
+.estante-busca-linha {
+  position: relative;
+  padding: 12px 18px 0;
+}
+.estante-busca {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 30px 8px 11px;
+  border: 1px solid #e3dfd6;
+  border-radius: 9px;
+  background: #fff;
+  color: var(--texto);
+  font: inherit;
+  font-size: 13px;
+}
+.estante-busca::placeholder { color: #a9a298; }
+.estante-busca:focus {
+  outline: none;
+  border-color: #b9b1a3;
+  box-shadow: 0 0 0 3px rgba(47, 93, 74, 0.12);
+}
+/* o X do type=search e feio e some em alguns temas: uso o meu */
+.estante-busca::-webkit-search-cancel-button { display: none; }
+.estante-busca-limpar {
+  position: absolute;
+  right: 24px;
+  top: 50%;
+  transform: translateY(-25%);
+  border: 0;
+  background: transparent;
+  color: #9a938a;
+  font-size: 11px;
+  line-height: 1;
+  padding: 5px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.estante-busca-limpar:hover { background: #efece5; color: var(--texto); }
+
+/* A grade: capas no formato de livro (2:3).
+   `auto-fill` com largura minima, e nao duas colunas fixas: no painel de 392px
+   dao TRES por fileira em vez de duas, ou seja 50% mais capa visivel sem rolar.
+   A capa continua grande o bastante pra reconhecer de relance, que e o ponto -
+   e quem abre a estante quase sempre ja sabe o que esta procurando. */
+.estante-grade {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  /* Fileira na altura inteira do conteudo. Sem isso a capa (aspect-ratio +
+     overflow hidden, que deixa ela "encolhivel" ate zero) cabia na altura do
+     painel espremida: com 12 livros as capas encavalavam umas nas outras. */
+  grid-auto-rows: max-content;
+  gap: 16px 14px;
+  padding: 16px 18px 22px;
+  align-content: start;
+}
+/* Filtro por setor: uma fileira so, que rola de lado se o acervo tiver muitos
+   setores - quebrar em duas linhas empurraria as capas pra baixo. */
+.estante-filtros {
+  display: flex;
+  gap: 6px;
+  padding: 12px 18px 2px;
+  /* A fileira rola de lado, mas a barra de rolagem esta escondida - entao ela
+     terminava CORTADA NO MEIO DE UMA PALAVRA, e cortado parece quebrado, nao
+     parece "tem mais pro lado". Esta mascara desbota os ultimos 22px e diz, sem
+     texto nenhum, que a fileira continua. */
+  -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+  mask-image: linear-gradient(to right, #000 calc(100% - 22px), transparent);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.estante-filtros::-webkit-scrollbar { display: none; }
+.estante-filtro {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border: 1px solid #e3dfd6;
+  border-radius: 999px;
+  background: #fff;
+  color: #5d574f;
+  font: inherit;
+  font-size: 12.5px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.estante-filtro:hover { border-color: #cfc8bb; color: var(--texto); }
+.estante-filtro:focus-visible { outline: 2px solid #2f5d4a; outline-offset: 2px; }
+.estante-filtro.ativo {
+  background: #2f3a33;
+  border-color: #2f3a33;
+  color: #fbfaf7;
+}
+.estante-filtro-n {
+  font-size: 11px;
+  color: #a8a196;
+  font-variant-numeric: tabular-nums;
+}
+.estante-filtro.ativo .estante-filtro-n { color: #b9c4bc; }
+
+/* Titulo do setor atravessa as duas colunas da grade. */
+/* "Quem esta lendo" na capa. Fica na BASE e por cima da faixa do titulo: a
+   pessoa importa mais que o titulo, que a capa ja diz. Verde da sede, nao
+   vermelho: nao e alerta, e "tem gente aqui". */
+.estante-lendo {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  z-index: 2;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(30, 58, 46, 0.92);
+  color: #eaf3ee;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  pointer-events: none;
+}
+
+.estante-setor {
+  grid-column: 1 / -1;
+  margin: 8px 0 -4px;
+  font-size: 11.5px;
+  font-weight: 650;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #8a8378;
+}
+.estante-setor:first-child { margin-top: 0; }
+
+.estante-vazia {
+  grid-column: 1 / -1;
+  margin: 4px 0;
+  font-size: 13px;
+  color: #9a938a;
+}
+
+.estante-capa {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+  /* 3:4, e nao 2:3.
+     2:3 e a proporcao de um livro de bolso impresso - mas a nossa capa nao e um
+     livro, e a PAGINA 1 de um PDF, e pagina e A4 ou Letter. Medindo as 12 capas
+     do acervo: de 0,704 (A4) a 0,783 (Letter), nenhuma perto de 0,667. Com a
+     celula em 2:3 e `object-fit: cover`, sumia de 5% a 15% da LARGURA - nos
+     livros da OpenStax quase um sexto da capa, cortada nos dois lados.
+     3:4 = 0,75 fica no meio das duas familias: o corte cai pra no maximo ~6%,
+     que e margem de pagina, e a capa continua preenchendo a celula inteira (sem
+     tarja, e com a lombada caindo em cima da capa e nao do vazio). */
+  aspect-ratio: 3 / 4;
+  border-radius: 3px 5px 5px 3px;   /* a lombada e o lado que nao arredonda */
+  overflow: hidden;
+  background: #e7e2d9;
+  box-shadow: 0 2px 5px rgba(24, 20, 14, 0.16), 0 10px 20px -10px rgba(24, 20, 14, 0.34);
+  transition: transform 0.14s ease, box-shadow 0.14s ease;
+}
+.estante-capa::before {
+  /* o vinco da lombada, na esquerda: e o que faz a capa ler como LIVRO e nao
+     como cartao */
+  content: '';
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 7px;
+  z-index: 2;
+  background: linear-gradient(90deg, rgba(0, 0, 0, 0.30), rgba(0, 0, 0, 0.06) 62%, rgba(255, 255, 255, 0.16));
+  pointer-events: none;
+}
+.estante-capa:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(24, 20, 14, 0.2), 0 16px 28px -12px rgba(24, 20, 14, 0.42);
+}
+.estante-capa:focus-visible {
+  outline: 2px solid var(--indigo);
+  outline-offset: 3px;
+}
+.estante-capa img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Sem capa, a gente desenha uma. Cor tirada do titulo, entao o mesmo livro tem
+   sempre a mesma - de relance a estante continua reconhecivel. */
+/* Absoluta dentro da capa: assim o texto NUNCA empurra a caixa. Com ela no
+ fluxo, um titulo de tres linhas crescia a capa alem do 2:3 e a fileira
+ inteira ficava mais alta que a do lado - a grade saia desencontrada. */
+.estante-capa-desenhada {
+  position: absolute;
+  inset: 0;
+  /* Margem menor desde que a capa encolheu pra caber tres por fileira: com
+     16/12 sobrava pouco mais de 70px pro texto e palavra comprida escapava. */
+  padding: 13px 10px 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  color: #fdfbf6;
+  background:
+    radial-gradient(120% 90% at 22% 8%, rgba(255, 255, 255, 0.22), transparent 62%),
+    linear-gradient(165deg, rgba(255, 255, 255, 0.10), rgba(0, 0, 0, 0.26)),
+    hsl(var(--tom, 30) 44% 40%);
+}
+.estante-capa-desenhada-titulo {
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 13px;
+  line-height: 1.25;
+  text-wrap: balance;
+  /* Palavra que nao cabe QUEBRA, em vez de vazar pela borda da capa.
+     "Psicologia Organizacional" numa capa de 104px virava "Organizaciona"
+     cortado no talo - e capa cortada le como bug, nao como titulo comprido. */
+  overflow-wrap: anywhere;
+  hyphens: auto;
+}
+.estante-capa-desenhada-titulo::after {
+  content: '';
+  display: block;
+  width: 26px;
+  height: 2px;
+  margin-top: 9px;
+  background: currentColor;
+  opacity: 0.5;
+}
+.estante-capa-desenhada-autor {
+  margin-top: auto;
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.72;
+}
+
+/* O titulo so no passar do mouse: a capa e a informacao, o texto e a confirmacao. */
+.estante-capa-faixa {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 3;
+  padding: 20px 10px 8px;
+  font-size: 11.5px;
+  line-height: 1.3;
+  color: #fff;
+  background: linear-gradient(transparent, rgba(16, 13, 9, 0.86));
+  opacity: 0;
+  transition: opacity 0.14s ease;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.estante-capa:hover .estante-capa-faixa,
+.estante-capa:focus-visible .estante-capa-faixa { opacity: 1; }
+
+@media (prefers-reduced-motion: reduce) {
+  .estante-capa, .estante-capa-faixa { transition: none; }
+  .estante-capa:hover { transform: none; }
+}
+
+/* -------------------------------------------------------- painel de aviso
+   Cartao centrado sobre a sede: o WhatsApp, o link de um movel e a troca de
+   senha usam. (O nome vem de quando o "convidar visitante" era o unico.) */
+.painel-convite {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(17, 20, 28, 0.45);
+}
+.convite-card {
+  width: min(520px, 100%);
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  box-shadow: var(--sombra-painel);
+  padding: 22px;
+}
+.convite-card h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
+}
+.convite-ajuda {
+  margin: 0 0 16px;
+  color: var(--texto-fraco);
+  font-size: 13px;
+  line-height: 1.5;
+}
+.convite-linha {
+  display: flex;
+  gap: 8px;
+}
+/* O link e longo e a pessoa precisa ver que copiou o endereco certo; por isso
+   o campo cresce e o botao fica no tamanho do texto. */
+.convite-linha input {
+  flex: 1;
+  min-width: 0;
+  padding: 11px 12px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 10px;
+  background: var(--painel-alt);
+  font: 500 13px ui-monospace, Consolas, monospace;
+  color: var(--texto);
+}
+.convite-validade {
+  margin: 12px 0 0;
+  color: var(--texto-fraco);
+  font-size: 12.5px;
+  line-height: 1.5;
+  min-height: 18px;
+}
+.convite-acoes {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 18px;
+}
+.convite-revogar {
+  border: none;
+  background: none;
+  padding: 6px 0;
+  font: 600 13px inherit;
+  color: var(--vermelho);
+  cursor: pointer;
+}
+.convite-revogar:hover { text-decoration: underline; }
+.convite-revogar:disabled { opacity: 0.5; cursor: default; text-decoration: none; }
+.convite-acoes .btn {
+  background: var(--painel-alt);
+  color: var(--texto);
+}
+.convite-acoes .btn:hover { background: var(--borda); }
+
+/* --------------------------------------------------- objeto que abre conteudo
+   Reusa o .painel-convite / .convite-card: sao a mesma coisa visualmente, um
+   cartao centrado sobre a sede. Ver docs/plano-conteudo.md. */
+.conteudo-etiqueta {
+  display: inline-block;
+  margin-bottom: 6px;
+  padding: 3px 9px;
+  border-radius: 999px;
+  background: var(--indigo-claro);
+  color: var(--indigo-escuro);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+/* O endereco aparece inteiro ANTES de a pessoa clicar: e o que deixa ela ver
+   pra onde vai. Por isso quebra a linha em vez de cortar com reticencias. */
+.conteudo-url {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--borda);
+  border-radius: 10px;
+  background: var(--painel-alt);
+  color: var(--texto-fraco);
+  font: 500 12.5px ui-monospace, Consolas, monospace;
+  overflow-wrap: anywhere;
+}
+.conteudo-acoes { justify-content: flex-end; }
+.conteudo-onde {
+  display: block;
+  margin-top: 6px;
+  font: 500 11.5px ui-monospace, Consolas, monospace;
+  color: var(--texto-fraco);
+}
+.conteudo-erro { margin: 10px 0 0; }
+.conteudo-espaco { flex: 1; }
+#form-por-conteudo .login-campo { margin-top: 12px; }
+
+.decor-link {
+  width: auto;
+  gap: 6px;
+  padding: 0 10px;
+  font-weight: 700;
+  font-size: 12.5px;
+}
+.decor-link.ativo {
+  background: var(--indigo);
+  border-color: var(--indigo);
+  color: #fff;
+}
+
+/* ---------- leitor de livros ---------- */
+/* Tela cheia e escura de proposito: e sala de leitura, nao painel lateral. O
+   unico ponto claro da tela e a pagina - que e pra onde o olho tem que ir. O
+   escuro puxa pro quente, e nao pro preto-azulado do resto da interface: luz
+   quente e a de ler. */
+.leitor {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: #171411;
+  color: #efe9df;
+}
+.leitor-barra {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 14px;
+  background: rgba(23, 20, 17, 0.94);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+.leitor-cabeca {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.leitor-cabeca strong {
+  font-size: 14.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.leitor-pagina {
+  flex: none;
+  font-size: 12.5px;
+  color: #a39a8c;
+  font-variant-numeric: tabular-nums;
+}
+.leitor-acoes {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.leitor-btn {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+.leitor-btn:hover { background: rgba(255, 255, 255, 0.08); }
+.leitor-zoom {
+  min-width: 46px;
+  text-align: center;
+  font-size: 12.5px;
+  color: #a39a8c;
+  font-variant-numeric: tabular-nums;
+}
+.leitor-baixar {
+  margin-left: 8px;
+  padding: 7px 13px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 999px;
+  color: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  text-decoration: none;
+}
+.leitor-baixar:hover { background: rgba(255, 255, 255, 0.08); }
+
+.leitor-palco {
+  position: absolute;
+  top: 54px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: auto;
+  display: grid;
+  place-items: center;
+  padding: 24px 70px;
+}
+.leitor-folha {
+  line-height: 0;
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), 0 24px 60px -18px rgba(0, 0, 0, 0.7);
+  cursor: pointer;
+}
+.leitor-folha canvas { display: block; }
+
+.leitor-virar {
+  position: fixed;
+  top: 50%;
+  z-index: 2;
+  width: 52px;
+  height: 52px;
+  margin-top: -26px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #d9d1c4;
+  cursor: pointer;
+}
+.leitor-virar.esquerda { left: 10px; }
+.leitor-virar.direita { right: 10px; }
+.leitor-virar:hover:not(:disabled) { background: rgba(255, 255, 255, 0.09); color: #fff; }
+.leitor-virar:disabled { opacity: 0.22; cursor: default; }
+
+.leitor-status {
+  position: fixed;
+  left: 50%;
+  bottom: 28px;
+  transform: translateX(-50%);
+  z-index: 3;
+  padding: 9px 16px;
+  border-radius: 999px;
+  background: rgba(239, 233, 223, 0.95);
+  color: #1d1a16;
+  font-size: 13px;
+  font-weight: 500;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  white-space: nowrap;
+}
+
+.leitor :focus-visible {
+  outline: 2px solid #e8c48a;
+  outline-offset: 2px;
+}
+
+@media (max-width: 640px) {
+  .leitor-palco { padding: 16px 12px 72px; }
+  .leitor-virar { top: auto; bottom: 12px; margin-top: 0; }
+  .leitor-zoom, #leitor-menos, #leitor-mais { display: none; }
+}
+
+/* ============ Conta: trocar senha e membros da sede ============
+   Reusa o cartao do convite (.painel-convite / .convite-card). Ver js/membros.js. */
+.login-esqueci {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--texto-fraco);
+  text-align: center;
+}
+.login-esqueci summary { cursor: pointer; font-weight: 600; user-select: none; list-style: none; }
+.login-esqueci summary::-webkit-details-marker { display: none; }
+.login-esqueci summary:hover { color: var(--indigo); }
+.login-esqueci p { margin: 8px 0 0; line-height: 1.5; text-align: left; }
+
+.senha-campo { display: flex; flex-direction: column; gap: 5px; margin-bottom: 12px; }
+.senha-campo span { font-size: 12px; font-weight: 700; color: var(--texto-fraco); }
+.senha-campo input {
+  padding: 10px 12px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 9px;
+  font: inherit;
+  font-size: 14px;
+  color: var(--texto);
+  background: var(--painel);
+}
+.senha-campo input:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.14);
+}
+#form-senha .login-erro { margin-bottom: 4px; }
+
+.membros-card {
+  width: min(640px, 100%);
+  max-height: min(86vh, 760px);
+  display: flex;
+  flex-direction: column;
+}
+.membros-topo { display: flex; align-items: baseline; gap: 10px; }
+.membros-conta { font-size: 12.5px; color: var(--texto-fraco); }
+.membros-provisoria {
+  margin: 0 0 14px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #fff8e6;
+  border: 1px solid #f3dfa8;
+}
+.membros-provisoria p { margin: 0 0 10px; font-size: 13px; line-height: 1.5; color: #6b4e0f; }
+#membros-erro { margin-bottom: 10px; }
+.membros-lista {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  min-height: 0;
+  border-top: 1px solid var(--borda);
+}
+.membro {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 11px 2px;
+  border-bottom: 1px solid var(--borda);
+}
+.membro-carregando { padding: 14px 2px; color: var(--texto-fraco); font-size: 13px; }
+.membro-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.membro-info strong { font-size: 14px; }
+.membro-email, .membro-meta {
+  font-size: 12.5px;
+  color: var(--texto-fraco);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.membro-meta { font-size: 12px; }
+.membro-acoes { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+.membro-acao {
+  border: 1px solid var(--borda-forte);
+  background: var(--painel);
+  color: var(--texto);
+  border-radius: 8px;
+  padding: 6px 9px;
+  font: 600 12px inherit;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.membro-acao:hover { background: var(--painel-alt); }
+.membro-acao.perigo { color: var(--vermelho); }
+.membro-acao.perigo:hover { background: #fdeceb; border-color: #f5c2bd; }
+.membro-acao:disabled { opacity: 0.5; cursor: default; }
+@media (max-width: 640px) {
+  .membro { flex-direction: column; align-items: stretch; }
+  .membro-acoes { justify-content: flex-start; }
+}
+/* `.convite-acoes .btn` deixa o botao neutro (e o "Fechar" do convite); aqui o
+   botao de acao e o principal da janela e precisa continuar com peso. */
+.convite-acoes .btn.btn-primario { background: var(--indigo); color: #fff; }
+.convite-acoes .btn.btn-primario:hover { background: var(--indigo-escuro); }
+.convite-acoes .btn.btn-primario:disabled { opacity: 0.6; cursor: default; }
+
+/* ============ Pedido de permissao dos avisos ============ Ver js/avisos.js. */
+.aviso-permissao {
+  position: fixed;
+  left: 50%;
+  bottom: 96px;
+  transform: translateX(-50%);
+  z-index: 70;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: min(560px, calc(100vw - 32px));
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  box-shadow: var(--sombra-painel);
+  color: var(--texto);
+}
+.aviso-permissao svg { flex: none; color: var(--indigo); }
+.aviso-permissao p { flex: 1; margin: 0; font-size: 13px; line-height: 1.4; }
+.aviso-permissao .btn { flex: none; }
+.aviso-permissao-dispensar {
+  flex: none;
+  border: none;
+  background: none;
+  color: var(--texto-fraco);
+  font: 600 12.5px inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+.aviso-permissao-dispensar:hover { color: var(--texto); }
+@media (max-width: 640px) {
+  .aviso-permissao { flex-wrap: wrap; bottom: 84px; }
+  .aviso-permissao p { flex-basis: calc(100% - 30px); }
+}
+
+/* ======================================================================
+   CELULAR
+   A sede foi desenhada pra tela de computador: trilho de icones na lateral,
+   paineis lado a lado, dica de teclado. Numa tela de 390px o trilho comia 16%
+   da largura e o chat espremia a conversa numa coluna de uma letra por linha.
+
+   O que muda abaixo de 640px:
+   - o trilho vira barra de abas EMBAIXO, onde o polegar alcanca
+   - cada painel (chat, agenda, Trello, estante, decorador) ocupa a tela, e a
+     barra de abas continua visivel pra trocar de um pro outro
+   - o chat vira uma coluna so: lista de conversas OU a conversa, com voltar
+   - os controles da chamada sobem pra cima da barra de abas
+   - o +/- de zoom some (e pinca, ver game.js) e o minimapa ja sumia em 820px
+   ====================================================================== */
+
+/* Sempre (nao so no celular): sem isto a pinca no mapa dava zoom na PAGINA. */
+#canvas-jogo { touch-action: none; -webkit-tap-highlight-color: transparent; }
+.chat-voltar { display: none; }
+
+@media (max-width: 640px) {
+  :root { --abas-altura: calc(56px + env(safe-area-inset-bottom, 0px)); }
+
+  /* 100vh no celular inclui a barra do navegador, e o rodape ficava escondido
+     atras dela. dvh e a altura que sobra de verdade. */
+  #tela-jogo { height: 100vh; height: 100dvh; }
+
+  /* ---- trilho -> barra de abas ---- */
+  .trilho {
+    top: auto;
+    right: 0;
+    width: auto;
+    height: var(--abas-altura);
+    padding: 0 4px env(safe-area-inset-bottom, 0px);
+    flex-direction: row;
+    justify-content: space-around;
+    gap: 0;
+    border-right: none;
+    border-top: 1px solid var(--borda);
+    z-index: 32;
+  }
+  .trilho-logo, .trilho-espaco, .trilho-atalho { display: none; }
+  .trilho-btn { width: 44px; height: 44px; flex: none; }
+  .trilho-nome { font-size: 9.5px; max-width: 100%; }
+
+  /* O "Mais": WhatsApp, Discador, Estante e Decorar num menu em cima da barra -
+     9 botoes nao cabiam num celular de 360 px. */
+  .trilho-so-celular { display: flex; }
+  .trilho-mais-grupo { display: none; }
+  .trilho.mais-aberto .trilho-mais-grupo {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 6px;
+    position: fixed;
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--abas-altura) + 8px);
+    padding: 10px;
+    background: var(--painel);
+    border: 1px solid var(--borda);
+    border-radius: 14px;
+    box-shadow: 0 12px 32px rgba(15, 18, 25, 0.18);
+    z-index: 33;
+  }
+  .trilho.mais-aberto .trilho-mais-grupo .trilho-btn { width: auto; max-width: none; height: 58px; }
+
+  /* menu da conta abre em cima da barra, na largura da tela */
+  .menu-conta {
+    left: 8px;
+    right: 8px;
+    bottom: calc(var(--abas-altura) + 8px);
+    width: auto;
+  }
+  .menu-conta .menu-suspenso { left: 0; right: 0; min-width: 0; }
+  .menu-suspenso-item { padding-top: 11px; padding-bottom: 11px; }
+
+  /* ---- mapa: o que flutua por cima ---- */
+  .topo-esq { left: 10px; top: calc(10px + env(safe-area-inset-top, 0px)); gap: 6px; }
+  .topo-dir { right: 10px; top: calc(10px + env(safe-area-inset-top, 0px)); }
+  /* "Conectado" vira so a bolinha: com sala + conexao + status nao cabia numa linha */
+  .indicador-conectado .texto-indicador { display: none; }
+  .zoom-controles { display: none; }
+  .barra-controle { bottom: calc(var(--abas-altura) + 12px); }
+  .dica-controles {
+    bottom: calc(var(--abas-altura) + 72px);
+    max-width: calc(100vw - 24px);
+    white-space: normal;
+    text-align: center;
+    line-height: 1.35;
+  }
+  .aviso-permissao { bottom: calc(var(--abas-altura) + 72px); }
+  .lembretes-reuniao { bottom: calc(var(--abas-altura) + 76px); }
+  /* o Spotify fica em cima da barra de abas, na largura da tela */
+  /* acima da barra da chamada, que no celular fica logo em cima das abas */
+  .spotify-mini { left: 8px; right: 8px; bottom: calc(var(--abas-altura) + 76px); width: auto; z-index: 31; }
+  .spotify-mini.minimizado { left: auto; max-width: calc(100% - 16px); }
+  /* no celular fica fixo em cima da barra: a alca some */
+  .spotify-alca { display: none; }
+  .spotify-topo { cursor: default; }
+  .spotify-form input { font-size: 16px; }
+  .grade-chamada { inset: calc(60px + env(safe-area-inset-top, 0px)) 8px calc(var(--abas-altura) + 72px) 8px; padding: 8px; }
+  .grade-chamada-tiles { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 8px; }
+  .cartao-pessoa { width: min(280px, calc(100vw - 24px)); }
+  .cartao-mesa { left: 8px; right: 8px; top: calc(8px + env(safe-area-inset-top, 0px)); width: auto; }
+
+  /* ---- paineis: tela inteira, com a barra de abas aparecendo ---- */
+  .painel-pessoas,
+  .painel-diretoria,
+  .painel-avisos,
+  .painel-chat,
+  .painel-calendario,
+  .painel-trello,
+  .painel-estante,
+  .painel-decorador {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--abas-altura);
+    width: auto;
+    border: none;
+    box-shadow: none;
+    z-index: 30;
+  }
+
+  /* ---- chat: uma coluna so ---- */
+  .painel-chat { display: block; }
+  .chat-coluna-conversas { width: 100%; height: 100%; border-right: none; }
+  .chat-coluna-mensagens { display: none; height: 100%; }
+  .painel-chat.vendo-conversa .chat-coluna-conversas { display: none; }
+  .painel-chat.vendo-conversa .chat-coluna-mensagens { display: flex; }
+  .chat-voltar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    margin-left: -8px;
+    border: none;
+    border-radius: 10px;
+    background: transparent;
+    color: var(--texto);
+    cursor: pointer;
+  }
+  .chat-conversa-topo { padding: 10px 12px; }
+  .chat-form { padding: 8px 10px calc(10px + env(safe-area-inset-bottom, 0px)); }
+  /* 16px no campo: abaixo disso o iPhone da zoom na pagina ao tocar pra digitar */
+  #chat-input, .chat-busca, .login-campo input, .senha-campo input, #pessoas-busca { font-size: 16px; }
+  /* no dedo, as acoes da pessoa precisam de alvo maior */
+  .pessoa-acao { width: 38px; height: 38px; }
+  .pessoa-ir { padding: 9px 12px; }
+  .pessoas-rodape { display: none; }
+
+  /* ---- agenda: a lateral vira faixa de cima ---- */
+  .painel-calendario { flex-direction: column; overflow: auto; }
+  .cal-lateral { width: auto; border-right: none; border-bottom: 1px solid var(--borda); }
+}
+
+@media (max-width: 640px) {
+  /* ---- Trello: titulo e link numa linha cada, botoes a direita ---- */
+  .trello-topo { flex-wrap: wrap; row-gap: 4px; padding: 12px 14px; }
+  .trello-topo h2 { font-size: 15px; flex-basis: calc(100% - 150px); }
+  .trello-link { order: 3; flex-basis: 100%; }
+
+  /* ---- editor de avatar: categorias viram fileira que rola de lado ---- */
+  #tela-criador { align-items: stretch; padding: 0; }
+  .editor-card { width: 100%; max-width: none; border-radius: 0; min-height: 100dvh; display: flex; flex-direction: column; }
+  .editor-topo { padding: 14px 16px; }
+  .editor-topo h1 { font-size: 18px; }
+  .editor-espaco-nome { display: none; }
+  .editor-corpo { flex-direction: column; min-height: 0; flex: 1; }
+  .editor-categorias {
+    flex-direction: row;
+    width: auto;
+    max-height: none;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 8px 10px;
+    border-right: none;
+    border-bottom: 1px solid var(--borda);
+    scrollbar-width: none;
+  }
+  .editor-categorias::-webkit-scrollbar { display: none; }
+  .editor-categoria { flex: none; padding: 6px 10px 6px 6px; gap: 6px; }
+  /* a previa vem PRIMEIRO no celular: e o boneco mudando que a pessoa quer ver */
+  .editor-preview { order: -1; width: auto; height: 170px; margin: 10px 12px 0; }
+  .editor-preview canvas { max-height: 160px; width: auto; }
+  .editor-meio { min-width: 0; padding: 10px 12px; }
+  .editor-opcoes { max-height: none; grid-template-columns: repeat(3, 1fr); }
+  .editor-rodape { padding: 10px 12px calc(10px + env(safe-area-inset-bottom, 0px)); position: sticky; bottom: 0; }
+}
+@media (max-width: 640px) {
+  /* Filho de flex em coluna encolhe no maximo ate a largura do conteudo - e a
+     fileira de categorias tem ~1000px de conteudo. Sem min-width: 0 ela
+     esticava o cartao inteiro pra 1028px e a grade de opcoes ia junto. */
+  .editor-card { max-width: 100vw; min-width: 0; }
+  .editor-corpo, .editor-corpo > * { min-width: 0; max-width: 100%; }
+}
+
+/* ============ Estante: abas Digitais / Na sala da ADM ============
+   Ver js/estante.js e server/emprestimos.js. */
+.estante-abas {
+  display: flex;
+  gap: 4px;
+  margin: 10px 18px 0;
+  padding: 3px;
+  border-radius: 10px;
+  background: #efece5;
+}
+.estante-aba {
+  flex: 1;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  padding: 7px 8px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #6b645a;
+  cursor: pointer;
+}
+.estante-aba.ativa { background: #fff; color: var(--texto); box-shadow: 0 1px 3px rgba(24, 20, 14, 0.12); }
+.estante-aba-n { font-weight: 500; color: #a8a196; font-variant-numeric: tabular-nums; margin-left: 2px; }
+
+/* situacao do livro de papel: faixa embaixo da capa (o mesmo lugar do "lendo") */
+.estante-situacao {
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 6px;
+  z-index: 2;
+  padding: 3px 6px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.estante-situacao.livre { background: rgba(255, 255, 255, 0.92); color: #2f5d4a; }
+.estante-situacao.meu { background: rgba(47, 93, 74, 0.94); color: #fff; }
+.estante-situacao.fora { background: rgba(120, 72, 16, 0.92); color: #fff3df; }
+/* etiqueta e PDF ficam logo acima da situacao: no topo cobriam o titulo */
+.estante-etiqueta {
+  position: absolute;
+  bottom: 27px;
+  left: 8px;
+  z-index: 2;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #3a342c;
+  font: 600 9.5px ui-monospace, Consolas, monospace;
+}
+.estante-tem-pdf {
+  position: absolute;
+  bottom: 27px;
+  right: 8px;
+  z-index: 2;
+  padding: 1px 5px;
+  border-radius: 4px;
+  background: #2f3a33;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+.estante-fisico .estante-capa-faixa { display: none; }
+
+/* ficha do livro de papel: sobe do pe do painel */
+
+.estante-detalhe {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  z-index: 5;
+  padding: 14px 16px 16px;
+  border-radius: 14px;
+  background: #fff;
+  border: 1px solid #e6e1d8;
+  box-shadow: 0 -10px 34px rgba(24, 20, 14, 0.18);
+}
+.estante-detalhe-topo { display: flex; align-items: flex-start; gap: 10px; }
+.estante-detalhe-topo h3 { flex: 1; margin: 0; font-size: 15px; line-height: 1.3; }
+.estante-detalhe-meta { margin: 6px 0 0; font-size: 12.5px; color: #8a8378; line-height: 1.4; }
+.estante-detalhe-onde { margin: 10px 0 0; font-size: 13.5px; color: var(--texto); }
+.estante-detalhe-conferir {
+  margin: 8px 0 0;
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: #fff8e6;
+  color: #6b4e0f;
+  font-size: 12px;
+}
+.estante-detalhe-acoes { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.estante-detalhe-acoes .btn { padding: 8px 14px; font-size: 13px; }
+
+/* ============ WhatsApp ============ Ver js/whatsapp.js. */
+.cartao-acoes { flex-wrap: wrap; }
+.cartao-whatsapp { color: #14803c; }
+.whatsapp-acoes-direita { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+
+/* ============ Discador ============ Ver js/discador.js e docs/discador.md.
+   Painel colado no trilho, como o chat: o mapa continua a vista, e da pra ver
+   quem esta perto enquanto liga. */
+.status-ligacao { color: #6d4fd6; }
+.status-ligacao .bolinha { background: var(--roxo); }
+
+.painel-discador {
+  position: absolute;
+  top: 0;
+  left: 62px;
+  bottom: 0;
+  width: min(480px, calc(100vw - 62px));
+  z-index: 9;
+  display: flex;
+  flex-direction: column;
+  background: var(--painel);
+  border-right: 1px solid var(--borda);
+  box-shadow: var(--sombra-painel);
+}
+.discador-topo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--borda);
+}
+.discador-topo h2 { margin: 0; font-size: 17px; font-weight: 800; }
+.discador-corpo {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px 18px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+.painel-discador.em-sessao .discador-corpo { padding-bottom: 0; }
+
+.disc-sub { margin: 0; color: var(--texto-fraco); }
+.disc-nota { margin: 0; font-size: 12px; color: var(--texto-fraco); }
+.disc-bloco {
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.disc-bloco h3 {
+  margin: 4px 0 0;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: .05em;
+  text-transform: uppercase;
+  color: var(--texto-fraco);
+}
+.disc-bloco h3:first-child { margin-top: 0; }
+.disc-grade { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.disc-grade label, .disc-rotulo { display: flex; flex-direction: column; gap: 4px; font-size: 12px; font-weight: 700; color: var(--texto-fraco); }
+.discador-corpo select,
+.discador-corpo input[type="number"],
+.discador-corpo input[type="date"],
+.discador-corpo input[type="time"],
+.discador-corpo textarea {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--texto);
+  padding: 8px 10px;
+  border: 1px solid var(--borda-forte);
+  border-radius: 8px;
+  background: var(--painel);
+}
+.discador-corpo textarea { resize: vertical; min-height: 54px; }
+.disc-check { display: flex; gap: 8px; align-items: flex-start; font-size: 12.5px; color: var(--texto-fraco); }
+.disc-check b { color: var(--texto); }
+.disc-check input { margin-top: 3px; }
+.disc-total { margin: 0; font-size: 14px; }
+.disc-total b { font-size: 22px; font-variant-numeric: tabular-nums; }
+.disc-total span { color: var(--texto-fraco); font-size: 12px; }
+.disc-previa { margin: 0; padding-left: 18px; display: flex; flex-direction: column; gap: 2px; }
+.disc-previa li span { font-weight: 600; }
+.disc-previa li em { font-style: normal; color: var(--texto-fraco); margin-left: 6px; font-size: 12px; }
+.disc-fora { border-top: 1px solid var(--borda); padding-top: 8px; color: var(--texto-fraco); font-size: 12.5px; }
+.disc-fora ul { margin: 4px 0 0; padding-left: 18px; }
+.disc-comecar { padding: 11px; font-size: 14px; }
+/* O passo a passo de vincular o celular ao Windows: so pra quem usa mouse. */
+.disc-pc { border-top: 1px solid var(--borda); padding-top: 8px; font-size: 12px; color: var(--texto-fraco); }
+.disc-pc summary { cursor: pointer; font-weight: 700; color: var(--texto); }
+.disc-pc ol { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 4px; }
+.disc-pc p { margin: 8px 0 0; }
+@media (pointer: coarse) { .disc-pc { display: none; } }
+.disc-aviso-grande { padding: 14px; border-radius: 12px; background: var(--indigo-claro); display: flex; flex-direction: column; gap: 10px; align-items: flex-start; }
+.disc-aviso-grande p { margin: 0; }
+
+/* ---- o lead ---- */
+.disc-lead h2 { margin: 0; font-size: 19px; line-height: 1.2; font-weight: 800; overflow-wrap: anywhere; }
+.disc-sobre { margin: 0; font-size: 11px; font-weight: 800; letter-spacing: .05em; text-transform: uppercase; color: var(--texto-fraco); }
+.disc-sobre span { color: var(--indigo); }
+.disc-onde { margin: 0; color: var(--texto-fraco); }
+.disc-temp { font-style: normal; font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; vertical-align: 3px; margin-left: 4px; }
+.disc-temp-quente { background: #fef3f2; color: #b42318; }
+.disc-temp-morno { background: #fffaeb; color: #93370d; }
+.disc-temp-frio { background: var(--indigo-claro); color: var(--indigo-escuro); }
+.disc-dados { margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; }
+.disc-dados .largo { grid-column: 1 / -1; }
+.disc-dados dt { font-size: 11px; color: var(--texto-fraco); }
+.disc-dados dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; }
+.disc-dados dd span { font-weight: 400; color: var(--texto-fraco); }
+.disc-citacao { display: block; font-weight: 400; color: var(--texto-fraco); }
+.disc-contagem { margin: 0; font-weight: 700; color: var(--indigo); }
+/* Verde escuro: o verde da sede com letra branca nao passa de 2,3 pra 1. */
+.disc-ligar {
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  padding: 14px;
+  border-radius: 12px;
+  background: #15803d;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 800;
+  box-shadow: 0 2px 8px rgba(21, 128, 61, .25);
+}
+.disc-ligar:hover { background: #166534; }
+.disc-ligar:focus-visible { outline: 3px solid #86efac; outline-offset: 2px; }
+.disc-ligar.desligado { opacity: .45; pointer-events: none; }
+
+/* ---- resultado ---- */
+.disc-ligando { border: 2px solid #c7c3fb; }
+.disc-ligando-topo { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; }
+.disc-ligando-topo h3 { font-size: 15px; letter-spacing: 0; text-transform: none; color: var(--texto); }
+.disc-ligando-topo span { font-size: 12.5px; color: var(--texto-fraco); font-variant-numeric: tabular-nums; }
+.disc-resultados { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+.disc-res {
+  text-align: left;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  padding: 8px 10px;
+  min-height: 52px;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font: inherit;
+}
+.disc-res:hover { filter: brightness(.97); }
+.disc-res:focus-visible { outline: 2px solid var(--indigo); outline-offset: 1px; }
+.disc-res-nome { font-weight: 700; font-size: 13px; display: flex; justify-content: space-between; gap: 6px; }
+.disc-res-nome kbd { font-family: ui-monospace, Consolas, monospace; font-size: 10px; opacity: .55; }
+.disc-res-efeito { font-size: 11.5px; opacity: .8; }
+.disc-tom-success { background: #ecfdf3; color: #067647; border-color: #abefc6; }
+.disc-tom-info { background: var(--indigo-claro); color: var(--indigo-escuro); border-color: #c7c3fb; }
+.disc-tom-neutral { background: var(--painel-alt); color: var(--texto); border-color: var(--borda); }
+.disc-tom-warning { background: #fffaeb; color: #93370d; border-color: #fedf89; }
+.disc-tom-danger { background: #fef3f2; color: #b42318; border-color: #fecdca; }
+.disc-data { display: flex; flex-direction: column; gap: 8px; border: 1px solid var(--borda); border-radius: 10px; padding: 10px; }
+.disc-data > div { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---- roteiro ---- */
+.disc-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.disc-chip {
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 700;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1px solid var(--borda-forte);
+  background: var(--painel);
+  color: var(--texto-fraco);
+  cursor: pointer;
+}
+.disc-chip.ativo { background: var(--indigo); border-color: var(--indigo); color: #fff; }
+.disc-abertura { margin: 0; padding-left: 10px; border-left: 3px solid #c7c3fb; font-size: 14px; }
+.disc-spin { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.disc-spin li { display: flex; gap: 8px; align-items: flex-start; }
+.disc-spin small { display: block; color: var(--texto-fraco); font-size: 11.5px; }
+.disc-letra {
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 11px;
+  font-weight: 800;
+  background: var(--indigo-claro);
+  color: var(--indigo);
+}
+.disc-letra.forte { background: var(--indigo); color: #fff; }
+.disc-valor { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 4px 10px; }
+.disc-valor dt { font-weight: 700; color: var(--texto-fraco); }
+.disc-valor dd { margin: 0; }
+.disc-prova { margin: 0; color: var(--texto-fraco); }
+.disc-objecoes { border: 1px solid var(--borda); border-radius: 10px; }
+.disc-objecoes summary { cursor: pointer; padding: 8px 10px; font-weight: 700; }
+.disc-objecoes ul { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--borda); }
+.disc-objecoes li { padding: 8px 10px; border-top: 1px solid var(--borda); display: flex; flex-direction: column; gap: 2px; }
+.disc-objecoes li:first-child { border-top: none; }
+.disc-objecoes li span { color: var(--texto-fraco); }
+
+/* ---- avisos da sessao ---- */
+.disc-alerta { border: 1px solid #fecdca; background: #fef3f2; color: #b42318; border-radius: 10px; padding: 10px 12px; display: flex; flex-direction: column; gap: 6px; }
+.disc-alerta-linha { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 6px; }
+.disc-atencao { border: 1px solid #fedf89; background: #fffaeb; color: #93370d; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; gap: 10px; }
+.disc-atencao ul { margin: 0; padding-left: 16px; }
+.disc-atencao button { background: none; border: none; color: inherit; font-weight: 700; text-decoration: underline; cursor: pointer; }
+.disc-pausa { margin: 0; padding: 9px 12px; border-radius: 10px; background: var(--painel-alt); text-align: center; }
+.disc-meta { margin: 0; padding: 9px 12px; border-radius: 10px; background: #ecfdf3; color: #067647; font-weight: 700; }
+.disc-fim { align-items: flex-start; }
+
+/* ---- rodape fixo da sessao: progresso e os controles sempre a mao ---- */
+.disc-rodape {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -18px;
+  padding: 10px 18px 12px;
+  background: var(--painel);
+  border-top: 1px solid var(--borda);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.disc-rodape-linha { display: flex; justify-content: space-between; font-size: 12px; color: var(--texto-fraco); font-variant-numeric: tabular-nums; }
+.disc-rodape-linha b { color: var(--texto); }
+.disc-barra { height: 6px; border-radius: 999px; background: var(--painel-alt); overflow: hidden; }
+.disc-barra div { height: 100%; background: #15803d; transition: width .3s; }
+.disc-rodape-botoes { display: flex; gap: 6px; }
+.disc-rodape-botoes .btn { flex: 1; }
+
+/* ---- resumo ---- */
+.disc-numeros { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.disc-numeros div { border: 1px solid var(--borda); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; }
+.disc-numeros b { font-size: 24px; font-variant-numeric: tabular-nums; }
+.disc-numeros span { color: var(--texto-fraco); font-size: 12px; }
+.disc-lista { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 4px; }
+.disc-lista li { display: flex; justify-content: space-between; gap: 8px; }
+.disc-lista em { font-style: normal; color: var(--texto-fraco); }
+
+@media (prefers-reduced-motion: reduce) {
+  .disc-barra div { transition: none; }
+}
+
+@media (max-width: 640px) {
+  .painel-discador {
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: var(--abas-altura);
+    width: auto;
+    border: none;
+    box-shadow: none;
+    z-index: 30;
+  }
+  .disc-grade { grid-template-columns: 1fr; }
+  /* Com o discador a barra de abas passa de 8 pra 9 botoes: 9 x 44 px nao cabe
+     num celular de 360 px. Os botoes encolhem pra caber, em vez de a barra
+     vazar pra fora da tela. */
+  .trilho-btn { flex: 1 1 0; width: auto; min-width: 34px; max-width: 48px; }
+}
+
+/* ============ Login: tela dividida, com a identidade da sede ============
+   Esquerda: a marca, com o que a sede oferece. Direita: o formulario, direto
+   na superficie - sem cartao solto no meio da tela.
+
+   As cores, as fontes e o logotipo saem do server/marca.js, que decide por
+   sede. Por isso todo `var()` aqui tem um segundo argumento: sem identidade
+   configurada, a tela cai nos tons de sempre. */
+#tela-login {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 0;
+}
+
+.login-marca-painel {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  gap: 30px;
+  padding: clamp(28px, 4vw, 52px);
+  background: var(--marca-fundo, #262b36);
+  color: var(--marca-card, #fff);
+}
+.login-marca-alto { display: flex; align-items: center; gap: 12px; }
+.login-marca-painel h1 {
+  margin: 0;
+  font-family: var(--marca-titulo, inherit);
+  font-weight: var(--marca-titulo-peso, 800);
+  font-size: 16px;
+  text-transform: var(--marca-titulo-caixa, none);
+  letter-spacing: 0.06em;
+}
+.login-marca-meio { align-self: center; display: flex; flex-direction: column; gap: 22px; }
+
+/* O mote da sede vira a manchete do painel: e a frase que a marca escolheu
+   pra se apresentar, entao e ela que fala mais alto aqui. */
+.login-mote {
+  margin: 0;
+  max-width: 12ch;
+  font-family: var(--marca-titulo, inherit);
+  font-weight: var(--marca-titulo-peso, 800);
+  font-size: clamp(30px, 3.6vw, 46px);
+  line-height: 1.02;
+  letter-spacing: -0.015em;
+  text-transform: none;
+  text-wrap: balance;
+}
+.login-dentro {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 34ch;
+  font-size: 14.5px;
+  line-height: 1.5;
+  opacity: 0.84;
+}
+/* Marcador com a forma do logotipo (quadrado de canto arredondado), e nao um
+   ponto qualquer. */
+.login-dentro li { position: relative; padding-left: 22px; }
+.login-dentro li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45em;
+  width: 9px;
+  height: 9px;
+  border-radius: 3px;
+  background: var(--marca-acao, currentColor);
+}
+.login-marca-pe {
+  margin: 0;
+  font-family: var(--marca-sub, inherit);
+  font-size: 12.5px;
+  letter-spacing: 0.02em;
+  opacity: 0.78;
+}
+.login-marca {
+  flex-shrink: 0;
+  width: var(--marca-logo-tam, 44px);
+  height: var(--marca-logo-tam, 44px);
+  border-radius: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--marca-logo-fundo-escuro, transparent);
+  color: var(--marca-logo-tinta-escuro, #fff);
+}
+.login-marca svg, .entrada-logo svg { width: 100%; height: 100%; }
+/* O logotipo de arquivo (sede da ADM) entra como <img> no mesmo lugar do svg. */
+.login-marca img, .entrada-logo img { width: 100%; height: 100%; object-fit: contain; display: block; }
+.entrada-logo {
+  background: var(--marca-logo-fundo, var(--marca-acao, var(--indigo)));
+  color: var(--marca-logo-tinta, #fff);
+}
+
+/* ---- o lado do formulario ---- */
+.login-coluna {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-y: auto;
+  padding: clamp(28px, 4vw, 56px) 24px;
+  background: var(--marca-card, var(--painel));
+}
+/* O formulario e o servico desta tela: e a unica coisa aqui que ganha cartao,
+   borda e sombra. O fundo creme da marca fica de moldura, e o branco levanta. */
+.login-card {
+  background: var(--painel);
+  border: 1px solid var(--marca-anel, var(--borda));
+  border-radius: 18px;
+  box-shadow: 0 20px 44px -30px rgba(17, 0, 58, 0.5);
+  padding: clamp(22px, 2.6vw, 30px);
+  width: 100%;
+  max-width: 392px;
+  font-family: var(--marca-texto, inherit);
+}
+.login-topo { display: none; }
+.login-entrada-topo { margin-bottom: 20px; }
+.login-entrada-topo h2 {
+  margin: 0;
+  font-family: var(--marca-titulo, inherit);
+  font-weight: var(--marca-titulo-peso, 800);
+  font-size: clamp(23px, 2.2vw, 27px);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: var(--marca-tinta, var(--texto));
+}
+.login-entrada-topo p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.45; color: var(--texto-fraco); }
+
+/* Rotulo de campo como etiqueta: miudo, em caixa alta, longe do valor que a
+   pessoa digita - assim o olho separa o que e pergunta do que e resposta. */
+.login-campo span {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--texto-fraco);
+}
+.login-aba.ativa { color: var(--marca-tinta, var(--texto)); box-shadow: 0 1px 3px rgba(17, 0, 58, 0.13); }
+.login-abas { background: var(--marca-trilho, var(--painel-alt)); }
+.login-campo input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+.login-campo input:focus {
+  border-color: var(--marca-apoio, var(--indigo));
+  box-shadow: 0 0 0 3px var(--marca-anel, rgba(79, 70, 229, 0.14));
+}
+/* A porta principal de quem tem e-mail da empresa: e o primeiro caminho da
+   tela, entao tem peso de botao - nao de link discreto. */
+.login-btn-google {
+  border-radius: 10px;
+  padding: 13px 16px;
+  font-size: 14.5px;
+  font-weight: 600;
+  border-color: var(--marca-anel, var(--borda));
+  box-shadow: 0 1px 2px rgba(17, 0, 58, 0.07);
+}
+.login-btn-google:focus-visible,
+.login-aba:focus-visible { outline-color: var(--marca-apoio, var(--indigo)); }
+.login-google { gap: 10px; margin-bottom: 16px; }
+.login-ou { color: var(--texto-fraco); font-size: 11.5px; letter-spacing: 0.04em; text-transform: uppercase; }
+
+/* O botao que conclui: na sede da ADM ele e o vermelho de acao, que o
+   BrandingBook reserva pra "destacar e guiar a atencao". So o do login e o da
+   entrada - o resto do escritorio segue com o indigo de sempre. */
+.login-enviar,
+.entrada-enviar { background: var(--marca-acao, var(--indigo)); border-radius: 10px; }
+.login-enviar { padding: 12px; }
+.login-enviar:hover,
+.entrada-enviar:hover { background: var(--marca-acao, var(--indigo)); filter: brightness(0.92); }
+.entrada-marca strong { font-family: var(--marca-titulo, inherit); font-weight: var(--marca-titulo-peso, 700); }
+
+@media (max-width: 860px) {
+  /* Celular: a marca vira uma faixa curta em cima, e o formulario fica com o
+     resto da tela. */
+  #tela-login { grid-template-columns: 1fr; grid-template-rows: auto 1fr; }
+  .login-marca-painel {
+    grid-template-rows: auto;
+    grid-auto-flow: column;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 18px 20px calc(18px + env(safe-area-inset-top, 0px));
+  }
+  .login-marca-meio, .login-marca-pe { display: none; }
+  .login-marca { width: 36px; height: 36px; }
+  /* Comeca logo abaixo da faixa: centralizado, o cartao descia demais na tela
+     alta do celular e a pessoa abria o login olhando pra um vazio creme. */
+  .login-coluna { align-items: flex-start; padding: 24px 20px 32px; }
+}

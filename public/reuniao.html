@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <!-- O endereço desta página é uma credencial (o token da reunião): nada de ir
+       parar em buscador nem no Referer de outro site. O servidor manda os mesmos
+       avisos por cabeçalho; isto é o cinto e o suspensório. -->
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="referrer" content="no-referrer" />
+  <title>Reunião - {{NOME_SEDE}}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;700&family=Bree+Serif&display=swap" rel="stylesheet" />
+  <!-- Caminhos absolutos: esta página é servida em /r/<token>, e um caminho
+       relativo procuraria os arquivos dentro de /r/. -->
+  <link rel="stylesheet" href="/css/style.css" />
+  <link rel="stylesheet" href="/css/reuniao.css" />
+  {{ESTILO_SEDE}}
+  <link rel="icon" type="image/png" sizes="32x32" href="/icones/favicon-32.png" />
+  <meta name="theme-color" content="#4f46e5" />
+</head>
+<body class="pagina-reuniao">
+
+  <!-- Abrindo: o socket ainda não respondeu se o link vale -->
+  <section id="tela-carregando" class="tela">
+    <p class="reuniao-carregando">Abrindo a reunião…</p>
+  </section>
+
+  <!-- Link inválido, reunião que ainda não abriu ou que já terminou, entrada
+       recusada, removido. Uma tela só, com o texto que cada caso pede. -->
+  <section id="tela-aviso" class="tela oculto">
+    <div class="reuniao-cartao">
+      <span class="entrada-logo">{{LOGO_SEDE}}</span>
+      <h1 id="aviso-titulo"></h1>
+      <p id="aviso-texto"></p>
+      <button id="aviso-botao" class="btn btn-primario entrada-enviar oculto" type="button"></button>
+    </div>
+  </section>
+
+  <!-- Antes de entrar: nome, câmera e microfone. É o mesmo formato da tela de
+       entrada da sede. Enquanto espera alguém deixar entrar, a tela é esta
+       mesma, com o botão trocado. -->
+  <section id="tela-visita" class="tela oculto">
+    <div class="entrada-topo">
+      <div class="entrada-marca">
+        <span class="entrada-logo">{{LOGO_SEDE}}</span>
+        <strong>{{NOME_SEDE}}</strong>
+      </div>
+      <div class="entrada-conta">Você foi convidado para uma reunião</div>
+    </div>
+
+    <div class="entrada-corpo">
+      <div class="entrada-palco">
+        <video id="visita-video" autoplay playsinline muted></video>
+        <p id="visita-vazio" class="entrada-vazio">Sua câmera está desligada</p>
+        <p id="visita-aviso" class="entrada-aviso oculto"></p>
+        <div class="entrada-controles">
+          <button id="visita-btn-mic" class="entrada-toggle desligado" type="button" title="Microfone" aria-label="Ligar ou desligar o microfone">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            <span class="entrada-corte"></span>
+          </button>
+          <button id="visita-btn-camera" class="entrada-toggle desligado" type="button" title="Câmera" aria-label="Ligar ou desligar a câmera">
+            <svg viewBox="0 0 24 24" width="20" height="20"><rect x="3" y="6.5" width="12" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 11l5-3v8l-5-3z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+            <span class="entrada-corte"></span>
+          </button>
+        </div>
+      </div>
+
+      <form id="form-visita" class="entrada-lado" novalidate>
+        <h2 id="visita-titulo">Reunião</h2>
+        <p id="visita-quando" class="reuniao-quando"></p>
+        <input id="visita-nome" type="text" maxlength="18" placeholder="Seu nome" aria-label="Seu nome" autocomplete="name" />
+        <p id="visita-erro" class="login-erro oculto" role="alert"></p>
+        <button id="visita-enviar" class="btn btn-primario entrada-enviar" type="submit">Pedir para entrar</button>
+        <p id="visita-ajuda" class="reuniao-ajuda">Alguém da {{SIGLA_SEDE}} vai precisar deixar você entrar.</p>
+        <button id="visita-cancelar" class="entrada-link oculto" type="button">Cancelar</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Dentro da reunião: só a chamada. Não há mapa, chat nem menu da sede. Os
+       ids são os que o calls.js e o callgrid.js procuram - são os mesmos do
+       escritório. -->
+  <section id="tela-reuniao" class="tela oculto">
+    <div class="area-jogo">
+      <div id="barra-chamada" class="barra-chamada">
+        <span class="barra-chamada-ponto"></span>
+        <span id="barra-chamada-titulo" class="barra-chamada-titulo"></span>
+        <span id="barra-chamada-gente" class="barra-chamada-gente"></span>
+        <button id="barra-chamada-sair" class="barra-chamada-sair" type="button">Sair</button>
+      </div>
+
+      <div id="grade-chamada" class="grade-chamada oculto">
+        <div id="grade-chamada-tiles" class="grade-chamada-tiles"></div>
+      </div>
+
+      <!-- Sem ninguém com vídeo por enquanto -->
+      <p id="reuniao-sozinho" class="reuniao-sozinho">Você está na reunião. Aguardando a conexão com os outros participantes…</p>
+
+      <div id="aviso-camera" class="aviso-camera oculto"></div>
+      <p id="aviso-rede" class="aviso-rede oculto" role="status">Reconectando…</p>
+
+      <div class="barra-controle">
+        <div id="preview-local" class="preview-local oculto">
+          <video id="video-local" autoplay muted playsinline></video>
+          <div id="preview-local-controles" class="preview-local-controles">
+            <button id="btn-mic" class="ctrl-btn" type="button" title="Mudo/desmudo">
+              <svg viewBox="0 0 24 24" width="18" height="18"><rect x="9" y="3" width="6" height="11" rx="3" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="risco" d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+            <button id="btn-video-toggle" class="ctrl-btn" type="button" title="Câmera ligada/desligada">
+              <svg viewBox="0 0 24 24" width="18" height="18"><rect x="3" y="6.5" width="12" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 11l5.5-3v8L15 13z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path class="risco" d="M4 4l16 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <button id="btn-camera" class="ctrl-btn ctrl-entrar" type="button" title="Ligar câmera e microfone">
+          <svg viewBox="0 0 24 24" width="18" height="18"><rect x="3" y="6.5" width="12" height="11" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M15 11l5.5-3v8L15 13z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+        </button>
+
+        <button id="btn-tela" class="ctrl-btn" type="button" title="Compartilhar a tela">
+          <svg viewBox="0 0 24 24" width="18" height="18"><rect x="2.5" y="4.5" width="19" height="13" rx="2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M8.5 20.5h7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M12 14.5V8.5m0 0L9.5 11M12 8.5l2.5 2.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+      </div>
+
+      <div id="palco-remoto" class="palco-remoto" aria-hidden="true"></div>
+    </div>
+  </section>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/js/calls.js"></script>
+  <script src="/js/callgrid.js"></script>
+  <script src="/js/paginas/reuniao.js"></script>
+</body>
+</html>

@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pacote LPC - catalogo de folhas</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      margin: 0; padding: 20px; background: #eceaf6; color: #2c3240;
+      font: 14px/1.5 Inter, system-ui, -apple-system, "Segoe UI", sans-serif;
+    }
+    h1 { margin: 0 0 4px; font-size: 19px; }
+    .aviso { margin: 0 0 18px; color: #666f80; font-size: 13px; max-width: 720px; }
+    .peca {
+      background: #fff; border-radius: 10px; padding: 10px 12px 12px;
+      margin-bottom: 12px; box-shadow: 0 4px 14px rgba(30,34,48,.09);
+    }
+    .peca h2 { margin: 0; font-size: 14px; }
+    .peca .meta { margin: 0 0 8px; font-size: 11.5px; color: #8a91a1; }
+    .barra {
+      position: sticky; top: 0; z-index: 5; display: flex; gap: 10px;
+      align-items: center; background: #eceaf6; padding: 8px 0 12px;
+    }
+    input {
+      padding: 7px 10px; border: 1px solid #d4d7e2; border-radius: 8px;
+      font: inherit; background: #fff; min-width: 260px;
+    }
+    .contagem { font-size: 12.5px; color: #8a91a1; }
+    .peca .meta code { color: #5b45c8; }
+    .rolagem { overflow-x: auto; line-height: 0; }
+    canvas { display: block; image-rendering: pixelated; }
+  </style>
+</head>
+<body>
+  <h1>Pacote LPC &mdash; catalogo de folhas</h1>
+  <p class="aviso">
+    Cada folha em 3x, com a grade de 32px (= 1 tile do mapa) e o numero da
+    coluna/linha. E daqui que saem as coordenadas em <code>js/sprites.js</code>.
+  </p>
+  <div class="barra">
+    <input id="busca" type="search" placeholder="filtrar (ex: chair, wall, floor, tree)" />
+    <span class="contagem" id="contagem"></span>
+  </div>
+  <div id="lista"></div>
+
+  <script src="js/paginas/pacote.js"></script>
+</body>
+</html>
