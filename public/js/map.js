@@ -231,7 +231,7 @@
     { id: 'cabine2', nome: 'Cabine 2', r0: 7, c0: 3, r1: 9, c1: 7, piso: 'espinha_fria', cor: '#4d8fa0', labelR: 7, labelC: 3, som: salaToda },
     { id: 'reuniao', nome: 'Sala de Reunião', r0: 3, c0: 12, r1: 9, c1: 18, piso: 'ladrilho', cor: '#0077b6', labelR: 3, labelC: 11, som: salaToda },
     { id: 'huddle1', nome: 'Recursos Humanos', r0: 3, c0: 20, r1: 9, c1: 25, piso: 'ladrilho', cor: '#0284c7', labelR: 3, labelC: 20, som: salaToda },
-    { id: 'copa', nome: 'Cafeteria', r0: 3, c0: 27, r1: 9, c1: 34, piso: 'ladrilho', cor: '#ff7a00', labelR: 4, labelC: 27, som: perto(6) },
+    { id: 'copa', nome: 'Cafeteria', r0: 3, c0: 27, r1: 9, c1: 34, piso: 'ladrilho', cor: '#ff7a00', labelR: 4, labelC: 27, som: perto(4) },
 
     // --- sul: recepcao, os dois bairros e a biblioteca ---
     { id: 'recepcao', nome: 'Recepção', r0: 13, c0: 3, r1: 24, c1: 9, piso: 'madeira_clara', cor: '#8b98a8', labelR: 13, labelC: 3, som: perto(3) },

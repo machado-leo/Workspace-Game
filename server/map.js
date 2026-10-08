@@ -253,7 +253,7 @@ const ROOMS = [
   { id: 'cabine2', nome: 'Cabine 2', r0: 7, c0: 3, r1: 9, c1: 7, piso: 'espinha_fria', som: salaToda() },
   { id: 'reuniao', nome: 'Sala de Reunião', r0: 3, c0: 12, r1: 9, c1: 18, piso: 'ladrilho', som: salaToda() },
   { id: 'huddle1', nome: 'Recursos Humanos', r0: 3, c0: 20, r1: 9, c1: 25, piso: 'ladrilho', som: salaToda() },
-  { id: 'copa', nome: 'Cafeteria', r0: 3, c0: 27, r1: 9, c1: 34, piso: 'ladrilho', som: perto(6) },
+  { id: 'copa', nome: 'Cafeteria', r0: 3, c0: 27, r1: 9, c1: 34, piso: 'ladrilho', som: perto(4) },
 
   // --- sul: recepcao, os dois bairros e a biblioteca ---
   { id: 'recepcao', nome: 'Recepção', r0: 13, c0: 3, r1: 24, c1: 9, piso: 'madeira_clara', som: perto(3) },

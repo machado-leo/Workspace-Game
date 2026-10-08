@@ -67,6 +67,8 @@ button { font-family: inherit; }
   border: 1px solid var(--borda-forte);
 }
 .btn-secundario:hover { background: var(--painel-alt); }
+.btn-perigo { background: #e63946; color: #fff; }
+.btn-perigo:hover { background: #d62828; }
 .btn-pequeno { padding: 7px 14px; font-size: 13px; border-radius: 8px; }
 
 /* ============ Login ============ */
@@ -1013,6 +1015,15 @@ button { font-family: inherit; }
    sao dois estados que convivem, e confundir os dois faz a pessoa achar que
    parou de dividir quando so desligou o video. */
 .ctrl-btn.ativo { background: var(--roxo, #5b45c8); color: #fff; }
+.ctrl-desligar {
+  background: #e63946 !important;
+  color: #fff !important;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.ctrl-desligar:hover {
+  background: #d62828 !important;
+  transform: scale(1.08);
+}
 
 .preview-local {
   position: relative;

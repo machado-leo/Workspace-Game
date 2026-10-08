@@ -80,6 +80,7 @@
   }
 
   function atualizar() {
+    if (!habilitado) return;
     const peers = Calls.getPeersConectados();
     const deveEstarAtivo = (Calls.isCameraAtiva() || semCameraTambem) && peers.length > 0;
 
@@ -137,18 +138,21 @@
     }
   }
 
+  let habilitado = false;
+
   function estaAtivo() { return ativo; }
 
   function init(opcoes) {
     semCameraTambem = !!(opcoes && opcoes.semCamera);
+    habilitado = !!(opcoes && (opcoes.semCamera || opcoes.forcarGrade));
     painel = document.getElementById('grade-chamada');
     grade = document.getElementById('grade-chamada-tiles');
     previewLocal = document.getElementById('preview-local');
     videoLocal = document.getElementById('video-local');
     controlesLocais = document.getElementById('preview-local-controles');
 
-    montarTileSelf();
-    setInterval(atualizar, 500);
+    if (grade) montarTileSelf();
+    if (habilitado) setInterval(atualizar, 500);
   }
 
   window.CallGrid = { init, estaAtivo };

@@ -3713,7 +3713,11 @@
     });
   }
 
-  function desenharBolhaVideo(ctx, x, y, videoEl, corAnel) {
+  function desenharBolhaVideo(ctx, x, y, videoEl, corAnel, espelhar) {
+    if (!videoEl || !videoEl.videoWidth || !videoEl.videoHeight) {
+      desenharBolhaAudio(ctx, x, y, corAnel);
+      return;
+    }
     const raio = 21;
     ctx.save();
     ctx.beginPath();
@@ -3722,10 +3726,16 @@
     ctx.fillStyle = '#0d1117';
     ctx.fill();
     ctx.clip();
-    const vw = videoEl.videoWidth || 4, vh = videoEl.videoHeight || 3;
+    const vw = videoEl.videoWidth, vh = videoEl.videoHeight;
     const escalaV = Math.max((raio * 2) / vw, (raio * 2) / vh);
     const dw = vw * escalaV, dh = vh * escalaV;
-    ctx.drawImage(videoEl, x - dw / 2, y - dh / 2, dw, dh);
+    if (espelhar) {
+      ctx.translate(x, y);
+      ctx.scale(-1, 1);
+      ctx.drawImage(videoEl, -dw / 2, -dh / 2, dw, dh);
+    } else {
+      ctx.drawImage(videoEl, x - dw / 2, y - dh / 2, dw, dh);
+    }
     ctx.restore();
 
     ctx.beginPath();
@@ -4264,20 +4274,33 @@
         STATUS_COR[p.status] || STATUS_COR.livre, emChamada, p.id === selfId
       );
 
-      // a bolha flutuante so aparece quando o grid de chamada NAO esta cobrindo
-      // esse mesmo participante (o grid vira a visao principal da chamada).
-      if (p.id !== selfId && Calls.temChamadaAtiva(p.id) && !CallGrid.estaAtivo()) {
-        const video = Calls.getVideoRemoto(p.id);
-        if (video && Calls.temVideoRemoto(p.id)) {
-          desenharBolhaVideo(ctx, p.displayX, labelY - 26, video, corDoId(p.id));
-        } else {
-          desenharBolhaAudio(ctx, p.displayX, labelY - 26, corDoId(p.id));
+      // A bolha flutuante circular (video ou audio) fica sobre a cabeca do boneco.
+      // Aparece tanto pro colega quanto pra si mesmo quando em chamada conectada,
+      // sem abrir telas/grades grandes estilo Meet.
+      if (!CallGrid.estaAtivo()) {
+        if (p.id === selfId) {
+          if (Calls.isCameraAtiva() && Calls.getPeersConectados().length > 0) {
+            const vLocal = Calls.getVideoLocal ? Calls.getVideoLocal() : document.getElementById('video-local');
+            if (vLocal && Calls.temVideoLocal()) {
+              desenharBolhaVideo(ctx, p.displayX, labelY - 26, vLocal, corDoId(selfId), true);
+            } else {
+              desenharBolhaAudio(ctx, p.displayX, labelY - 26, corDoId(selfId));
+            }
+          }
+        } else if (Calls.temChamadaAtiva(p.id)) {
+          const video = Calls.getVideoRemoto(p.id);
+          if (video && Calls.temVideoRemoto(p.id)) {
+            desenharBolhaVideo(ctx, p.displayX, labelY - 26, video, corDoId(p.id), false);
+          } else {
+            desenharBolhaAudio(ctx, p.displayX, labelY - 26, corDoId(p.id));
+          }
         }
       }
 
       if (p.reacao) {
         if (p.reacao.expiresAt > now) {
-          desenharReacao(ctx, p.displayX, p.displayY - 78, p.reacao, now);
+          const reacaoY = emChamada ? p.displayY - 95 : p.displayY - 78;
+          desenharReacao(ctx, p.displayX, reacaoY, p.reacao, now);
         } else {
           p.reacao = null;
         }

@@ -8,17 +8,15 @@
   // 130px, que dao 4,1 tiles - com o zoom em 2x isso e meia tela de distancia,
   // e a chamada abria com gente que voce mal via.
   const TILE = 32;
-  const TILES_ENTRAR = 3;
-  // Sair tem folga: sem ela a chamada pisca com a pessoa andando na borda. E
-  // proporcao, e nao numero fixo, porque agora cada area tem o seu alcance
-  // (docs/areas.md) - 1,5x de 2 tiles e 3; de 6 tiles, 9.
-  const FOLGA_SAIR = 1.5;
+  const TILES_ENTRAR = 2.4;
+  // Sair tem folga suave pra evitar oscilacao na borda, mas sem exigir correr longe
+  // pra desligar (1,15x em vez de 1,5x).
+  const FOLGA_SAIR = 1.15;
   const RAIO_ENTRAR = TILES_ENTRAR * TILE;
 
   // De onde o som ja comeca a cair. Perto e volume cheio; dai pra fora vai
-  // sumindo ate zero no raio de saida, como no Gather - o corte seco fazia a
-  // conversa aparecer e desaparecer de uma vez.
-  const TILES_VOLUME_CHEIO = 1.5;
+  // sumindo ate zero no raio de saida.
+  const TILES_VOLUME_CHEIO = 1.2;
 
   // Quanto tempo uma conexao pode ficar "quase la" antes de ser considerada
   // perdida. Ver `podarConexoesPresas`.
@@ -94,6 +92,37 @@
 
   const peers = new Map(); // id do outro jogador -> { pc, videoEl, videoSender, remoteDescDefinida, candidatosPendentes }
   const desistencias = new Map(); // id -> { falhas, ateQuando }: quem nunca atende (ver ESPERA_BASE_MS)
+  const desconectadosManualmente = new Set(); // id de quem desligamos manualmente ou que desligou de nos
+
+  function atualizarUiDesligar() {
+    const btn = document.getElementById('btn-desligar');
+    if (!btn) return;
+    const ativos = getPeersConectados();
+    if (ativos.length > 0) {
+      btn.classList.remove('oculto');
+      if (ativos.length === 1) {
+        const outro = jogadorDe(ativos[0].id);
+        btn.title = 'Desligar chamada' + (outro ? ` com ${outro.name}` : '');
+      } else {
+        btn.title = `Desligar chamada (${ativos.length} pessoas)`;
+      }
+    } else {
+      btn.classList.add('oculto');
+    }
+  }
+
+  function desligar(idAlvo) {
+    const alvos = idAlvo ? [idAlvo] : Array.from(peers.keys());
+    alvos.forEach((id) => {
+      try {
+        Network.sendRtcSignal(id, { type: 'hangup' });
+      } catch (e) {}
+      fecharPeer(id);
+      desconectadosManualmente.add(id);
+    });
+    atualizarUiDesligar();
+    mostrarAviso('Chamada encerrada');
+  }
 
   function registrarFalha(id) {
     const d = desistencias.get(id) || { falhas: 0, ateQuando: 0 };
@@ -145,6 +174,7 @@
     try { p.pc.close(); } catch (e) { /* ja fechada */ }
     if (p.videoEl) p.videoEl.remove();
     peers.delete(id);
+    atualizarUiDesligar();
   }
 
   // Qual video sai daqui agora: a tela, quando esta sendo dividida, senao a
@@ -255,6 +285,7 @@
       if (pc.connectionState === 'connected' && !p.avisouConexao) {
         p.avisouConexao = true;
         desistencias.delete(id);
+        atualizarUiDesligar();
         window.dispatchEvent(new CustomEvent('sede:chamada-conectou', { detail: { id } }));
       }
     };
@@ -276,6 +307,13 @@
 
   async function tratarSinal({ from, signal }) {
     if (!signal || !from) return;
+    if (signal.type === 'hangup') {
+      fecharPeer(from);
+      desconectadosManualmente.add(from);
+      atualizarUiDesligar();
+      mostrarAviso('Chamada encerrada');
+      return;
+    }
     // Mesma espera do iniciarChamada, pro lado que RECEBE a oferta tambem abrir
     // a conexao com o TURN. Todos os sinais esperam a mesma promessa, entao
     // oferta e candidatos continuam saindo na ordem em que chegaram.
@@ -512,6 +550,15 @@
       const jaConectado = peers.has(id);
 
       if (!jaConectado) {
+        if (desconectadosManualmente.has(id)) {
+          // Se o outro jogador se afastou além da distância de manter conversa,
+          // esquecemos o desligamento manual para permitir reconectar no futuro.
+          if (!deveContinuarCom(self, p)) {
+            desconectadosManualmente.delete(id);
+          } else {
+            return;
+          }
+        }
         // QUALQUER um dos dois propoe - e nao so o de id menor, como era antes.
         //
         // O motivo e concreto: `updateProximity` roda no laco de desenho, e o
@@ -549,6 +596,7 @@
     // quem saiu do mapa (ou trocou de id) leva a fila de espera junto
     desistencias.forEach((_, id) => { if (!playersMap.has(id)) desistencias.delete(id); });
     ajustarChamadaGrande();
+    atualizarUiDesligar();
   }
 
   function mostrarAviso(texto) {
@@ -617,9 +665,11 @@
     if (localStream) localStream.getTracks().forEach((t) => t.stop());
     localStream = null;
     cameraAtiva = false;
+    desconectadosManualmente.clear();
     document.getElementById('preview-local').classList.add('oculto');
     document.getElementById('btn-camera').classList.remove('ativo');
     peers.forEach((_, id) => fecharPeer(id));
+    atualizarUiDesligar();
   }
 
   function alternarCamera() {
@@ -790,9 +840,21 @@
     setInterval(buscarIce, RENOVAR_ICE_MS);
     Network.on('rtc-signal', tratarSinal);
     adotarStreamPendente();
-    document.getElementById('btn-camera').addEventListener('click', alternarCamera);
-    document.getElementById('btn-mic').addEventListener('click', alternarMic);
-    document.getElementById('btn-video-toggle').addEventListener('click', alternarVideo);
+    const btnCam = document.getElementById('btn-camera');
+    if (btnCam) {
+      btnCam.addEventListener('click', () => {
+        desconectadosManualmente.clear();
+        alternarCamera();
+      });
+    }
+    const btnM = document.getElementById('btn-mic');
+    if (btnM) btnM.addEventListener('click', alternarMic);
+    const btnV = document.getElementById('btn-video-toggle');
+    if (btnV) btnV.addEventListener('click', alternarVideo);
+    const btnDesligar = document.getElementById('btn-desligar');
+    if (btnDesligar) {
+      btnDesligar.addEventListener('click', () => desligar());
+    }
 
     const btnTela = document.getElementById('btn-tela');
     // Navegador sem `getDisplayMedia` (celular, quase sempre) nao ganha um botao
@@ -856,7 +918,11 @@
   function isCameraAtiva() { return cameraAtiva; }
   // Na chamada grande a propria camera tambem sai da grade: mostrar o proprio
   // video faria a pessoa achar que os outros estao vendo ela.
-  function temVideoLocal() { return temVideo && !soVoz; }
+  function temVideoLocal() {
+    if (!temVideo || soVoz) return false;
+    const v = document.getElementById('video-local');
+    return !!(v && v.srcObject && (v.readyState >= 2 || v.videoWidth > 0));
+  }
 
   function estaDividindoTela() { return !!telaTrack; }
 
@@ -880,5 +946,9 @@
     emChamadaGrande: () => soVoz,
     _ajustarChamadaGrande: ajustarChamadaGrande,
     _peers: peers,
+    desligar,
+    limparDesconexoesManuais: () => desconectadosManualmente.clear(),
+    getVideoLocal: () => document.getElementById('video-local'),
+    isMicAtivo: () => micAtivo,
   };
 })();

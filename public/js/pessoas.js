@@ -213,6 +213,16 @@
     });
     acoes.appendChild(btnIr);
 
+    if (window.Calls && Calls.temChamadaAtiva && Calls.temChamadaAtiva(id)) {
+      const btnDesligar = el('button', 'btn btn-perigo btn-pequeno', '📵 Desligar chamada');
+      btnDesligar.type = 'button';
+      btnDesligar.addEventListener('click', () => {
+        Calls.desligar(id);
+        fecharCartao();
+      });
+      acoes.appendChild(btnDesligar);
+    }
+
     cartao.appendChild(acoes);
 
     // WhatsApp so aparece se a pessoa cadastrou o numero. Pedido na hora, um
