@@ -20,7 +20,7 @@ set -euo pipefail
 
 DOMINIO=""
 EMAIL=""
-REPO="https://github.com/adm-solucoes/escritorio-virtual.git"
+REPO="https://github.com/machado-leo/Workspace-Game.git"
 PORTA=3500
 VARIAS=0
 RAIZ=/opt/sede
