@@ -656,6 +656,7 @@ function criarRotas(sanitizeAppearance, ganchos = {}) {
     }
     const atualizado = usuarios.atualizarPerfil(req.usuario.id, {
       nome: nome || undefined,
+      bio: typeof corpo.bio === 'string' ? corpo.bio.slice(0, 160) : undefined,
       appearance: corpo.appearance ? sanitizeAppearance(corpo.appearance) : undefined,
     });
     res.json({ usuario: usuarios.publico(atualizado) });

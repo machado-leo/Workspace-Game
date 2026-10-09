@@ -190,6 +190,7 @@ function publico(usuario) {
     id: usuario.id,
     nome: usuario.nome,
     usuario: usuario.usuario || null,
+    bio: usuario.bio || '',
     email: usuario.email,
     isAdmin: !!usuario.isAdmin,
     appearance: usuario.appearance || null,
@@ -454,10 +455,11 @@ function definirWhatsapp(id, bruto) {
   return { whatsapp: u.whatsapp };
 }
 
-function atualizarPerfil(id, { nome, appearance }) {
+function atualizarPerfil(id, { nome, bio, appearance }) {
   const u = porId(id);
   if (!u) return null;
   if (typeof nome === 'string' && nome) u.nome = nome;
+  if (typeof bio === 'string') u.bio = bio;
   if (appearance) u.appearance = appearance;
   salvar();
   return u;

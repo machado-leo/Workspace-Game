@@ -176,14 +176,53 @@
     cartao.innerHTML = '';
 
     const topo = el('div', 'cartao-topo');
-    const avatar = el('div', 'cartao-avatar', iniciais(p.name));
-    avatar.style.background = (p.appearance && p.appearance.skin) || '#8b98a8';
-    topo.appendChild(avatar);
+    topo.style.alignItems = 'flex-start';
+    
+    const caixaAvatar = el('div', 'cartao-avatar-caixa');
+    caixaAvatar.style.width = '70px';
+    caixaAvatar.style.height = '80px';
+    caixaAvatar.style.flexShrink = '0';
+    caixaAvatar.style.display = 'flex';
+    caixaAvatar.style.alignItems = 'flex-end';
+    caixaAvatar.style.justifyContent = 'center';
+    caixaAvatar.style.background = 'var(--fundo-leve)';
+    caixaAvatar.style.borderRadius = '8px';
+    caixaAvatar.style.overflow = 'hidden';
+
+    const canvasAvatar = document.createElement('canvas');
+    canvasAvatar.width = 60;
+    canvasAvatar.height = 80;
+    const ctx = canvasAvatar.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+    if (p.appearance && window.Character) {
+      Character.draw(ctx, 30, 75, p.appearance, { dir: 'down', scale: 2, walkTime: 0 });
+    }
+    caixaAvatar.appendChild(canvasAvatar);
+    topo.appendChild(caixaAvatar);
 
     const info = document.createElement('div');
+    info.style.minWidth = '0'; // pro ellipsis funcionar se precisar
     const sala = salaDoMapa(p);
     info.appendChild(el('div', 'cartao-nome', (p.isAdmin ? '👑 ' : '') + p.name));
+    
+    if (p.usuario) {
+      const uEl = el('div', 'cartao-username', '@' + p.usuario);
+      uEl.style.fontSize = '12px';
+      uEl.style.color = 'var(--texto-fraco)';
+      uEl.style.marginBottom = '2px';
+      info.appendChild(uEl);
+    }
+    
     info.appendChild(el('div', 'cartao-sub', (Game.STATUS_LABEL[p.status] || '') + ' · ' + (sala ? sala.nome : '-')));
+    
+    if (p.bio) {
+      const bioEl = el('div', 'cartao-bio', p.bio);
+      bioEl.style.marginTop = '6px';
+      bioEl.style.fontSize = '13px';
+      bioEl.style.color = 'var(--texto-base)';
+      info.appendChild(bioEl);
+    }
+
     topo.appendChild(info);
     cartao.appendChild(topo);
 

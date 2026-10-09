@@ -37,6 +37,7 @@
     Creator.init(contaAtual, (perfil) => {
       contaAtual = Object.assign({}, contaAtual, {
         nome: perfil.name,
+        bio: perfil.bio,
         appearance: perfil.appearance,
       });
       if (iniciado) {

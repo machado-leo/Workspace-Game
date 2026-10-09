@@ -588,6 +588,8 @@ io.on('connection', (socket) => {
     const player = {
       id: socket.id,
       uid: conta.id,
+      usuario: conta.usuario,
+      bio: conta.bio || '',
       name: sanitizeName(conta.nome),
       appearance,
       x: spawn.x,
@@ -649,6 +651,7 @@ io.on('connection', (socket) => {
     if (!player || !data) return;
 
     player.name = data.name || player.name;
+    if (data.bio !== undefined) player.bio = String(data.bio).slice(0, 160);
     if (data.appearance) {
       player.appearance = sanitizeAppearance(data.appearance);
     }
@@ -658,6 +661,8 @@ io.on('connection', (socket) => {
       id: socket.id,
       uid: player.uid,
       name: player.name,
+      usuario: player.usuario,
+      bio: player.bio,
       appearance: player.appearance
     });
   });

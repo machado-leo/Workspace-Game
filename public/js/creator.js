@@ -190,6 +190,8 @@
 
     const inputNome = document.getElementById('input-nome');
     inputNome.value = (conta && conta.nome) || '';
+    const inputBio = document.getElementById('input-bio');
+    inputBio.value = (conta && conta.bio) || '';
 
     const canvas = document.getElementById('canvas-preview');
     const ctx = canvas.getContext('2d');
@@ -215,6 +217,7 @@
     listenersProntos = true;
 
     const inputNome = document.getElementById('input-nome');
+    const inputBio = document.getElementById('input-bio');
     const botaoPronto = document.getElementById('btn-entrar');
 
     document.getElementById('btn-aleatorio').addEventListener('click', () => {
@@ -225,6 +228,7 @@
     document.getElementById('form-criador').addEventListener('submit', async (ev) => {
       ev.preventDefault();
       const nome = inputNome.value.trim();
+      const bio = inputBio.value.trim();
       if (!nome) {
         inputNome.focus();
         return;
@@ -233,9 +237,9 @@
       botaoPronto.disabled = true;
       try {
         // O avatar e do dono da conta: quem manda e o servidor.
-        const salvo = await Auth.salvarPerfil({ nome, appearance });
+        const salvo = await Auth.salvarPerfil({ nome, bio, appearance });
         clearInterval(previewIntervalId);
-        onEntrarAtual({ name: salvo.nome, appearance: salvo.appearance });
+        onEntrarAtual({ name: salvo.nome, bio: salvo.bio, appearance: salvo.appearance });
       } catch (e) {
         alertaSalvar(e.message);
       } finally {

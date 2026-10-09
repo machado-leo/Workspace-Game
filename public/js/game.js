@@ -4900,9 +4900,13 @@
       const p = players.get(data.id);
       if (p) {
         p.name = data.name;
+        p.usuario = data.usuario;
+        p.bio = data.bio;
         p.appearance = data.appearance;
         if (p.id === idLocal) {
           playerLocal.name = data.name;
+          playerLocal.usuario = data.usuario;
+          playerLocal.bio = data.bio;
           playerLocal.appearance = data.appearance;
         }
         Membros.atualizar(); // Atualiza a lista lateral
