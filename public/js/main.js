@@ -71,7 +71,7 @@
     const desde = document.getElementById('menu-conta-desde');
     desde.textContent = usuario.criadoEm
       ? 'Entrou em ' + new Date(usuario.criadoEm).toLocaleDateString('pt-BR')
-      : usuario.email;
+      : (usuario.usuario ? '@' + usuario.usuario : usuario.email);
   }
 
   function fecharMenu() {

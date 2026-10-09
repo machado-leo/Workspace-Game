@@ -111,7 +111,7 @@
       nome.textContent = m.nome + (m.id === euId ? ' (voce)' : '');
       const email = document.createElement('span');
       email.className = 'membro-email';
-      email.textContent = m.email;
+      email.textContent = m.usuario ? '@' + m.usuario : (m.email || '');
       const meta = document.createElement('span');
       meta.className = 'membro-meta';
       meta.textContent = (m.isAdmin ? 'Diretoria · ' : '') + 'ultimo acesso ' + quando(m.ultimoAcesso)
@@ -183,7 +183,7 @@
   }
 
   function remover(m) {
-    if (!confirm('Remover ' + m.nome + ' (' + m.email + ') da sede?\n\n'
+    if (!confirm('Remover ' + m.nome + ' (' + (m.usuario ? '@' + m.usuario : m.email) + ') da sede?\n\n'
       + 'A pessoa sai agora, perde o acesso e a mesa dela fica livre. As mensagens que ela mandou continuam no chat. '
       + 'Isso nao da pra desfazer: pra voltar, ela cria uma conta nova com o codigo da sede.')) return;
     acao(async () => {

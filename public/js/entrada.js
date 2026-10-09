@@ -134,7 +134,7 @@
   function mostrar(conta) {
     tela.classList.remove('oculto');
     nomeEl.value = conta.nome || '';
-    document.getElementById('entrada-email').textContent = conta.email || '';
+    document.getElementById('entrada-email').textContent = (conta.usuario ? '@' + conta.usuario : conta.email) || '';
     document.getElementById('entrada-inicial').textContent =
       (conta.nome || '?').trim().slice(0, 1).toUpperCase();
     pintarBotoes();

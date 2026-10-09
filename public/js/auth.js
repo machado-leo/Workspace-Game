@@ -51,42 +51,8 @@
     erroEl.classList.remove('login-info');
   }
 
-  // Quem tem e-mail da empresa nao precisa de codigo nenhum, entao nem ve o
-  // campo. Ele so aparece quando a pessoa digita um e-mail de FORA - e ai
-  // aparece junto com a explicacao de por que ele apareceu.
-  //
-  // A lista de dominios e a mesma do servidor (server/auth.js), mas aqui ela e
-  // so pra decidir o que MOSTRAR: quem decide quem entra continua sendo o
-  // servidor. Se as duas divergirem, o pior que acontece e o campo aparecer a
-  // toa - nunca o contrario.
-  // Comeca vazia e recebe os que o servidor da sede informar
-  // (/api/login-opcoes): cada sede de cliente tem os seus.
-  let DOMINIOS_SEDE = [];
-
-  function ehEmailDaSede(email) {
-    const arroba = String(email || '').lastIndexOf('@');
-    if (arroba < 0) return false;
-    return DOMINIOS_SEDE.includes(email.slice(arroba + 1).toLowerCase().trim());
-  }
-
   // O servidor diz se o login com o Google esta ligado (/api/login-opcoes).
-  // Ligado, e-mail da ADM nao se cadastra com senha - entra pelo botao.
   let googleLigado = false;
-
-  function mostrarCampoCodigo() {
-    const campo = document.getElementById('campo-codigo');
-    if (!campo) return;
-    const email = document.getElementById('login-email').value;
-    // Enquanto a pessoa nao digitou um e-mail completo, o campo fica fora do
-    // caminho: mostrar "precisa do codigo" antes do @ seria assustar a toa.
-    const deFora = email.includes('@') && !ehEmailDaSede(email);
-    campo.classList.toggle('oculto', modo !== 'criar' || !deFora);
-    // E o contrario: e-mail da ADM no cadastro, com o Google ligado, ganha o
-    // aviso de que o caminho e o botao - antes de a pessoa inventar uma senha
-    // que o servidor vai recusar.
-    const dica = document.getElementById('dica-email-adm');
-    if (dica) dica.classList.toggle('oculto', !(modo === 'criar' && googleLigado && ehEmailDaSede(email)));
-  }
 
   // Volta do Google com problema: `?entrar=...` (ver server/auth.js).
   const AVISOS_GOOGLE = {
@@ -110,28 +76,19 @@
   const tokenRedefinir = parametros.get('redefinir');
   if (tokenConfirmar || tokenRedefinir) history.replaceState(null, '', location.pathname);
 
-  // O servidor diz se esta sede manda e-mail (/api/login-opcoes).
-  let emailLigado = false;
-
   function carregarOpcoes() {
     fetch('/api/login-opcoes', { credentials: 'same-origin' })
       .then((r) => (r.ok ? r.json() : {}))
       .then((o) => {
         googleLigado = !!o.google;
-        emailLigado = !!o.email;
-        document.getElementById('esqueci-por-email').classList.toggle('oculto', !emailLigado);
-        document.getElementById('esqueci-pela-diretoria').classList.toggle('oculto', emailLigado);
-        if (Array.isArray(o.dominios)) DOMINIOS_SEDE = o.dominios;
-        // Com a marca da sede em maos, o aviso de conta errada fica especifico.
-        if (codigoAvisoGoogle === 'dominio' && o.sigla && o.dominio) {
-          const antes = avisoGoogle;
-          avisoGoogle = 'Essa conta Google nao e da ' + o.sigla + '. Escolha a conta @' + o.dominio + '.';
-          if (erroEl && erroEl.textContent === antes) mostrarErro(avisoGoogle);
-        }
+        // Entra por usuario e senha: nao ha e-mail pra mandar link. Quem esqueceu
+        // a senha pede pra diretoria redefinir.
+        document.getElementById('esqueci-por-email').classList.add('oculto');
+        document.getElementById('esqueci-pela-diretoria').classList.remove('oculto');
+        // Com o e-mail desligado no cadastro, o Google so aparece se configurado.
         document.getElementById('login-google').classList.toggle('oculto', !googleLigado || !!tokenRedefinir);
-        mostrarCampoCodigo();
       })
-      .catch(() => { /* sem opcoes: fica so e-mail e senha */ });
+      .catch(() => { /* sem opcoes: fica so usuario e senha */ });
   }
 
   function trocarModo(novo) {
@@ -145,8 +102,6 @@
     document.querySelectorAll('.campo-cadastro').forEach((el) => {
       el.classList.toggle('oculto', modo !== 'criar');
     });
-    // O campo do codigo tem regra propria: ele so existe pra e-mail de fora.
-    mostrarCampoCodigo();
 
     botao.textContent = ROTULO[modo];
     document.getElementById('login-senha').setAttribute(
@@ -164,7 +119,7 @@
     limparErro();
     ocupado(true);
 
-    const email = document.getElementById('login-email').value.trim();
+    const usuarioDigitado = document.getElementById('login-usuario').value.trim().toLowerCase();
     const senha = document.getElementById('login-senha').value;
 
     try {
@@ -172,27 +127,18 @@
       if (modo === 'entrar') {
         usuario = (await pedir('/entrar', {
           method: 'POST',
-          body: JSON.stringify({ email, senha, confirmar: tokenConfirmar || undefined }),
+          body: JSON.stringify({ usuario: usuarioDigitado, senha }),
         })).usuario;
       } else {
         const r = await pedir('/registrar', {
           method: 'POST',
           body: JSON.stringify({
             nome: document.getElementById('login-nome').value.trim(),
-            email,
+            usuario: usuarioDigitado,
             senha,
-            codigo: document.getElementById('login-codigo').value.trim(),
             codigoAdmin: document.getElementById('login-admin').value.trim(),
           }),
         });
-        // Sede com e-mail: a conta so entra depois do link. Volta pra aba de
-        // entrar com o e-mail preenchido, e diz onde procurar o link.
-        if (r.pendente) {
-          trocarModo('entrar');
-          document.getElementById('login-senha').value = '';
-          mostrarInfo('Quase la! Mandamos um link pra ' + r.email + '. Abra o link e entre com a senha que voce acabou de criar (confira o spam tambem).');
-          return;
-        }
         usuario = r.usuario;
       }
       form.reset();
@@ -216,26 +162,6 @@
   function mostrarInfo(mensagem) {
     mostrarErro(mensagem);
     erroEl.classList.add('login-info');
-  }
-
-  // "Esqueci minha senha", com e-mail: o link vai pro endereco do campo de cima.
-  async function pedirSenhaNova() {
-    const email = document.getElementById('login-email').value.trim();
-    if (!email.includes('@')) {
-      mostrarErro('Digite o seu e-mail no campo de cima e clique de novo.');
-      document.getElementById('login-email').focus();
-      return;
-    }
-    const b = document.getElementById('btn-esqueci');
-    b.disabled = true;
-    try {
-      const r = await pedir('/esqueci-senha', { method: 'POST', body: JSON.stringify({ email }) });
-      mostrarInfo(r.aviso);
-    } catch (e) {
-      mostrarErro(e.message);
-    } finally {
-      b.disabled = false;
-    }
   }
 
   // A senha nova, com o token do link. So o formulario da senha fica na tela.
@@ -276,8 +202,8 @@
     } catch (e) { /* sem storage */ }
     if (AVISOS_LOGIN[motivo]) mostrarErro(AVISOS_LOGIN[motivo]);
     else if (avisoGoogle) mostrarErro(avisoGoogle);
-    else if (tokenConfirmar) mostrarInfo('Falta so um passo: entre com o e-mail e a senha que voce escolheu no cadastro, e o e-mail fica confirmado.');
-    document.getElementById(tokenRedefinir ? 'nova-senha' : 'login-email').focus();
+    else if (tokenConfirmar) mostrarInfo('Falta so um passo: entre com o usuario e a senha que voce escolheu no cadastro, e o e-mail fica confirmado.');
+    document.getElementById(tokenRedefinir ? 'nova-senha' : 'login-usuario').focus();
   }
 
   function esconder() {
@@ -295,11 +221,8 @@
 
     abaEntrar.addEventListener('click', () => trocarModo('entrar'));
     abaCriar.addEventListener('click', () => trocarModo('criar'));
-    // O campo do codigo aparece e some conforme a pessoa digita o e-mail.
-    document.getElementById('login-email').addEventListener('input', mostrarCampoCodigo);
     form.addEventListener('submit', enviar);
-    document.getElementById('btn-esqueci').addEventListener('click', pedirSenhaNova);
-    trocarModo('entrar');
+        trocarModo('entrar');
     if (tokenRedefinir) abrirSenhaNova();
     carregarOpcoes();
   }

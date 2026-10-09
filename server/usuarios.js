@@ -107,11 +107,80 @@ function chaveEmail(email) {
 
 function porEmail(email) {
   const chave = chaveEmail(email);
+  // Conta sem e-mail (cadastro so com usuario e senha) tem emailChave vazia:
+  // sem esta guarda, procurar por "" acharia a primeira conta dessas.
+  if (!chave) return null;
   return usuarios.find((u) => u.emailChave === chave) || null;
 }
 
 function porId(id) {
   return usuarios.find((u) => u.id === id) || null;
+}
+
+// ---------- usuario (o nome de login) ----------
+//
+// `usuario` e o que a pessoa digita pra entrar: unico, sem acento, minusculo.
+// `nome` e o do personagem (o que aparece em cima da cabeca) e tambem e unico,
+// mas livre pra ter acento e espaco. Os dois sao conferidos sem diferenciar
+// maiuscula de minuscula.
+
+const USUARIO_RE = /^[a-z0-9._-]{3,20}$/;
+
+function chaveUsuario(usuario) {
+  return String(usuario || '').trim().toLowerCase();
+}
+
+function usuarioValido(usuario) {
+  return USUARIO_RE.test(chaveUsuario(usuario));
+}
+
+function porUsuario(usuario) {
+  const chave = chaveUsuario(usuario);
+  if (!chave) return null;
+  return usuarios.find((u) => u.usuarioChave === chave) || null;
+}
+
+function chaveNome(nome) {
+  return String(nome || '').trim().replace(/\s+/g, ' ').toLowerCase();
+}
+
+// `ignorarId`: a propria conta, pra quem salva o perfil sem trocar o nome.
+function nomeEmUso(nome, ignorarId) {
+  const chave = chaveNome(nome);
+  if (!chave) return false;
+  return usuarios.some((u) => u.id !== ignorarId && chaveNome(u.nome) === chave);
+}
+
+// Sugere um usuario livre a partir de um texto (a parte do e-mail antes do @,
+// ou o nome). Se ja existir, ganha um numero no fim.
+function usuarioLivre(base) {
+  let raiz = String(base || '').split('@')[0].toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9._-]/g, '');
+  if (raiz.length < 3) raiz = (raiz + 'membro').slice(0, 20);
+  raiz = raiz.slice(0, 20);
+  let candidato = raiz;
+  for (let n = 2; porUsuario(candidato); n++) {
+    const sufixo = String(n);
+    candidato = raiz.slice(0, 20 - sufixo.length) + sufixo;
+  }
+  return candidato;
+}
+
+// Contas criadas antes do login por usuario nao tem `usuario`: ganham um, a
+// partir do e-mail, na primeira subida. Roda uma vez e depois nao acha nada.
+function migrarUsuarios() {
+  let mudou = false;
+  usuarios.forEach((u) => {
+    if (u.usuarioChave) return;
+    u.usuario = usuarioLivre(u.email || u.nome);
+    u.usuarioChave = u.usuario;
+    mudou = true;
+  });
+  if (mudou) {
+    console.log('[usuarios] contas antigas ganharam um nome de usuario (a parte do e-mail antes do @)');
+    salvar();
+  }
 }
 
 // O que pode sair do servidor: nunca o hash nem o salt.
@@ -120,6 +189,7 @@ function publico(usuario) {
   return {
     id: usuario.id,
     nome: usuario.nome,
+    usuario: usuario.usuario || null,
     email: usuario.email,
     isAdmin: !!usuario.isAdmin,
     appearance: usuario.appearance || null,
@@ -141,12 +211,15 @@ function publico(usuario) {
 //   false     - criada com o e-mail ligado e o link ainda nao foi clicado: NAO entra;
 //   ausente   - criada antes de existir e-mail na sede (ou com ele desligado):
 //               entra como sempre entrou. Ligar o e-mail nao tranca ninguem fora.
-function criar({ nome, email, senha, isAdmin, emailVerificado }) {
+function criar({ usuario: usuarioDigitado, nome, email, senha, isAdmin, emailVerificado }) {
   const salt = crypto.randomBytes(16).toString('hex');
+  const login = usuarioDigitado ? chaveUsuario(usuarioDigitado) : usuarioLivre(email || nome);
   const usuario = {
     id: crypto.randomUUID(),
     nome,
-    email: String(email).trim(),
+    usuario: login,
+    usuarioChave: login,
+    email: String(email || '').trim(),
     emailChave: chaveEmail(email),
     salt,
     senhaHash: hashSenha(senha, salt),
@@ -166,9 +239,12 @@ function criar({ nome, email, senha, isAdmin, emailVerificado }) {
 // e e o Google, e uma senha a mais seria so mais uma coisa pra vazar. `googleSub`
 // e o id fixo da pessoa no Google (o e-mail pode ser renomeado; o sub, nao).
 function criarPeloGoogle({ nome, email, sub, isAdmin }) {
+  const login = usuarioLivre(email || nome);
   const usuario = {
     id: crypto.randomUUID(),
     nome,
+    usuario: login,
+    usuarioChave: login,
     email: String(email).trim(),
     emailChave: chaveEmail(email),
     salt: null,
@@ -338,6 +414,7 @@ function membros() {
     .map((u) => ({
       id: u.id,
       nome: u.nome,
+      usuario: u.usuario || null,
       email: u.email,
       isAdmin: !!u.isAdmin,
       criadoEm: u.criadoEm || null,
@@ -388,10 +465,15 @@ function atualizarPerfil(id, { nome, appearance }) {
 
 carregar();
 removerContasDeConvidado();
+migrarUsuarios();
 
 module.exports = {
   porEmail,
   porId,
+  porUsuario,
+  usuarioValido,
+  usuarioLivre,
+  nomeEmUso,
   publico,
   criar,
   criarPeloGoogle,
@@ -413,5 +495,5 @@ module.exports = {
   getSegredoSessao,
   totalDeContas: () => usuarios.length,
   // copia rasa: quem le a lista nao mexe no estado interno
-  todos: () => usuarios.map((u) => ({ id: u.id, nome: u.nome, email: u.email })),
+  todos: () => usuarios.map((u) => ({ id: u.id, nome: u.nome, usuario: u.usuario, email: u.email })),
 };

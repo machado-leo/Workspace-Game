@@ -65,7 +65,7 @@
           <span>Entrar com o Google da {{SIGLA_SEDE}}</span>
         </a>
         <p class="login-dica login-dica-google">Primeira vez? A conta é criada na hora, sem senha.</p>
-        <div class="login-ou"><span>ou com e-mail e senha</span></div>
+        <div class="login-ou"><span>ou com usuário e senha</span></div>
       </div>
 
       <div id="login-abas" class="login-abas" role="tablist">
@@ -75,33 +75,19 @@
 
       <form id="form-login" class="login-form" novalidate>
         <label id="campo-nome" class="login-campo campo-cadastro oculto">
-          <span>Nome</span>
-          <input id="login-nome" type="text" maxlength="18" placeholder="Como te chamam na sede" autocomplete="name" />
+          <span>Nome do personagem</span>
+          <input id="login-nome" type="text" maxlength="18" placeholder="Único: só você usa esse nome" autocomplete="nickname" />
         </label>
 
         <label class="login-campo campo-conta">
-          <span>E-mail</span>
-          <input id="login-email" type="email" placeholder="voce@{{DOMINIO_EXEMPLO}}" autocomplete="email" required />
+          <span>Usuário</span>
+          <input id="login-usuario" type="text" maxlength="20" placeholder="seu_usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required />
+          <small class="login-dica campo-cadastro oculto">De 3 a 20 caracteres: letras minúsculas, números, ponto, hífen e underline.</small>
         </label>
 
         <label class="login-campo campo-conta">
           <span>Senha</span>
           <input id="login-senha" type="password" placeholder="Pelo menos 8 caracteres" autocomplete="current-password" required />
-        </label>
-
-        <!-- O codigo da sede so aparece pra quem digitou um e-mail DE FORA.
-             Quem tem e-mail da empresa entra direto, e nem fica sabendo que existe
-             um codigo - ver o `mostrarCampoCodigo` em js/auth.js. -->
-        <p id="dica-email-adm" class="login-dica login-dica-aviso oculto">
-          E-mail da {{SIGLA_SEDE}} não precisa de cadastro: use o botão
-          <strong>Entrar com o Google da {{SIGLA_SEDE}}</strong>, ali em cima.
-        </p>
-
-        <label id="campo-codigo" class="login-campo campo-cadastro oculto">
-          <span>Código da sede</span>
-          <input id="login-codigo" type="text" placeholder="Peça pra diretoria" autocomplete="off" />
-          <small class="login-dica">Seu e-mail não é da {{SIGLA_SEDE}}, então a diretoria
-            precisa te passar o código.</small>
         </label>
 
         <details class="campo-admin campo-cadastro oculto">

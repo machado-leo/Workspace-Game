@@ -230,6 +230,33 @@ function criarRotas(sanitizeAppearance, ganchos = {}) {
     const senha = typeof corpo.senha === 'string' ? corpo.senha : '';
     const codigo = texto(corpo.codigo);
 
+    // Cadastro por usuario e senha: aberto, sem e-mail, dominio nem codigo da
+    // sede. Nunca da diretoria (ver o comentario mais abaixo) - so o ADMIN_CODE.
+    if (!email && corpo.usuario !== undefined) {
+      const login = texto(corpo.usuario).toLowerCase();
+      if (!nome) return res.status(400).json({ erro: 'Diz o nome do teu personagem.' });
+      if (!usuarios.usuarioValido(login)) {
+        return res.status(400).json({ erro: 'Usuario: de 3 a 20 caracteres, so letras minusculas, numeros, ponto, hifen e underline.' });
+      }
+      if (senha.length < MIN_SENHA) {
+        return res.status(400).json({ erro: 'A senha precisa de pelo menos ' + MIN_SENHA + ' caracteres.' });
+      }
+      if (senha.length > MAX_SENHA) return res.status(400).json({ erro: 'Senha grande demais.' });
+      if (usuarios.porUsuario(login)) return res.status(409).json({ erro: 'Esse usuario ja existe. Escolhe outro.' });
+      if (usuarios.nomeEmUso(nome)) {
+        return res.status(409).json({ erro: 'Ja tem um personagem chamado "' + nome + '". Escolhe outro nome.' });
+      }
+      cadastrosDoIp(ip).qtd += 1;
+      const novo = usuarios.criar({
+        usuario: login,
+        nome,
+        senha,
+        isAdmin: !!codigoDeAdmin(corpo.codigoAdmin),
+      });
+      sessao.definirCookie(res, novo.id);
+      return res.json({ usuario: usuarios.publico(novo) });
+    }
+
     if (!nome) return res.status(400).json({ erro: 'Diz teu nome.' });
     if (!EMAIL_RE.test(email)) return res.status(400).json({ erro: 'E-mail invalido.' });
 
@@ -386,13 +413,17 @@ function criarRotas(sanitizeAppearance, ganchos = {}) {
     }
 
     const corpo = req.body || {};
-    const usuario = usuarios.porEmail(texto(corpo.email));
+    // Entra pelo nome de usuario. Quem ainda digita o e-mail (conta antiga, ou
+    // um cliente velho mandando `email`) tambem entra: o campo com "@" cai na
+    // busca por e-mail.
+    const digitado = texto(corpo.usuario !== undefined ? corpo.usuario : corpo.email);
+    const usuario = digitado.includes('@') ? usuarios.porEmail(digitado) : usuarios.porUsuario(digitado);
     const senha = typeof corpo.senha === 'string' ? corpo.senha : '';
 
-    // Mesma resposta nos dois casos: nao entrega quais e-mails existem.
+    // Mesma resposta nos dois casos: nao entrega quais usuarios existem.
     if (!usuario || !senha || !usuarios.senhaConfere(senha, usuario)) {
       contarErro(ip);
-      return res.status(401).json({ erro: 'E-mail ou senha invalidos.' });
+      return res.status(401).json({ erro: 'Usuario ou senha invalidos.' });
     }
 
     limparErros(ip);
@@ -620,6 +651,9 @@ function criarRotas(sanitizeAppearance, ganchos = {}) {
   rotas.put('/perfil', sessao.exigirLogin, (req, res) => {
     const corpo = req.body || {};
     const nome = texto(corpo.nome).slice(0, MAX_NOME);
+    if (nome && usuarios.nomeEmUso(nome, req.usuario.id)) {
+      return res.status(409).json({ erro: 'Ja tem um personagem chamado "' + nome + '". Escolhe outro nome.' });
+    }
     const atualizado = usuarios.atualizarPerfil(req.usuario.id, {
       nome: nome || undefined,
       appearance: corpo.appearance ? sanitizeAppearance(corpo.appearance) : undefined,
