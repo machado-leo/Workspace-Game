@@ -103,7 +103,7 @@ const CSP = [
   // nunca do navegador
   "connect-src 'self'",
   // o unico iframe da sede e o player incorporado do Spotify (public/js/spotify.js)
-  "frame-src https://open.spotify.com",
+  "frame-src https://open.spotify.com https://www.youtube.com",
   // ninguem coloca a sede dentro de um iframe: com camera, microfone e botao de
   // diretoria na tela, clickjacking aqui custa caro
   "frame-ancestors 'none'",
@@ -600,6 +600,7 @@ io.on('connection', (socket) => {
       status: 'livre',
       dividindoTela: false,
       midiaAtiva: false,
+      youtube: null,
       // Livro aberto no leitor, ou null. Vai junto no `init` pra quem chega
       // depois ja ver quem esta lendo o que, como o dividindoTela.
       lendo: null,
@@ -742,6 +743,13 @@ io.on('connection', (socket) => {
 
   // Quem ativou camera/microfone. Permite que a proximidade saiba se o outro
   // lado esta com midia ligada antes de abrir a conexao P2P.
+  socket.on('youtube', (data) => {
+    const player = players.get(socket.id);
+    if (!player || !data) return;
+    player.youtube = data.youtube || null;
+    io.emit('youtube-mudou', { id: socket.id, youtube: player.youtube });
+  });
+
   socket.on('midia', (data) => {
     const player = players.get(socket.id);
     if (!player || !data) return;

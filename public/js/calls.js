@@ -8,9 +8,9 @@
   // 130px, que dao 4,1 tiles - com o zoom em 2x isso e meia tela de distancia,
   // e a chamada abria com gente que voce mal via.
   const TILE = 32;
-  const TILES_ENTRAR = 2.8;
+  const TILES_ENTRAR = 9.0;
   // Folga ao sair para evitar oscilacao na borda da sala ou na proximidade (1.35x).
-  const FOLGA_SAIR = 1.35;
+  const FOLGA_SAIR = 1.15;
   const RAIO_ENTRAR = TILES_ENTRAR * TILE;
 
   // De onde o som ja comeca a cair. Perto e volume cheio; dai pra fora vai
@@ -1096,7 +1096,7 @@
     // conseguir exercita-las sem navegador. Mesma ideia do `canvasDoMapa` do
     // game.js: e caro demais so conferir isso a olho, numa chamada de verdade.
     deveFalarCom, deveContinuarCom,
-    estaNoAlcanceFisico, ligarCamera, desligarCamera,
+    estaNoAlcanceFisico, ligarCamera, desligarCamera, volumePara,
     abafarParaLigacao,
     estaAbafado: () => abafado,
     emChamadaGrande: () => soVoz,

@@ -3387,6 +3387,8 @@
       id: data.id,
       uid: data.uid, // identidade estavel da pessoa: e por ela que a DM anda
       name: data.name,
+      usuario: data.usuario || null,
+      bio: data.bio || '',
       appearance: data.appearance,
       x: data.x,
       y: data.y,
@@ -3406,6 +3408,7 @@
       // mudanca de estado.
       chamada: data.chamada || null,
       lendo: data.lendo || null,
+      youtube: data.youtube || null,
       reacao: null,
     };
   }
@@ -4256,6 +4259,12 @@
 
   function render(now, dt) {
     atualizarCamera(dt);
+    if (window.Youtube) {
+       // atualiza volumes usando as funcoes do Calls pra consistencia do ambiente!
+       window.Youtube.atualizarVolumes(idLocal, players, (dist) => {
+          return window.Calls && window.Calls.volumePara ? window.Calls.volumePara(dist, 9.0 * OfficeMap.TILE) : (dist < 9.0 * OfficeMap.TILE ? 1 - (dist / (9.0 * OfficeMap.TILE)) : 0);
+       });
+    }
     const dpr = window.devicePixelRatio || 1;
     const vista = tamanhoDaVista();
     ctx.setTransform(ZOOM * dpr, 0, 0, ZOOM * dpr, -camX * ZOOM * dpr, -camY * ZOOM * dpr);
@@ -4382,8 +4391,9 @@
       // fileira, cada pixel de etiqueta a menos e uma sobreposicao a menos.
       // Seu proprio nome voce ja sabe.
       const ehEu = p.id === selfId;
-      const nomeExibido = (ehEu ? 'Voce' : p.name)
+      let nomeExibido = (ehEu ? 'Voce' : p.name)
         + (rotuloStatus ? ' · ' + rotuloStatus : '');
+      if (p.youtube) nomeExibido = '♫ ' + nomeExibido;
       const dividindoLocal = p.id === selfId && Calls.estaDividindoTela && Calls.estaDividindoTela();
       const emChamada = p.id === selfId
         ? (Calls.getPeersConectados().length > 0 || dividindoLocal)
@@ -4411,10 +4421,13 @@
             }
           }
         } else if (Calls.temChamadaAtiva(p.id)) {
+          const selfP = players.get(selfId);
+          const dist = selfP ? Math.hypot(p.displayX - selfP.displayX, p.displayY - selfP.displayY) : 0;
+          const pertoPraVideo = dist < 3.8 * OfficeMap.TILE;
           const video = Calls.getVideoRemoto(p.id);
           const remotoDividindo = !!p.dividindoTela;
 
-          if (video && Calls.temVideoRemoto(p.id)) {
+          if (video && Calls.temVideoRemoto(p.id) && pertoPraVideo) {
             if (remotoDividindo) {
               desenharBolhaTela(ctx, p.displayX, labelY - 26, video, null, corDoId(p.id), false);
             } else {
@@ -4783,6 +4796,26 @@
       barraReacoes.classList.toggle('oculto');
     });
     document.getElementById('btn-aceno').addEventListener('click', () => Network.sendReaction('👋'));
+
+    const btnYoutube = document.getElementById('btn-youtube');
+    if (btnYoutube) {
+      btnYoutube.addEventListener('click', () => {
+        const link = prompt('Cole o link do video do YouTube para ser seu Boombox: (Ou deixe vazio para parar)');
+        if (link === null) return;
+        if (!link.trim()) {
+           Network.sendYoutube(null);
+           if (window.Youtube) window.Youtube.pararPara(idLocal);
+           return;
+        }
+        const parsed = window.Youtube ? window.Youtube.parseLink(link.trim()) : null;
+        if (parsed) {
+           Network.sendYoutube(parsed);
+           if (window.Youtube) window.Youtube.tocarPara(idLocal, parsed);
+        } else {
+           alert('Nao reconheci esse link do YouTube.');
+        }
+      });
+    }
     document.addEventListener('click', (ev) => {
       if (!barraReacoes.contains(ev.target)) barraReacoes.classList.add('oculto');
     });

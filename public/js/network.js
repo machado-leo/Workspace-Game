@@ -60,6 +60,7 @@
       if (Array.isArray(lista)) lista.forEach((data) => emitLocal('player-moved', data));
     });
     socket.on('player-status', (data) => emitLocal('player-status', data));
+    socket.on('youtube-mudou', (data) => emitLocal('youtube-mudou', data));
     socket.on('reacao', (data) => emitLocal('reacao', data));
     socket.on('aceno', (data) => emitLocal('aceno', data));
     socket.on('rtc-signal', (data) => emitLocal('rtc-signal', data));
@@ -73,6 +74,7 @@
     socket.on('mapa-area-criada', (data) => emitLocal('mapa-area-criada', data));
     socket.on('mapa-area-apagada', (data) => emitLocal('mapa-area-apagada', data));
     socket.on('mapa-area-recusada', (data) => emitLocal('mapa-area-recusada', data));
+    socket.on('youtube-mudou', (data) => emitLocal('youtube-mudou', data));
     socket.on('tela-mudou', (data) => emitLocal('tela-mudou', data));
     socket.on('midia-mudou', (data) => emitLocal('midia-mudou', data));
     socket.on('lendo-mudou', (data) => emitLocal('lendo-mudou', data));
@@ -101,6 +103,10 @@
 
   function sendStatus(status) {
     if (socket && socket.connected) socket.emit('status', { status });
+  }
+
+  function sendYoutube(videoId) {
+    if (socket && socket.connected) socket.emit('youtube', { youtube: videoId });
   }
 
   // Avisa a sede que comecei (ou parei) de dividir a tela. Sem este aviso o
@@ -291,7 +297,7 @@
   }
 
   window.Network = {
-    connect, on, sendMove, enviarVista, sendStatus, dividirTela, avisarMidia, estouLendo, marcarReuniao, desmarcarReuniao, novoLinkDaReuniao, decidirVisitante, removerVisitante, entrarNaChamada, sairDaChamada, ligarProGrupo, sendReaction, acenarPara, sendRtcSignal, sendChatMessage,
+    connect, on, sendMove, enviarVista, sendStatus, sendYoutube, dividirTela, avisarMidia, estouLendo, marcarReuniao, desmarcarReuniao, novoLinkDaReuniao, decidirVisitante, removerVisitante, entrarNaChamada, sairDaChamada, ligarProGrupo, sendReaction, acenarPara, sendRtcSignal, sendChatMessage,
     pedirHistorico, reagirMensagem, reivindicarMesa, largarMesa, itemNaMinhaMesa, moverItemDaMesa, tirarItemDaMesa,
     editarMapa, editarObjetoMapa, porConteudoNoMapa, editarArea, restaurarArea, criarArea, apagarArea,
     pedirAgenda, pedirTrello, pedirPrazos,
