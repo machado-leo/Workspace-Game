@@ -1,16 +1,23 @@
 // Mapa 2D da sede da ADM Solucoes (lado servidor: colisao e ponto de entrada).
 // Mantido em sincronia manualmente com public/js/map.js (sem bundler no projeto).
 
+const fs = require('fs');
+const path = require('path');
+
 const TILE = 32;
-const COLS = 38;
-const ROWS = 28;
+const COLS_PADRAO = 38;
+const ROWS_PADRAO = 28;
 // Muda quando a PLANTA muda de um jeito que invalida o que foi salvo por celula
 // (decoracao, links, areas mexidas, mesas reivindicadas). O que foi salvo com
 // outra versao sai do caminho no arranque e a sede comeca do zero nisso (ver
 // guardarDePlantaAntiga em server/dados.js).
 //   1 - planta de 48x32, 32 mesas (ate 18/09/2026)
 //   2 - planta compacta de 38x28, 16 mesas
-const VERSAO_PLANTA = 3;
+const VERSAO_PLANTA_PADRAO = 3;
+
+let COLS = COLS_PADRAO;
+let ROWS = ROWS_PADRAO;
+let VERSAO_PLANTA = VERSAO_PLANTA_PADRAO;
 
 const LIVRE = 0;
 const PAREDE = 1;
@@ -247,7 +254,7 @@ const PISOS_DE_AREA = [
   'madeira', 'madeira_clara', 'espinha_fria', 'cinza', 'grama',
 ];
 
-const ROOMS = [
+const ROOMS_PADRAO = [
   // --- banda norte, de oeste (silencio) para leste (barulho) ---
   { id: 'cabine1', nome: 'Cabine 1', r0: 3, c0: 3, r1: 5, c1: 7, piso: 'espinha_fria', som: salaToda() },
   { id: 'cabine2', nome: 'Cabine 2', r0: 7, c0: 3, r1: 9, c1: 7, piso: 'espinha_fria', som: salaToda() },
@@ -268,11 +275,20 @@ const ROOMS = [
   { id: 'jardim', nome: 'Jardim', r0: 0, c0: 0, r1: 27, c1: 37, piso: 'grama', som: perto(3) },
 ];
 
+const ZONAS_PISO_PADRAO = [
+  { r0: 21, c0: 30, r1: 23, c1: 32, piso: 'tapete_biblioteca' },
+  { r0: 3, c0: 12, r1: 8, c1: 17, piso: 'tapete_sala' },
+  { r0: 25, c0: 4, r1: 27, c1: 7, piso: 'tijolo' },
+];
+
+let ROOMS = ROOMS_PADRAO.map((s) => ({ ...s, som: somDaArea(s.som) }));
+let ZONAS_PISO = ZONAS_PISO_PADRAO.slice();
+
 function buildMap() {
   const tiles = [];
-  for (let r = 0; r < ROWS; r++) tiles.push(new Array(COLS).fill(LIVRE));
+  for (let r = 0; r < ROWS_PADRAO; r++) tiles.push(new Array(COLS_PADRAO).fill(LIVRE));
 
-  const dentro = (r, c) => r >= 0 && r < ROWS && c >= 0 && c < COLS;
+  const dentro = (r, c) => r >= 0 && r < ROWS_PADRAO && c >= 0 && c < COLS_PADRAO;
   const set = (r, c, t) => { if (dentro(r, c)) tiles[r][c] = t; };
   const rect = (r0, c0, r1, c1, t) => {
     for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) set(r, c, t);
@@ -445,7 +461,7 @@ function buildMap() {
   return tiles;
 }
 
-const tiles = buildMap();
+let tiles = buildMap();
 
 // Todas as celulas do mesmo movel de mesa, a partir de qualquer uma delas.
 // E o que faz "pegar a mesa" pegar a mesa inteira em vez de um bloco: uma mesa
@@ -532,11 +548,13 @@ function isWalkable(x, y) {
 // Na recepcao, logo dentro da porta da rua. Quem chega entra por onde uma
 // visita entraria - e nao no meio de uma sala de reuniao, que e onde o spawn
 // antigo caiu quando a planta mudou.
-const SPAWN_POINTS = [
+const SPAWN_POINTS_PADRAO = [
   { x: 5.5 * TILE, y: 20.5 * TILE },
   { x: 6.5 * TILE, y: 20.5 * TILE },
   { x: 7.5 * TILE, y: 20.5 * TILE },
 ];
+
+let SPAWN_POINTS = SPAWN_POINTS_PADRAO.slice();
 
 function getSpawnPoint() {
   const p = SPAWN_POINTS[Math.floor(Math.random() * SPAWN_POINTS.length)];
@@ -546,10 +564,281 @@ function getSpawnPoint() {
 // Copia da planta original. O decorador escreve em `tiles`; guardar o original
 // deixa a gente saber quando uma celula voltou ao que era (e sai do arquivo de
 // diferencas). Ver server/mapa-editado.js.
-const baseTiles = tiles.map((linha) => linha.slice());
+let baseTiles = tiles.map((linha) => linha.slice());
 
 // Grade da camada de cima, comeca vazia (o que tiver e decoracao salva).
-const objetos = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+let objetos = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+
+// Mapeamento de nomes amigaveis de tiles para facilidade de edicao no JSON
+const TILES_NOME = {
+  LIVRE, PAREDE, MESA, MESA_MONITOR, SOFA_CIMA, SOFA_BAIXO, MESA_CENTRO,
+  ESTANTE, PLANTA, ARVORE, QUADRO, LOUSA, ARMARIO, BALCAO, CERCA, CADEIRA,
+  TAPETE, MESA_REUNIAO, JANELA, AGUA, PEDRA, ARBUSTO, BANCO, CABIDE,
+  IMPRESSORA, CAVALETE,
+  MESA_DUPLA, MESA_NOTEBOOK, PLANTA_GRANDE, VASO_FLORES, CACTO, POLTRONA,
+  CADEIRA_VERMELHA, BEBEDOURO, TV, RELOGIO, TAPETE_REDONDO,
+  CADEIRA_BAIXO, CADEIRA_ESQ, CADEIRA_DIR,
+  CADEIRA_VERMELHA_BAIXO, CADEIRA_VERMELHA_ESQ, CADEIRA_VERMELHA_DIR,
+  MESA_BAIXO, MESA_ESQ, MESA_DIR,
+  MESA_MONITOR_BAIXO, MESA_MONITOR_ESQ, MESA_MONITOR_DIR,
+  PUFE, MESA_REDONDA, GELADEIRA, AQUARIO, LUMINARIA_PE, PORTA,
+};
+
+function converterTile(val) {
+  if (typeof val === 'number') return val;
+  if (typeof val === 'string') {
+    const limpo = val.trim().toUpperCase();
+    if (Object.prototype.hasOwnProperty.call(TILES_NOME, limpo)) {
+      return TILES_NOME[limpo];
+    }
+    const n = Number(limpo);
+    if (!Number.isNaN(n)) return n;
+  }
+  return LIVRE;
+}
+
+function converterObjeto(val) {
+  if (typeof val === 'number') return Math.max(0, Math.min(val, OBJETO_MAX));
+  if (typeof val === 'string') {
+    const limpo = val.trim().toUpperCase();
+    if (Object.prototype.hasOwnProperty.call(OBJETOS, limpo)) {
+      return OBJETOS[limpo];
+    }
+    const n = Number(limpo);
+    if (!Number.isNaN(n)) return Math.max(0, Math.min(n, OBJETO_MAX));
+  }
+  return 0;
+}
+
+function restaurarMapaPadrao() {
+  COLS = COLS_PADRAO;
+  ROWS = ROWS_PADRAO;
+  VERSAO_PLANTA = VERSAO_PLANTA_PADRAO;
+  tiles = buildMap();
+  baseTiles = tiles.map((linha) => linha.slice());
+  objetos = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  ROOMS = ROOMS_PADRAO.map((s) => ({ ...s, som: somDaArea(s.som) }));
+  ZONAS_PISO = ZONAS_PISO_PADRAO.slice();
+  SPAWN_POINTS = SPAWN_POINTS_PADRAO.slice();
+}
+
+function aplicarMapaCustomizado(dados, origem = 'custom') {
+  if (!dados || typeof dados !== 'object') {
+    throw new Error('Dados do mapa inválidos');
+  }
+
+  const cols = Number.isInteger(dados.cols) && dados.cols > 0
+    ? dados.cols
+    : (Array.isArray(dados.tiles) && dados.tiles[0] ? dados.tiles[0].length : COLS_PADRAO);
+
+  const rows = Number.isInteger(dados.rows) && dados.rows > 0
+    ? dados.rows
+    : (Array.isArray(dados.tiles) ? dados.tiles.length : ROWS_PADRAO);
+
+  if (cols < 5 || rows < 5) {
+    throw new Error(`Dimensões do mapa muito pequenas: ${cols}x${rows}`);
+  }
+
+  // 1. Grade de tiles
+  let novaGrade;
+  if (Array.isArray(dados.tiles) && dados.tiles.length > 0) {
+    novaGrade = [];
+    for (let r = 0; r < rows; r++) {
+      const linha = [];
+      const fonte = dados.tiles[r] || [];
+      for (let c = 0; c < cols; c++) {
+        linha.push(c < fonte.length ? converterTile(fonte[c]) : LIVRE);
+      }
+      novaGrade.push(linha);
+    }
+  } else {
+    novaGrade = [];
+    for (let r = 0; r < rows; r++) {
+      const linha = [];
+      for (let c = 0; c < cols; c++) {
+        linha.push((r === 0 || r === rows - 1 || c === 0 || c === cols - 1) ? PAREDE : LIVRE);
+      }
+      novaGrade.push(linha);
+    }
+  }
+
+  // 2. Salas / Áreas
+  let novasSalas = [];
+  if (Array.isArray(dados.rooms) && dados.rooms.length > 0) {
+    novasSalas = dados.rooms.map((s, idx) => ({
+      id: s.id || ('sala_' + idx),
+      nome: s.nome || ('Sala ' + (idx + 1)),
+      r0: Number.isInteger(s.r0) ? s.r0 : 0,
+      c0: Number.isInteger(s.c0) ? s.c0 : 0,
+      r1: Number.isInteger(s.r1) ? s.r1 : rows - 1,
+      c1: Number.isInteger(s.c1) ? s.c1 : cols - 1,
+      piso: typeof s.piso === 'string' && PISOS_DE_AREA.includes(s.piso) ? s.piso : 'ladrilho',
+      som: somDaArea(s.som),
+      cor: s.cor || undefined,
+      labelR: s.labelR != null ? s.labelR : s.r0,
+      labelC: s.labelC != null ? s.labelC : s.c0,
+    }));
+  }
+
+  if (!novasSalas.some((s) => s.id === 'hall')) {
+    novasSalas.push({
+      id: 'hall',
+      nome: 'Corredor',
+      r0: 0,
+      c0: 0,
+      r1: rows - 1,
+      c1: cols - 1,
+      piso: 'tijolo',
+      som: { modo: 'perto', alcance: 3 },
+    });
+  }
+  if (!novasSalas.some((s) => s.id === 'jardim')) {
+    novasSalas.push({
+      id: 'jardim',
+      nome: 'Jardim',
+      r0: 0,
+      c0: 0,
+      r1: rows - 1,
+      c1: cols - 1,
+      piso: 'grama',
+      som: { modo: 'perto', alcance: 3 },
+    });
+  }
+
+  // 3. Zonas de Piso
+  let novasZonasPiso = [];
+  if (Array.isArray(dados.zonasPiso)) {
+    novasZonasPiso = dados.zonasPiso.map((z) => ({
+      r0: Number(z.r0),
+      c0: Number(z.c0),
+      r1: Number(z.r1),
+      c1: Number(z.c1),
+      piso: String(z.piso || 'tijolo'),
+    }));
+  }
+
+  // 4. Pontos de Entrada (Spawn)
+  let novosSpawns = [];
+  if (Array.isArray(dados.spawnPoints) && dados.spawnPoints.length > 0) {
+    novosSpawns = dados.spawnPoints.map((p) => {
+      if (p.col != null && p.row != null) {
+        return { x: (Number(p.col) + 0.5) * TILE, y: (Number(p.row) + 0.5) * TILE };
+      }
+      return { x: Number(p.x), y: Number(p.y) };
+    }).filter((p) => Number.isFinite(p.x) && Number.isFinite(p.y));
+  }
+
+  if (novosSpawns.length === 0) {
+    let achou = null;
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        if (!SOLID_TILES.has(novaGrade[r][c])) {
+          achou = { x: (c + 0.5) * TILE, y: (r + 0.5) * TILE };
+          break;
+        }
+      }
+      if (achou) break;
+    }
+    novosSpawns = [achou || { x: (cols / 2) * TILE, y: (rows / 2) * TILE }];
+  }
+
+  // 5. Objetos superiores
+  let novosObjetos;
+  if (Array.isArray(dados.objetos)) {
+    novosObjetos = [];
+    for (let r = 0; r < rows; r++) {
+      const linha = [];
+      const fonte = dados.objetos[r] || [];
+      for (let c = 0; c < cols; c++) {
+        linha.push(c < fonte.length ? converterObjeto(fonte[c]) : 0);
+      }
+      novosObjetos.push(linha);
+    }
+  } else {
+    novosObjetos = Array.from({ length: rows }, () => new Array(cols).fill(0));
+  }
+
+  const versao = Number(dados.versaoPlanta || dados.versao) || (VERSAO_PLANTA_PADRAO + 100);
+
+  COLS = cols;
+  ROWS = rows;
+  VERSAO_PLANTA = versao;
+  tiles = novaGrade;
+  baseTiles = tiles.map((l) => l.slice());
+  objetos = novosObjetos;
+  ROOMS = novasSalas;
+  ZONAS_PISO = novasZonasPiso;
+  SPAWN_POINTS = novosSpawns;
+
+  console.log(`[mapa] Mapa customizado carregado (${origem}): ${cols}x${rows}, ${novasSalas.length} salas, ${novosSpawns.length} spawn(s).`);
+  return true;
+}
+
+const CAMINHO_CUSTOM_PADRAO = path.join(__dirname, 'data', 'mapa-custom.json');
+
+let observadores = new Set();
+let observadorFs = null;
+
+function aoAtualizar(callback) {
+  if (typeof callback === 'function') observadores.add(callback);
+}
+
+function dispararAtualizacao() {
+  const dados = {
+    cols: COLS,
+    rows: ROWS,
+    tile: TILE,
+    tiles,
+    rooms: ROOMS,
+    zonasPiso: ZONAS_PISO,
+  };
+  observadores.forEach((cb) => {
+    try { cb(dados); } catch (e) { console.error('[mapa] Erro no listener de atualização:', e); }
+  });
+}
+
+function iniciarObservador(alvo) {
+  if (observadorFs) {
+    try { observadorFs.close(); } catch (_) {}
+    observadorFs = null;
+  }
+  if (!fs.existsSync(alvo)) return;
+
+  try {
+    let timer = null;
+    observadorFs = fs.watch(alvo, () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        if (fs.existsSync(alvo)) {
+          const ok = carregarArquivoCustomizado(alvo);
+          if (ok) dispararAtualizacao();
+        }
+      }, 200);
+    });
+  } catch (err) {
+    console.warn('[mapa] Não foi possível observar mapa-custom.json:', err.message);
+  }
+}
+
+function carregarArquivoCustomizado(caminho) {
+  if (process.env.IGNORAR_MAPA_CUSTOM === '1') return false;
+  const alvo = caminho || process.env.MAPA_ARQUIVO || CAMINHO_CUSTOM_PADRAO;
+  if (!fs.existsSync(alvo)) return false;
+
+  try {
+    const conteudo = fs.readFileSync(alvo, 'utf8');
+    const dados = JSON.parse(conteudo);
+    const ok = aplicarMapaCustomizado(dados, alvo);
+    if (ok) iniciarObservador(alvo);
+    return ok;
+  } catch (err) {
+    console.error(`[mapa] Aviso: Erro ao carregar mapa de ${alvo}:`, err.message);
+    return false;
+  }
+}
+
+// Carrega automaticamente se mapa-custom.json existir
+carregarArquivoCustomizado();
 
 module.exports = {
   TILE,
@@ -561,23 +850,42 @@ module.exports = {
   ALCANCE_MAX,
   somDaArea,
   somIgual,
-  COLS,
-  ROWS,
-  VERSAO_PLANTA,
-  tiles,
-  baseTiles,
-  objetos,
-  ROOMS,
+  get COLS() { return COLS; },
+  set COLS(v) { COLS = v; },
+  get ROWS() { return ROWS; },
+  set ROWS(v) { ROWS = v; },
+  get VERSAO_PLANTA() { return VERSAO_PLANTA; },
+  set VERSAO_PLANTA(v) { VERSAO_PLANTA = v; },
+  get tiles() { return tiles; },
+  set tiles(v) { tiles = v; },
+  get baseTiles() { return baseTiles; },
+  set baseTiles(v) { baseTiles = v; },
+  get objetos() { return objetos; },
+  set objetos(v) { objetos = v; },
+  get ROOMS() { return ROOMS; },
+  set ROOMS(v) { ROOMS = v; },
+  get ZONAS_PISO() { return ZONAS_PISO; },
+  set ZONAS_PISO(v) { ZONAS_PISO = v; },
+  get SPAWN_POINTS() { return SPAWN_POINTS; },
+  set SPAWN_POINTS(v) { SPAWN_POINTS = v; },
   ASSENTOS,
   DIRECAO_ASSENTO,
   SUPERFICIES,
   OBJETOS,
   OBJETO_MAX,
   isWalkable,
+  isWalkableTile,
   celulasDaMesa,
   tampoAte,
   noTampo,
   getSpawnPoint,
+  carregarArquivoCustomizado,
+  aplicarMapaCustomizado,
+  restaurarMapaPadrao,
+  aoAtualizar,
+  TILES_NOME,
+  converterTile,
+  converterObjeto,
   LIVRE, PAREDE, MESA, MESA_MONITOR, SOFA_CIMA, SOFA_BAIXO, MESA_CENTRO,
   ESTANTE, PLANTA, ARVORE, QUADRO, LOUSA, ARMARIO, BALCAO, CERCA, CADEIRA,
   TAPETE, MESA_REUNIAO, JANELA, AGUA, PEDRA, ARBUSTO, BANCO, CABIDE,

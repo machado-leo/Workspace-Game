@@ -562,6 +562,12 @@ const salaDeVisitas = visitantes.iniciar({
   sede: marcaDaSede.marca,
 });
 
+// Quando o mapa customizado é alterado no disco, avisa todos os clientes conectados
+map.aoAtualizar((dadosMapa) => {
+  console.log('[mapa] Mapa atualizado no disco! Enviando atualização em tempo real para os clientes...');
+  io.emit('mapa-base-atualizado', dadosMapa);
+});
+
 io.on('connection', (socket) => {
   socket.on('join', (payload) => {
     if (players.has(socket.id)) return; // ja entrou
@@ -591,6 +597,7 @@ io.on('connection', (socket) => {
       sentado: false,
       status: 'livre',
       dividindoTela: false,
+      midiaAtiva: false,
       // Livro aberto no leitor, ou null. Vai junto no `init` pra quem chega
       // depois ja ver quem esta lendo o que, como o dividindoTela.
       lendo: null,
@@ -613,7 +620,14 @@ io.on('connection', (socket) => {
     socket.emit('init', {
       selfId: socket.id,
       selfUid: player.uid,
-      map: { cols: map.COLS, rows: map.ROWS, tile: map.TILE, tiles: map.tiles },
+      map: {
+        cols: map.COLS,
+        rows: map.ROWS,
+        tile: map.TILE,
+        tiles: map.tiles,
+        rooms: map.ROOMS,
+        zonasPiso: map.ZONAS_PISO,
+      },
       players: Array.from(players.values()),
       canais: CANAIS,
       conversaPadrao: idCanal('geral'),
@@ -701,6 +715,17 @@ io.on('connection', (socket) => {
     player.dividindoTela = ligado;
     io.emit('tela-mudou', { id: socket.id, ligado });
     salaDeVisitas.aoMudarTela(player);
+  });
+
+  // Quem ativou camera/microfone. Permite que a proximidade saiba se o outro
+  // lado esta com midia ligada antes de abrir a conexao P2P.
+  socket.on('midia', (data) => {
+    const player = players.get(socket.id);
+    if (!player || !data) return;
+    const ativa = !!data.ativa;
+    if (player.midiaAtiva === ativa) return;
+    player.midiaAtiva = ativa;
+    io.emit('midia-mudou', { id: socket.id, midiaAtiva: ativa });
   });
 
   // Quem esta lendo o que. A estante passa a mostrar na capa quem pegou o
@@ -1372,6 +1397,55 @@ app.get('/api/ice', sessao.exigirLogin, async (req, res) => {
   const { iceServers, turn: comTurn } = await turn.obter();
   res.set('Cache-Control', 'no-store');
   res.json({ iceServers, turn: comTurn });
+});
+
+// API para ler e salvar o mapa customizado através do editor visual
+app.get('/api/mapa-custom', (req, res) => {
+  const caminho = process.env.MAPA_ARQUIVO || path.join(__dirname, 'data', 'mapa-custom.json');
+  if (fs.existsSync(caminho)) {
+    try {
+      const dados = JSON.parse(fs.readFileSync(caminho, 'utf8'));
+      return res.json({ ok: true, custom: true, mapa: dados });
+    } catch (e) {
+      return res.status(500).json({ ok: false, erro: e.message });
+    }
+  }
+  res.json({
+    ok: true,
+    custom: false,
+    mapa: {
+      cols: map.COLS,
+      rows: map.ROWS,
+      versaoPlanta: map.VERSAO_PLANTA,
+      spawnPoints: map.SPAWN_POINTS.map((p) => ({ col: p.x / map.TILE, row: p.y / map.TILE })),
+      rooms: map.ROOMS,
+      zonasPiso: map.ZONAS_PISO,
+      tiles: map.tiles,
+    },
+  });
+});
+
+app.post('/api/mapa-custom', express.json({ limit: '2mb' }), (req, res) => {
+  const dados = req.body;
+  if (!dados || !Array.isArray(dados.tiles)) {
+    return res.status(400).json({ ok: false, erro: 'Formato inválido (requer array "tiles")' });
+  }
+
+  const pasta = path.join(__dirname, 'data');
+  if (!fs.existsSync(pasta)) fs.mkdirSync(pasta, { recursive: true });
+
+  const caminho = process.env.MAPA_ARQUIVO || path.join(pasta, 'mapa-custom.json');
+  dados.versaoPlanta = (Number(dados.versaoPlanta) || 10) + 1;
+
+  try {
+    const tmp = caminho + '.tmp';
+    fs.writeFileSync(tmp, JSON.stringify(dados, null, 2), 'utf8');
+    fs.renameSync(tmp, caminho);
+    map.carregarArquivoCustomizado(caminho);
+    res.json({ ok: true, versaoPlanta: dados.versaoPlanta });
+  } catch (e) {
+    res.status(500).json({ ok: false, erro: e.message });
+  }
 });
 
 // Recebe a capa que o navegador desenhou da pagina 1, pra ela ser feita UMA vez

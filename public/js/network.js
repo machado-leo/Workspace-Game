@@ -73,6 +73,7 @@
     socket.on('mapa-area-apagada', (data) => emitLocal('mapa-area-apagada', data));
     socket.on('mapa-area-recusada', (data) => emitLocal('mapa-area-recusada', data));
     socket.on('tela-mudou', (data) => emitLocal('tela-mudou', data));
+    socket.on('midia-mudou', (data) => emitLocal('midia-mudou', data));
     socket.on('lendo-mudou', (data) => emitLocal('lendo-mudou', data));
     socket.on('mapa-conteudo-atualizado', (data) => emitLocal('mapa-conteudo-atualizado', data));
     socket.on('mapa-conteudo-recusado', (data) => emitLocal('mapa-conteudo-recusado', data));
@@ -107,6 +108,10 @@
   // deixa a TV da sala de reuniao espelhar quem esta apresentando.
   function dividirTela(ligado) {
     if (socket && socket.connected) socket.emit('tela', { ligado: !!ligado });
+  }
+
+  function avisarMidia(ativa) {
+    if (socket && socket.connected) socket.emit('midia', { ativa: !!ativa });
   }
 
   // Abri (ou fechei) um livro no leitor. Manda so o ID - o titulo quem resolve
@@ -279,7 +284,7 @@
   }
 
   window.Network = {
-    connect, on, sendMove, enviarVista, sendStatus, dividirTela, estouLendo, marcarReuniao, desmarcarReuniao, novoLinkDaReuniao, decidirVisitante, removerVisitante, entrarNaChamada, sairDaChamada, ligarProGrupo, sendReaction, acenarPara, sendRtcSignal, sendChatMessage,
+    connect, on, sendMove, enviarVista, sendStatus, dividirTela, avisarMidia, estouLendo, marcarReuniao, desmarcarReuniao, novoLinkDaReuniao, decidirVisitante, removerVisitante, entrarNaChamada, sairDaChamada, ligarProGrupo, sendReaction, acenarPara, sendRtcSignal, sendChatMessage,
     pedirHistorico, reagirMensagem, reivindicarMesa, largarMesa, itemNaMinhaMesa, moverItemDaMesa, tirarItemDaMesa,
     editarMapa, editarObjetoMapa, porConteudoNoMapa, editarArea, restaurarArea, criarArea, apagarArea,
     pedirAgenda, pedirTrello, pedirPrazos,

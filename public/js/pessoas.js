@@ -214,6 +214,16 @@
     acoes.appendChild(btnIr);
 
     if (window.Calls && Calls.temChamadaAtiva && Calls.temChamadaAtiva(id)) {
+      if (window.CallGrid && CallGrid.abrir) {
+        const btnGrade = el('button', 'btn btn-secundario btn-pequeno', '🗖 Ver em tela grande');
+        btnGrade.type = 'button';
+        btnGrade.addEventListener('click', () => {
+          CallGrid.abrir();
+          fecharCartao();
+        });
+        acoes.appendChild(btnGrade);
+      }
+
       const btnDesligar = el('button', 'btn btn-perigo btn-pequeno', '📵 Desligar chamada');
       btnDesligar.type = 'button';
       btnDesligar.addEventListener('click', () => {

@@ -11,6 +11,7 @@ const path = require('path');
 
 const RAIZ = path.join(__dirname, '..');
 const servidor = require(path.join(RAIZ, 'server', 'map.js'));
+if (typeof servidor.restaurarMapaPadrao === 'function') servidor.restaurarMapaPadrao();
 
 global.window = {};
 new Function(fs.readFileSync(path.join(RAIZ, 'public', 'js', 'map.js'), 'utf8'))();

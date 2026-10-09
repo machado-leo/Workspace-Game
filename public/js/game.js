@@ -3399,6 +3399,7 @@
       sentado: !!data.sentado,
       status: STATUS_VALIDOS.includes(data.status) ? data.status : 'livre',
       dividindoTela: !!data.dividindoTela,
+      midiaAtiva: !!data.midiaAtiva,
       isAdmin: !!data.isAdmin,
       // Chamada marcada e livro aberto vem junto no `init`: quem chega depois
       // ja cai na chamada em andamento em vez de ficar de fora ate a proxima
@@ -3745,6 +3746,103 @@
     ctx.stroke();
   }
 
+  function desenharRetArredondado(ctx, x, y, w, h, r) {
+    if (typeof ctx.roundRect === 'function') {
+      ctx.roundRect(x, y, w, h, r);
+    } else {
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+    }
+  }
+
+  function desenharBolhaTela(ctx, x, y, videoTela, videoCam, corAnel, espelharCam) {
+    if (!videoTela || !videoTela.videoWidth || !videoTela.videoHeight) {
+      if (videoCam) {
+        desenharBolhaVideo(ctx, x, y, videoCam, corAnel, espelharCam);
+      } else {
+        desenharBolhaAudio(ctx, x, y, corAnel);
+      }
+      return;
+    }
+
+    // Tela compartilhada em formato retangular widescreen arredondado
+    const w = 54;
+    const h = 34;
+    const r = 8;
+    const rx = x - w / 2;
+    const ry = y - h / 2;
+
+    ctx.save();
+    ctx.beginPath();
+    desenharRetArredondado(ctx, rx, ry, w, h, r);
+    ctx.closePath();
+    ctx.fillStyle = '#0a0d14';
+    ctx.fill();
+    ctx.clip();
+
+    const vw = videoTela.videoWidth, vh = videoTela.videoHeight;
+    const escala = Math.max(w / vw, h / vh);
+    const dw = vw * escala, dh = vh * escala;
+    // Tela nunca e espelhada (para o texto nao ficar invertido)
+    ctx.drawImage(videoTela, x - dw / 2, y - dh / 2, dw, dh);
+    ctx.restore();
+
+    // Borda da tela compartilhada
+    ctx.beginPath();
+    desenharRetArredondado(ctx, rx, ry, w, h, r);
+    ctx.strokeStyle = corAnel;
+    ctx.lineWidth = 2.5;
+    ctx.stroke();
+
+    // Mini icone de tela no canto superior esquerdo
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+    ctx.beginPath();
+    desenharRetArredondado(ctx, rx + 3, ry + 3, 14, 11, 3);
+    ctx.fill();
+    ctx.fillStyle = '#4cc9f0';
+    ctx.font = '8px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🖥', rx + 10, ry + 8.5);
+
+    // Se a camera estiver ativa junto, desenha a camera pequena no cantinho (PiP)
+    if (videoCam && videoCam.videoWidth && videoCam.videoHeight) {
+      const miniRaio = 11;
+      const miniX = x + w / 2 - 2;
+      const miniY = y + h / 2 - 2;
+
+      ctx.save();
+      ctx.beginPath();
+      ctx.arc(miniX, miniY, miniRaio, 0, Math.PI * 2);
+      ctx.closePath();
+      ctx.fillStyle = '#0d1117';
+      ctx.fill();
+      ctx.clip();
+
+      const cvw = videoCam.videoWidth, cvh = videoCam.videoHeight;
+      const cEscala = Math.max((miniRaio * 2) / cvw, (miniRaio * 2) / cvh);
+      const cdw = cvw * cEscala, cdh = cvh * cEscala;
+      if (espelharCam) {
+        ctx.translate(miniX, miniY);
+        ctx.scale(-1, 1);
+        ctx.drawImage(videoCam, -cdw / 2, -cdh / 2, cdw, cdh);
+      } else {
+        ctx.drawImage(videoCam, miniX - cdw / 2, miniY - cdh / 2, cdw, cdh);
+      }
+      ctx.restore();
+
+      // Borda da mini camera
+      ctx.beginPath();
+      ctx.arc(miniX, miniY, miniRaio, 0, Math.PI * 2);
+      ctx.strokeStyle = '#ffffff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  }
+
   // Chamada so de audio (sem camera): bolha com um iconezinho de microfone.
   function desenharBolhaAudio(ctx, x, y, corAnel) {
     const raio = 21;
@@ -3770,6 +3868,26 @@
     ctx.moveTo(x, y + 10);
     ctx.lineTo(x, y + 13);
     ctx.stroke();
+    ctx.restore();
+  }
+
+  // Aviso visual quando alguem esta no alcance fisico mas com camera/microfone desligados
+  function desenharBolhaMudo(ctx, x, y, corAnel) {
+    const raio = 16;
+    ctx.save();
+    ctx.beginPath();
+    ctx.arc(x, y, raio, 0, Math.PI * 2);
+    ctx.closePath();
+    ctx.fillStyle = '#1c1719';
+    ctx.fill();
+    ctx.strokeStyle = corAnel || '#e63946';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    ctx.font = '13px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('🔇', x, y + 0.5);
     ctx.restore();
   }
 
@@ -4266,22 +4384,27 @@
       const ehEu = p.id === selfId;
       const nomeExibido = (ehEu ? 'Voce' : p.name)
         + (rotuloStatus ? ' · ' + rotuloStatus : '');
+      const dividindoLocal = p.id === selfId && Calls.estaDividindoTela && Calls.estaDividindoTela();
       const emChamada = p.id === selfId
-        ? (Calls.isCameraAtiva() && Calls.getPeersConectados().length > 0)
-        : Calls.temChamadaAtiva(p.id);
+        ? (Calls.getPeersConectados().length > 0 || dividindoLocal)
+        : (Calls.temChamadaAtiva(p.id) || !!p.dividindoTela);
       desenharCracha(
         ctx, p.displayX, labelY, nomeExibido,
         STATUS_COR[p.status] || STATUS_COR.livre, emChamada, p.id === selfId
       );
 
-      // A bolha flutuante circular (video ou audio) fica sobre a cabeca do boneco.
-      // Aparece tanto pro colega quanto pra si mesmo quando em chamada conectada,
-      // sem abrir telas/grades grandes estilo Meet.
+      // A bolha flutuante (video da camera ou tela compartilhada) fica sobre a cabeca do boneco.
       if (!CallGrid.estaAtivo()) {
         if (p.id === selfId) {
-          if (Calls.isCameraAtiva() && Calls.getPeersConectados().length > 0) {
+          if (emChamada) {
             const vLocal = Calls.getVideoLocal ? Calls.getVideoLocal() : document.getElementById('video-local');
-            if (vLocal && Calls.temVideoLocal()) {
+            const vTela = Calls.getVideoTela ? Calls.getVideoTela() : null;
+            const temCam = Calls.temVideoLocal && Calls.temVideoLocal();
+            const temTela = dividindoLocal && vTela && (vTela.readyState >= 2 || vTela.videoWidth > 0);
+
+            if (temTela) {
+              desenharBolhaTela(ctx, p.displayX, labelY - 26, vTela, temCam ? vLocal : null, corDoId(selfId), true);
+            } else if (temCam && vLocal) {
               desenharBolhaVideo(ctx, p.displayX, labelY - 26, vLocal, corDoId(selfId), true);
             } else {
               desenharBolhaAudio(ctx, p.displayX, labelY - 26, corDoId(selfId));
@@ -4289,11 +4412,19 @@
           }
         } else if (Calls.temChamadaAtiva(p.id)) {
           const video = Calls.getVideoRemoto(p.id);
+          const remotoDividindo = !!p.dividindoTela;
+
           if (video && Calls.temVideoRemoto(p.id)) {
-            desenharBolhaVideo(ctx, p.displayX, labelY - 26, video, corDoId(p.id), false);
+            if (remotoDividindo) {
+              desenharBolhaTela(ctx, p.displayX, labelY - 26, video, null, corDoId(p.id), false);
+            } else {
+              desenharBolhaVideo(ctx, p.displayX, labelY - 26, video, corDoId(p.id), false);
+            }
           } else {
             desenharBolhaAudio(ctx, p.displayX, labelY - 26, corDoId(p.id));
           }
+        } else if (p.id !== selfId && !p.midiaAtiva && Calls.estaNoAlcanceFisico && Calls.estaNoAlcanceFisico(p.id)) {
+          desenharBolhaMudo(ctx, p.displayX, labelY - 26, '#e63946');
         }
       }
 
@@ -4686,6 +4817,10 @@
         players.set(p.id, p.id === selfId ? criarJogadorLocal(p) : criarJogadorRemoto(p));
       });
       ajustarBotaoStatus(players.get(selfId).status);
+      // Se o servidor mandou mapa customizado, atualiza a planta no cliente
+      if (data.map) {
+        OfficeMap.carregarMapa(data.map);
+      }
       // A decoracao guardada no servidor entra antes de qualquer coisa desenhar.
       const temDecoracao = (data.mudancasMapa && data.mudancasMapa.length)
         || (data.objetosMapa && data.objetosMapa.length);
@@ -4699,7 +4834,7 @@
       // criadas por ela nem existem na planta - entram antes de serem aplicadas.
       (data.areasMapa || []).forEach((a) => { if (a.criada) OfficeMap.adicionarArea(a); });
       (data.areasMapa || []).forEach((a) => OfficeMap.aplicarArea(a.id, a));
-      if (temDecoracao || (data.areasMapa && data.areasMapa.length)) prerenderMap();
+      prerenderMap();
       Conteudo.carregar(data.conteudosMapa);
       Conteudo.init(players.get(selfId).isAdmin);
       Decorador.init(players.get(selfId).isAdmin);
@@ -4709,6 +4844,13 @@
     });
 
     Network.on('mesas-atualizadas', (lista) => aplicarMesas(lista));
+
+    // O arquivo do mapa customizado mudou no disco: recarrega a planta em tempo real
+    Network.on('mapa-base-atualizado', (dados) => {
+      if (!dados) return;
+      OfficeMap.carregarMapa(dados);
+      prerenderMap();
+    });
 
     // Alguem decorou: escreve o tile e redesenha o mapa inteiro (48x32, e barato).
     Network.on('mapa-atualizado', (m) => {
@@ -4804,6 +4946,11 @@
     Network.on('tela-mudou', (data) => {
       const p = players.get(data.id);
       if (p) p.dividindoTela = !!data.ligado;
+    });
+
+    Network.on('midia-mudou', (data) => {
+      const p = players.get(data.id);
+      if (p) p.midiaAtiva = !!data.midiaAtiva;
     });
 
     // Alguem abriu ou fechou um livro. O objeto vem do servidor ja validado

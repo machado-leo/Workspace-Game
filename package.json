@@ -1,7 +1,7 @@
 {
-  "name": "escritorio-virtual-adm",
+  "name": "workspace-game",
   "version": "1.0.0",
-  "description": "Escritorio virtual 2D multiplayer da ADM Solucoes (empresa junior de administracao da UECE)",
+  "description": "Escritorio virtual 2D multiplayer com chamadas WebRTC por proximidade e presenca em tempo real",
   "main": "server/index.js",
   "scripts": {
     "start": "node server/iniciar.js",

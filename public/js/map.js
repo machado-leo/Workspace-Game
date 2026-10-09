@@ -4,8 +4,10 @@
 // ATENCAO: mantido em sincronia manualmente com server/map.js (sem bundler).
 (function () {
   const TILE = 32;
-  const COLS = 38;
-  const ROWS = 28;
+  const COLS_PADRAO = 38;
+  const ROWS_PADRAO = 28;
+  let COLS = COLS_PADRAO;
+  let ROWS = ROWS_PADRAO;
 
   const LIVRE = 0;
   const PAREDE = 1;
@@ -225,7 +227,7 @@
   const salaToda = { modo: 'sala', alcance: ALCANCE_PADRAO };
   const silencio = { modo: 'silencio', alcance: ALCANCE_PADRAO };
 
-  const ROOMS = [
+  const ROOMS_PADRAO = [
     // --- banda norte, de oeste (silencio) para leste (barulho) ---
     { id: 'cabine1', nome: 'Cabine 1', r0: 3, c0: 3, r1: 5, c1: 7, piso: 'espinha_fria', cor: '#4d8fa0', labelR: 3, labelC: 3, som: salaToda },
     { id: 'cabine2', nome: 'Cabine 2', r0: 7, c0: 3, r1: 9, c1: 7, piso: 'espinha_fria', cor: '#4d8fa0', labelR: 7, labelC: 3, som: salaToda },
@@ -267,7 +269,7 @@
   // O chao de cada AREA vem da propria area (`piso` em ROOMS), e e por isso que,
   // quando a diretoria muda o tamanho de uma area, o carpete muda junto
   // (docs/areas.md).
-  const ZONAS_PISO = [
+  const ZONAS_PISO_PADRAO = [
     // Tapete debaixo da mesa de leitura da biblioteca. Linha e coluna iniciais
     // multiplas de 3: o tapete e uma peca de 3x3 com borda, e `desenharPiso`
     // escolhe a fatia por `c % 3` - fora desse alinhamento a borda sai no meio.
@@ -281,11 +283,14 @@
     { r0: 25, c0: 4, r1: 27, c1: 7, piso: 'tijolo' },
   ];
 
+  let ROOMS = ROOMS_PADRAO.slice();
+  let ZONAS_PISO = ZONAS_PISO_PADRAO.slice();
+
   function buildMap() {
     const tiles = [];
-    for (let r = 0; r < ROWS; r++) tiles.push(new Array(COLS).fill(LIVRE));
+    for (let r = 0; r < ROWS_PADRAO; r++) tiles.push(new Array(COLS_PADRAO).fill(LIVRE));
 
-    const dentro = (r, c) => r >= 0 && r < ROWS && c >= 0 && c < COLS;
+    const dentro = (r, c) => r >= 0 && r < ROWS_PADRAO && c >= 0 && c < COLS_PADRAO;
     const set = (r, c, t) => { if (dentro(r, c)) tiles[r][c] = t; };
     const rect = (r0, c0, r1, c1, t) => {
       for (let r = r0; r <= r1; r++) for (let c = c0; c <= c1; c++) set(r, c, t);
@@ -458,9 +463,9 @@
     return tiles;
   }
 
-  const tiles = buildMap();
+  let tiles = buildMap();
   // Grade da camada de cima, comeca vazia (o servidor manda o que estiver salvo).
-  const objetos = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+  let objetos = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
 
   function getRoomAtTile(col, row) {
     return ROOMS.find((s) => row >= s.r0 && row <= s.r1 && col >= s.c0 && col <= s.c1) || null;
@@ -500,13 +505,17 @@
   const CORES_DE_AREA = ['#4d8fa0', '#cf4a41', '#e0607e', '#c08a3e', '#7a5cd0', '#c25a3f', '#3f7a5a', '#8b98a8'];
 
   const BASE_AREAS = {};
-  ROOMS.forEach((s) => {
-    BASE_AREAS[s.id] = {
-      r0: s.r0, c0: s.c0, r1: s.r1, c1: s.c1, labelR: s.labelR, labelC: s.labelC,
-      som: somDaArea(s.som), nome: s.nome, piso: s.piso,
-    };
-    s.som = somDaArea(s.som); // copia propria: as de fabrica sao compartilhadas
-  });
+  function recalcularBaseAreas() {
+    for (const k in BASE_AREAS) delete BASE_AREAS[k];
+    ROOMS.forEach((s) => {
+      BASE_AREAS[s.id] = {
+        r0: s.r0, c0: s.c0, r1: s.r1, c1: s.c1, labelR: s.labelR, labelC: s.labelC,
+        som: somDaArea(s.som), nome: s.nome, piso: s.piso,
+      };
+      s.som = somDaArea(s.som); // copia propria: as de fabrica sao compartilhadas
+    });
+  }
+  recalcularBaseAreas();
 
   // Area criada pela diretoria (nao veio na planta de fabrica). So essa se
   // apaga: apagar uma de fabrica levaria junto o piso e o movel que foram
@@ -698,8 +707,59 @@
     return true;
   }
 
+  function carregarMapa(dados) {
+    if (!dados || typeof dados !== 'object') return false;
+    if (Number.isInteger(dados.cols) && dados.cols > 0) {
+      COLS = dados.cols;
+    }
+    if (Number.isInteger(dados.rows) && dados.rows > 0) {
+      ROWS = dados.rows;
+    }
+    if (Array.isArray(dados.tiles) && dados.tiles.length > 0) {
+      tiles = dados.tiles;
+    }
+    if (Array.isArray(dados.objetos) && dados.objetos.length > 0) {
+      objetos = dados.objetos;
+    } else if (objetos.length !== ROWS || (objetos[0] && objetos[0].length !== COLS)) {
+      objetos = Array.from({ length: ROWS }, () => new Array(COLS).fill(0));
+    }
+    if (Array.isArray(dados.rooms) && dados.rooms.length > 0) {
+      ROOMS = dados.rooms.map((s) => ({
+        id: s.id,
+        nome: s.nome,
+        r0: s.r0,
+        c0: s.c0,
+        r1: s.r1,
+        c1: s.c1,
+        piso: s.piso,
+        cor: s.cor || CORES_DE_AREA[0],
+        labelR: s.labelR != null ? s.labelR : s.r0,
+        labelC: s.labelC != null ? s.labelC : s.c0,
+        som: somDaArea(s.som),
+      }));
+      recalcularBaseAreas();
+    }
+    if (Array.isArray(dados.zonasPiso)) {
+      ZONAS_PISO = dados.zonasPiso.slice();
+    }
+    return true;
+  }
+
   window.OfficeMap = {
-    TILE, COLS, ROWS, tiles,
+    TILE,
+    get COLS() { return COLS; },
+    set COLS(v) { COLS = v; },
+    get ROWS() { return ROWS; },
+    set ROWS(v) { ROWS = v; },
+    get tiles() { return tiles; },
+    set tiles(v) { tiles = v; },
+    get objetos() { return objetos; },
+    set objetos(v) { objetos = v; },
+    get ROOMS() { return ROOMS; },
+    set ROOMS(v) { ROOMS = v; },
+    get ZONAS_PISO() { return ZONAS_PISO; },
+    set ZONAS_PISO(v) { ZONAS_PISO = v; },
+    carregarMapa,
     LIVRE, PAREDE, MESA, MESA_MONITOR, SOFA_CIMA, SOFA_BAIXO, MESA_CENTRO,
     ESTANTE, PLANTA, ARVORE, QUADRO, LOUSA, ARMARIO, BALCAO, CERCA, CADEIRA,
     TAPETE, MESA_REUNIAO, JANELA, AGUA, PEDRA, ARBUSTO, BANCO, CABIDE,
@@ -718,9 +778,6 @@
     MESAS_DE_TRABALHO,
     SUPERFICIES,
     OBJETOS,
-    objetos,
-    ROOMS,
-    ZONAS_PISO,
     areaEditavel,
     problemaDaArea,
     aplicarArea,

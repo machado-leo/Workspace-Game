@@ -8,29 +8,23 @@
   // 130px, que dao 4,1 tiles - com o zoom em 2x isso e meia tela de distancia,
   // e a chamada abria com gente que voce mal via.
   const TILE = 32;
-  const TILES_ENTRAR = 2.4;
-  // Sair tem folga suave pra evitar oscilacao na borda, mas sem exigir correr longe
-  // pra desligar (1,15x em vez de 1,5x).
-  const FOLGA_SAIR = 1.15;
+  const TILES_ENTRAR = 2.8;
+  // Folga ao sair para evitar oscilacao na borda da sala ou na proximidade (1.35x).
+  const FOLGA_SAIR = 1.35;
   const RAIO_ENTRAR = TILES_ENTRAR * TILE;
 
   // De onde o som ja comeca a cair. Perto e volume cheio; dai pra fora vai
   // sumindo ate zero no raio de saida.
-  const TILES_VOLUME_CHEIO = 1.2;
+  const TILES_VOLUME_CHEIO = 1.3;
 
   // Quanto tempo uma conexao pode ficar "quase la" antes de ser considerada
   // perdida. Ver `podarConexoesPresas`.
-  const PACIENCIA_MS = 12000;
+  const PACIENCIA_MS = 8000;
 
-  // Quem nunca atende. A conexao que nasce e nao conecta (o outro esta com a aba
-  // parada, sem camera, ou atras de uma rede que nao passa) era derrubada depois da
-  // paciencia e refeita NO QUADRO SEGUINTE, pra sempre: medido, ~30 tentativas em
-  // ~7 minutos pra dois bonecos que nunca respondiam - cada uma com oferta,
-  // candidatos ICE e uma conexao nova. Agora cada falha seguida com a MESMA pessoa
-  // dobra a espera (15 s, 30 s, 60 s... ate 5 min); conectar, ou a pessoa sair do
-  // mapa, zera.
-  const ESPERA_BASE_MS = 15000;
-  const ESPERA_MAX_MS = 5 * 60 * 1000;
+  // Quem nunca atende. Reduzido para 2.5s para nunca travar quem apenas
+  // entrou e saiu de uma sala ou passou por perto.
+  const ESPERA_BASE_MS = 2500;
+  const ESPERA_MAX_MS = 30000;
 
   // Servidores ICE vem do servidor (/api/ice): STUN, e o TURN da Cloudflare
   // quando configurado - sem TURN a chamada nao fecha em rede de faculdade,
@@ -93,6 +87,7 @@
   const peers = new Map(); // id do outro jogador -> { pc, videoEl, videoSender, remoteDescDefinida, candidatosPendentes }
   const desistencias = new Map(); // id -> { falhas, ateQuando }: quem nunca atende (ver ESPERA_BASE_MS)
   const desconectadosManualmente = new Set(); // id de quem desligamos manualmente ou que desligou de nos
+  const ultimoAvisoInativo = new Map(); // id -> timestamp do ultimo aviso mostrado
 
   function atualizarUiDesligar() {
     const btn = document.getElementById('btn-desligar');
@@ -171,7 +166,12 @@
   function fecharPeer(id) {
     const p = peers.get(id);
     if (!p) return;
-    try { p.pc.close(); } catch (e) { /* ja fechada */ }
+    if (p.pc) {
+      p.pc.onconnectionstatechange = null;
+      p.pc.onicecandidate = null;
+      p.pc.ontrack = null;
+      try { p.pc.close(); } catch (e) { /* ja fechada */ }
+    }
     if (p.videoEl) p.videoEl.remove();
     peers.delete(id);
     atualizarUiDesligar();
@@ -266,7 +266,10 @@
 
     sincronizarTracks(p);
 
-    pc.ontrack = (ev) => { videoEl.srcObject = ev.streams[0]; };
+    pc.ontrack = (ev) => {
+      videoEl.srcObject = ev.streams[0];
+      videoEl.play().catch(() => {});
+    };
     pc.onicecandidate = (ev) => {
       if (ev.candidate) Network.sendRtcSignal(id, { type: 'candidate', candidate: ev.candidate.toJSON() });
     };
@@ -275,8 +278,13 @@
       // (o id e o mesmo).
       if (peers.get(id) !== p) return;
       if (['failed', 'closed', 'disconnected'].includes(pc.connectionState)) {
-        // Nunca chegou a conectar: conta como tentativa perdida (ver registrarFalha)
-        if (!p.avisouConexao) registrarFalha(id);
+        const outro = jogadorDe(id);
+        const self = (window.Game && window.Game.getPlayers) ? window.Game.getPlayers().get(selfId) : null;
+        // So registra falha se os jogadores ainda estao juntos e deveriam falar (falha tecnica real).
+        // Se a pessoa apenas se afastou ou saiu da sala, a desconexao e normal e nao deve punir!
+        if (!p.avisouConexao && self && outro && deveFalarCom(self, outro)) {
+          registrarFalha(id);
+        }
         fecharPeer(id);
         return;
       }
@@ -314,13 +322,42 @@
       mostrarAviso('Chamada encerrada');
       return;
     }
+    if (signal.type === 'leave') {
+      fecharPeer(from);
+      desistencias.delete(from);
+      atualizarUiDesligar();
+      return;
+    }
     // Mesma espera do iniciarChamada, pro lado que RECEBE a oferta tambem abrir
     // a conexao com o TURN. Todos os sinais esperam a mesma promessa, entao
     // oferta e candidatos continuam saindo na ordem em que chegaram.
     await icePronto;
 
     if (signal.type === 'offer') {
-      const p = garantirPeer(from);
+      const outro = jogadorDe(from);
+      const self = jogadorDe(selfId);
+      if (!naMesmaChamada(self, outro) && !cameraAtiva) {
+        if (outro) {
+          const agora = Date.now();
+          const ultAviso = ultimoAvisoInativo.get(from) || 0;
+          if (agora - ultAviso > 15000) {
+            ultimoAvisoInativo.set(from, agora);
+            mostrarAvisoInterativo(
+              `${outro.name} se aproximou de você! Clique para ativar câmera e microfone.`,
+              'Ativar câmera e microfone',
+              () => { ligarCamera(); }
+            );
+          }
+        }
+        return;
+      }
+
+      let p = peers.get(from);
+      if (p && (['closed', 'failed', 'disconnected'].includes(p.pc.connectionState) || p.pc.signalingState === 'closed')) {
+        fecharPeer(from);
+        p = null;
+      }
+      p = garantirPeer(from);
 
       // Se os dois lados ofertarem ao mesmo tempo, quem tem o id maior cede
       // (desfaz a propria oferta e aceita a do outro); o de id menor ignora.
@@ -559,23 +596,47 @@
             return;
           }
         }
-        // QUALQUER um dos dois propoe - e nao so o de id menor, como era antes.
-        //
-        // O motivo e concreto: `updateProximity` roda no laco de desenho, e o
-        // navegador CONGELA esse laco em aba de segundo plano. Com a regra
-        // antiga, se justamente a pessoa de id menor estivesse com a aba atras
-        // (alt-tab, o tempo todo), a chamada nunca abria - as duas ficavam lado
-        // a lado sem nada acontecer, e nem dava pra desconfiar do porque.
-        //
-        // Os dois propondo ao mesmo tempo nao e problema: o `tratarSinal` ja
-        // resolve a colisao de ofertas - o de id maior desfaz a propria e aceita
-        // a do outro. Essa regra continua sendo a que decide quem cede.
-        if (cameraAtiva && !emEspera(id) && deveFalarCom(self, p)) iniciarChamada(id);
+        // Se a pessoa saiu da proximidade/sala, limpa qualquer espera residual e cooldown de aviso
+        if (!deveContinuarCom(self, p)) {
+          desistencias.delete(id);
+          ultimoAvisoInativo.delete(id);
+        }
+
+        if (deveFalarCom(self, p)) {
+          if (naMesmaChamada(self, p)) {
+            if (!emEspera(id)) iniciarChamada(id);
+          } else if (cameraAtiva && p.midiaAtiva) {
+            // Chamada de proximidade so conecta se AMBOS tiverem ativado camera/microfone
+            if (!emEspera(id)) iniciarChamada(id);
+          } else if (cameraAtiva && !p.midiaAtiva) {
+            // Local com microfone ligado, mas o colega esta inativo
+            const agora = Date.now();
+            const ultAviso = ultimoAvisoInativo.get(id) || 0;
+            if (agora - ultAviso > 15000) {
+              ultimoAvisoInativo.set(id, agora);
+              mostrarAviso(`${p.name} está por perto, mas com câmera e microfone desligados.`);
+            }
+          } else if (!cameraAtiva && p.midiaAtiva) {
+            // Local inativo e colega com midia ativa se aproximou
+            const agora = Date.now();
+            const ultAviso = ultimoAvisoInativo.get(id) || 0;
+            if (agora - ultAviso > 15000) {
+              ultimoAvisoInativo.set(id, agora);
+              mostrarAvisoInterativo(
+                `${p.name} se aproximou de você! Clique para ativar câmera e microfone.`,
+                'Ativar câmera e microfone',
+                () => { ligarCamera(); }
+              );
+            }
+          }
+        }
         return;
       }
 
-      if (!deveContinuarCom(self, p)) {
+      if (!deveContinuarCom(self, p) || (!naMesmaChamada(self, p) && (!cameraAtiva || !p.midiaAtiva))) {
+        try { Network.sendRtcSignal(id, { type: 'leave' }); } catch (e) {}
         fecharPeer(id);
+        desistencias.delete(id);
         return;
       }
 
@@ -586,26 +647,66 @@
         // baixo por estar na outra cabeceira - e menos ainda por estar na outra
         // ponta do escritorio, que e o caso novo: quem entra numa chamada
         // marcada continua no lugar onde estava.
-        par.videoEl.volume = (naMesmaChamada(self, p) || salaFechadaDe(self))
+        par.videoEl.volume = (naMesmaChamada(self, p) || salaFechadaDe(self) || (window.CallGrid && CallGrid.estaAtivo && CallGrid.estaAtivo()))
           ? 1
           : volumePara(Math.hypot(p.x - self.x, p.y - self.y), alcanceEntre(regraDe(self), regraDe(p)));
       }
     });
 
-    peers.forEach((_, id) => { if (!playersMap.has(id)) fecharPeer(id); });
+    peers.forEach((_, id) => {
+      if (!playersMap.has(id)) {
+        try { Network.sendRtcSignal(id, { type: 'leave' }); } catch (e) {}
+        fecharPeer(id);
+      }
+    });
     // quem saiu do mapa (ou trocou de id) leva a fila de espera junto
     desistencias.forEach((_, id) => { if (!playersMap.has(id)) desistencias.delete(id); });
     ajustarChamadaGrande();
     atualizarUiDesligar();
   }
 
-  function mostrarAviso(texto) {
+  function mostrarAviso(texto, duracaoMs = 4500) {
     const el = document.getElementById('aviso-camera');
     if (!el) return;
+    el.innerHTML = '';
     el.textContent = texto;
     el.classList.remove('oculto');
     clearTimeout(mostrarAviso._timer);
-    mostrarAviso._timer = setTimeout(() => el.classList.add('oculto'), 4500);
+    mostrarAviso._timer = setTimeout(() => {
+      el.classList.add('oculto');
+      el.innerHTML = '';
+    }, duracaoMs);
+  }
+
+  function mostrarAvisoInterativo(texto, textoBtn, acao, duracaoMs = 8000) {
+    const el = document.getElementById('aviso-camera');
+    if (!el) return;
+    el.innerHTML = '';
+
+    const span = document.createElement('span');
+    span.textContent = texto;
+    el.appendChild(span);
+
+    if (textoBtn && typeof acao === 'function') {
+      const btn = document.createElement('button');
+      btn.className = 'btn-ativar-aviso';
+      btn.type = 'button';
+      btn.textContent = textoBtn;
+      btn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        el.classList.add('oculto');
+        el.innerHTML = '';
+        acao();
+      });
+      el.appendChild(btn);
+    }
+
+    el.classList.remove('oculto');
+    clearTimeout(mostrarAviso._timer);
+    mostrarAviso._timer = setTimeout(() => {
+      el.classList.add('oculto');
+      el.innerHTML = '';
+    }, duracaoMs);
   }
 
   async function ligarCamera() {
@@ -631,6 +732,13 @@
     cameraAtiva = true;
     micAtivo = true;
     videoAtivo = temVideo;
+    if (window.Network && Network.avisarMidia) Network.avisarMidia(true);
+
+    const elAviso = document.getElementById('aviso-camera');
+    if (elAviso && elAviso.querySelector('.btn-ativar-aviso')) {
+      elAviso.classList.add('oculto');
+      elAviso.innerHTML = '';
+    }
 
     // Conexoes que ja existiam nasceram sem as nossas tracks (a camera abriu
     // depois). Manda as tracks agora e renegocia, senao o outro lado nunca
@@ -665,6 +773,7 @@
     if (localStream) localStream.getTracks().forEach((t) => t.stop());
     localStream = null;
     cameraAtiva = false;
+    if (window.Network && Network.avisarMidia) Network.avisarMidia(false);
     desconectadosManualmente.clear();
     document.getElementById('preview-local').classList.add('oculto');
     document.getElementById('btn-camera').classList.remove('ativo');
@@ -701,6 +810,11 @@
 
     telaStream = stream;
     telaTrack = track;
+    const vt = obterVideoTelaLocal();
+    if (vt) {
+      vt.srcObject = stream;
+      vt.play().catch(() => {});
+    }
     // O navegador tem o proprio botao de "parar de compartilhar", fora da nossa
     // pagina. Sem escutar isto, a divisao parava pra ele e continuava ligada pra
     // gente: o botao ficaria aceso mandando uma track morta.
@@ -712,8 +826,32 @@
     aplicarUiTela();
   }
 
+  let videoTelaLocal = null;
+
+  function obterVideoTelaLocal() {
+    if (!videoTelaLocal) {
+      videoTelaLocal = document.getElementById('video-tela-local');
+      if (!videoTelaLocal) {
+        videoTelaLocal = document.createElement('video');
+        videoTelaLocal.id = 'video-tela-local';
+        videoTelaLocal.autoplay = true;
+        videoTelaLocal.muted = true;
+        videoTelaLocal.playsInline = true;
+        videoTelaLocal.style.position = 'absolute';
+        videoTelaLocal.style.width = '0';
+        videoTelaLocal.style.height = '0';
+        videoTelaLocal.style.opacity = '0';
+        videoTelaLocal.style.pointerEvents = 'none';
+        document.body.appendChild(videoTelaLocal);
+      }
+    }
+    return videoTelaLocal;
+  }
+
   function pararTela() {
     if (!telaTrack) return;
+    const vt = obterVideoTelaLocal();
+    if (vt) vt.srcObject = null;
     const camera = localStream ? (localStream.getVideoTracks()[0] || null) : null;
     telaTrack.removeEventListener('ended', pararTela);
     peers.forEach((p) => {
@@ -744,16 +882,23 @@
     }
     const videoLocal = document.getElementById('video-local');
     if (videoLocal) {
-      videoLocal.srcObject = dividindo ? telaStream : localStream;
-      // no proprio video, e nao no quadro: a grade de chamada move este
-      // elemento pra dentro dela (ver style.css, `video.mostrando-tela`)
-      videoLocal.classList.toggle('mostrando-tela', dividindo);
+      if (localStream && cameraAtiva) {
+        videoLocal.srcObject = localStream;
+        videoLocal.classList.remove('mostrando-tela');
+      } else if (dividindo) {
+        videoLocal.srcObject = telaStream;
+        videoLocal.classList.add('mostrando-tela');
+      } else {
+        videoLocal.srcObject = null;
+        videoLocal.classList.remove('mostrando-tela');
+      }
     }
     const preview = document.getElementById('preview-local');
     if (preview) {
       preview.classList.toggle('sem-video', !dividindo && !temVideo);
       preview.classList.toggle('dividindo-tela', dividindo);
-      if (dividindo) preview.classList.remove('oculto');
+      if (dividindo || cameraAtiva) preview.classList.remove('oculto');
+      else preview.classList.add('oculto');
     }
   }
 
@@ -822,6 +967,7 @@
     videoAtivo = temVideo && prefs.videoAtivo !== false;
     localStream.getAudioTracks().forEach((t) => { t.enabled = micAtivo; });
     localStream.getVideoTracks().forEach((t) => { t.enabled = videoAtivo; });
+    if (window.Network && Network.avisarMidia) Network.avisarMidia(true);
     aplicarUiCamera();
   }
 
@@ -840,6 +986,7 @@
     setInterval(buscarIce, RENOVAR_ICE_MS);
     Network.on('rtc-signal', tratarSinal);
     adotarStreamPendente();
+    if (window.Network && Network.avisarMidia) Network.avisarMidia(cameraAtiva);
     const btnCam = document.getElementById('btn-camera');
     if (btnCam) {
       btnCam.addEventListener('click', () => {
@@ -932,6 +1079,14 @@
     return telaTrack ? document.getElementById('video-local') : null;
   }
 
+  function estaNoAlcanceFisico(id) {
+    if (!selfId || !id) return false;
+    const self = jogadorDe(selfId);
+    const outro = jogadorDe(id);
+    if (!self || !outro) return false;
+    return deveContinuarCom(self, outro);
+  }
+
   window.Calls = {
     init, updateProximity, temChamadaAtiva, temVideoRemoto, getVideoRemoto,
     getPeersConectados, getLocalStream, isCameraAtiva, temVideoLocal,
@@ -941,14 +1096,19 @@
     // conseguir exercita-las sem navegador. Mesma ideia do `canvasDoMapa` do
     // game.js: e caro demais so conferir isso a olho, numa chamada de verdade.
     deveFalarCom, deveContinuarCom,
+    estaNoAlcanceFisico, ligarCamera, desligarCamera,
     abafarParaLigacao,
     estaAbafado: () => abafado,
     emChamadaGrande: () => soVoz,
-    _ajustarChamadaGrande: ajustarChamadaGrande,
     _peers: peers,
     desligar,
     limparDesconexoesManuais: () => desconectadosManualmente.clear(),
     getVideoLocal: () => document.getElementById('video-local'),
+    getVideoTela: () => obterVideoTelaLocal(),
+    temVideoTela: () => {
+      const vt = obterVideoTelaLocal();
+      return !!(telaTrack && vt && (vt.readyState >= 2 || vt.videoWidth > 0));
+    },
     isMicAtivo: () => micAtivo,
   };
 })();
