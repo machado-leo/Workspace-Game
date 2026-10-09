@@ -39,10 +39,13 @@
         nome: perfil.name,
         appearance: perfil.appearance,
       });
-      // O Game so aceita init uma vez; depois disso a troca de avatar exige
-      // reconectar, entao recarrega (a sessao continua no cookie).
-      if (iniciado) location.reload();
-      else abrirEntrada();
+      if (iniciado) {
+        telaCriador.classList.add('oculto');
+        telaGame.classList.remove('oculto');
+        Network.atualizarPerfil(perfil);
+      } else {
+        abrirEntrada();
+      }
     });
   }
 

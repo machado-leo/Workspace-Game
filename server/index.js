@@ -644,6 +644,24 @@ io.on('connection', (socket) => {
     avisoDePresenca(player.uid, player.name + ' entrou na sede');
   });
 
+  socket.on('perfil-atualizado', (data) => {
+    const player = players.get(socket.id);
+    if (!player || !data) return;
+
+    player.name = data.name || player.name;
+    if (data.appearance) {
+      player.appearance = sanitizeAppearance(data.appearance);
+    }
+    nomesPorUid.set(player.uid, player.name);
+
+    io.emit('player-atualizado', {
+      id: socket.id,
+      uid: player.uid,
+      name: player.name,
+      appearance: player.appearance
+    });
+  });
+
   socket.on('move', (data) => {
     const player = players.get(socket.id);
     if (!player || !data) return;

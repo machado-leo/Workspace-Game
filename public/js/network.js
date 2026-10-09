@@ -50,6 +50,7 @@
     });
 
     socket.on('init', (data) => emitLocal('init', data));
+    socket.on('player-atualizado', (data) => emitLocal('player-atualizado', data));
     socket.on('player-joined', (data) => emitLocal('player-joined', data));
     socket.on('player-left', (data) => emitLocal('player-left', data));
     socket.on('player-moved', (data) => emitLocal('player-moved', data));
@@ -159,6 +160,12 @@
   // Comeca uma chamada do grupo e CONVIDA o canal - nao arrasta ninguem.
   function ligarProGrupo(canal) {
     if (socket && socket.connected) socket.emit('chamada-chamar-grupo', { canal });
+  }
+
+  function atualizarPerfil(perfil) {
+    if (socket && socket.connected) {
+      socket.emit('perfil-atualizado', perfil);
+    }
   }
 
   function sendReaction(emoji) {

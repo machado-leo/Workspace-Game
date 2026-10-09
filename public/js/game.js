@@ -4896,6 +4896,19 @@
     });
     Network.on('mapa-conteudo-recusado', (m) => Conteudo.recusado(m));
 
+    Network.on('player-atualizado', (data) => {
+      const p = players.get(data.id);
+      if (p) {
+        p.name = data.name;
+        p.appearance = data.appearance;
+        if (p.id === idLocal) {
+          playerLocal.name = data.name;
+          playerLocal.appearance = data.appearance;
+        }
+        Membros.atualizar(); // Atualiza a lista lateral
+      }
+    });
+
     Network.on('player-joined', (data) => {
       players.set(data.id, criarJogadorRemoto(data));
       Chat.pessoasMudaram();
