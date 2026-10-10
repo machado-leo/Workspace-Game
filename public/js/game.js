@@ -4260,9 +4260,9 @@
   function render(now, dt) {
     atualizarCamera(dt);
     if (window.Pets) Pets.update(dt, players);
-    if (window.Youtube) {
+    if (window.Youtube && selfId) {
        // atualiza volumes usando as funcoes do Calls pra consistencia do ambiente!
-       window.Youtube.atualizarVolumes(idLocal, players, (dist) => {
+       window.Youtube.atualizarVolumes(selfId, players, (dist) => {
           return window.Calls && window.Calls.volumePara ? window.Calls.volumePara(dist, 9.0 * OfficeMap.TILE) : (dist < 9.0 * OfficeMap.TILE ? 1 - (dist / (9.0 * OfficeMap.TILE)) : 0);
        });
     }
@@ -4820,13 +4820,13 @@
         if (link === null) return;
         if (!link.trim()) {
            Network.sendYoutube(null);
-           if (window.Youtube) window.Youtube.pararPara(idLocal);
+           if (window.Youtube && selfId) window.Youtube.pararPara(selfId);
            return;
         }
         const parsed = window.Youtube ? window.Youtube.parseLink(link.trim()) : null;
         if (parsed) {
            Network.sendYoutube(parsed);
-           if (window.Youtube) window.Youtube.tocarPara(idLocal, parsed);
+           if (window.Youtube && selfId) window.Youtube.tocarPara(selfId, parsed);
         } else {
            alert('Nao reconheci esse link do YouTube.');
         }
@@ -4952,12 +4952,6 @@
         p.usuario = data.usuario;
         p.bio = data.bio;
         p.appearance = data.appearance;
-        if (p.id === idLocal) {
-          playerLocal.name = data.name;
-          playerLocal.usuario = data.usuario;
-          playerLocal.bio = data.bio;
-          playerLocal.appearance = data.appearance;
-        }
         Membros.atualizar(); // Atualiza a lista lateral
       }
     });

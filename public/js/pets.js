@@ -790,7 +790,7 @@
           // Nome do mascote sutil em cima
           ctx.fillStyle = 'rgba(0,0,0,0.45)';
           ctx.beginPath();
-          ctx.roundRect(m.displayX - 22, m.displayY - 30, 44, 13, 4);
+          if (typeof ctx.roundRect === 'function') ctx.roundRect(m.displayX - 22, m.displayY - 30, 44, 13, 4); else ctx.rect(m.displayX - 22, m.displayY - 30, 44, 13);
           ctx.fill();
           ctx.fillStyle = '#ffffff';
           ctx.font = 'bold 9px sans-serif';
@@ -844,7 +844,7 @@
       ctx.strokeStyle = '#2b2f38';
       ctx.lineWidth = 1.2;
       ctx.beginPath();
-      ctx.roundRect(b.x - w / 2, b.y - h, w, h, 6);
+      if (typeof ctx.roundRect === 'function') ctx.roundRect(b.x - w / 2, b.y - h, w, h, 6); else ctx.rect(b.x - w / 2, b.y - h, w, h);
       ctx.fill();
       ctx.stroke();
 
