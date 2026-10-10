@@ -91,7 +91,7 @@ const CSP = [
   "default-src 'self'",
   "base-uri 'self'",
   "object-src 'none'",
-  "script-src 'self' https://cdnjs.cloudflare.com",
+  "script-src 'self' https://cdnjs.cloudflare.com https://www.youtube.com https://s.ytimg.com",
   "worker-src 'self' blob:",
   "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
   "font-src 'self' https://fonts.gstatic.com",

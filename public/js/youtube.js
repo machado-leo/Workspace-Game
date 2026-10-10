@@ -139,10 +139,13 @@
     });
   }
 
-  // Extrair ID de https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  // Extrair ID de https://www.youtube.com/watch?v=dQw4w9WgXcQ, shorts ou ID direto
   function parseLink(url) {
-    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
-    const match = url.match(regExp);
+    if (!url || typeof url !== 'string') return null;
+    const limpo = url.trim();
+    if (/^[a-zA-Z0-9_-]{11}$/.test(limpo)) return limpo;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|&v=)([^#&?]*).*/;
+    const match = limpo.match(regExp);
     return (match && match[2].length === 11) ? match[2] : null;
   }
 

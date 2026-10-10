@@ -99,7 +99,7 @@ conferir('a alca de arrastar e o "Voltar pro canto" estao na pagina',
   [/id="spotify-alca"/.test(htmlArrasta), /id="spotify-canto"/.test(htmlArrasta)], [true, true]);
 
 const srv = fs.readFileSync(path.join(raiz, 'server/index.js'), 'utf8');
-conferir('a CSP deixa abrir iframe so do Spotify', srv.match(/"frame-src [^"]*"/g), ['"frame-src https://open.spotify.com"']);
+conferir('a CSP deixa abrir iframe de Spotify e YouTube', srv.match(/"frame-src [^"]*"/g), ['"frame-src https://open.spotify.com https://www.youtube.com"']);
 conferir('  e imagem de fora so a capa do Spotify (i.scdn.co)', srv.match(/"img-src [^"]*"/g), ['"img-src \'self\' data: blob: https://i.scdn.co"']);
 conferir('o nome e a capa vem de uma rota so pra quem esta logado', /app\.get\('\/api\/spotify\/:tipo\/:id', sessao\.exigirLogin/.test(srv), true);
 const htmlMini = fs.readFileSync(path.join(raiz, 'public/index.html'), 'utf8');
