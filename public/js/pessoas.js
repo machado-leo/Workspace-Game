@@ -195,7 +195,10 @@
     const ctx = canvasAvatar.getContext('2d');
     ctx.imageSmoothingEnabled = false;
     if (p.appearance && window.Character) {
-      Character.draw(ctx, 30, 75, p.appearance, { dir: 'down', scale: 2, walkTime: 0 });
+      Character.draw(ctx, 24, 75, p.appearance, { dir: 'down', scale: 2, walkTime: 0 });
+      if (p.appearance.pet && p.appearance.pet !== 'nenhum' && window.Pets) {
+        Pets.desenharIndividual(ctx, 48, 76, p.appearance.pet, { dir: 'down', scale: 1.4 });
+      }
     }
     caixaAvatar.appendChild(canvasAvatar);
     topo.appendChild(caixaAvatar);
@@ -215,6 +218,20 @@
     
     info.appendChild(el('div', 'cartao-sub', (Game.STATUS_LABEL[p.status] || '') + ' · ' + (sala ? sala.nome : '-')));
     
+    if (p.appearance && p.appearance.pet && p.appearance.pet !== 'nenhum') {
+      const nomesPet = {
+        caramelo: '🐕 Caramelo',
+        gato: '🐈 Gatinho',
+        capivara: '🦫 Capivara',
+        pato: '🦆 Pato'
+      };
+      const petEl = el('div', 'cartao-pet', (nomesPet[p.appearance.pet] || p.appearance.pet));
+      petEl.style.fontSize = '12px';
+      petEl.style.marginTop = '4px';
+      petEl.style.color = 'var(--texto-fraco)';
+      info.appendChild(petEl);
+    }
+
     if (p.bio) {
       const bioEl = el('div', 'cartao-bio', p.bio);
       bioEl.style.marginTop = '6px';

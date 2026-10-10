@@ -54,6 +54,17 @@
       campoOpcao: 'glasses',
       opcoes: () => [{ valor: false, rotulo: 'Sem' }, { valor: true, rotulo: 'Com' }],
     },
+    {
+      id: 'pet', nome: 'Pet',
+      campoOpcao: 'pet',
+      opcoes: () => [
+        { valor: 'nenhum', rotulo: 'Nenhum' },
+        { valor: 'caramelo', rotulo: '🐕 Caramelo' },
+        { valor: 'gato', rotulo: '🐈 Gatinho' },
+        { valor: 'capivara', rotulo: '🦫 Capivara' },
+        { valor: 'pato', rotulo: '🦆 Pato' },
+      ],
+    },
   ];
 
   let appearance = null;
@@ -80,6 +91,19 @@
   function desenharMiniatura(canvas, variacao, escala, neutra) {
     const ctx = canvas.getContext('2d');
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+    if (variacao && 'pet' in variacao) {
+      if (variacao.pet && variacao.pet !== 'nenhum' && window.Pets) {
+        Pets.desenharIndividual(ctx, canvas.width / 2, canvas.height - 6, variacao.pet, {
+          dir: 'down', state: 'idle', animTime: 0, scale: escala ? escala * 1.8 : 1.6,
+        });
+      } else {
+        ctx.fillStyle = '#8b98a8';
+        ctx.font = 'bold 9px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('Nenhum', canvas.width / 2, canvas.height / 2 + 3);
+      }
+      return;
+    }
     const cor = neutra && neutra.campoCor
       ? { [neutra.campoCor]: appearance[neutra.campoCor] }
       : null;
@@ -104,7 +128,20 @@
       mini.width = 30;
       mini.height = 34;
       btn.appendChild(mini);
-      Character.ready.then(() => desenharMiniatura(mini, {}, 0.55));
+      if (cat.id === 'pet') {
+        const mctx = mini.getContext('2d');
+        if (appearance.pet && appearance.pet !== 'nenhum' && window.Pets) {
+          Pets.desenharIndividual(mctx, mini.width / 2, mini.height - 4, appearance.pet, {
+            dir: 'down', scale: 1.1,
+          });
+        } else {
+          mctx.font = '14px sans-serif';
+          mctx.textAlign = 'center';
+          mctx.fillText('🐾', mini.width / 2, mini.height / 2 + 5);
+        }
+      } else {
+        Character.ready.then(() => desenharMiniatura(mini, {}, 0.55));
+      }
 
       const rotulo = document.createElement('span');
       rotulo.textContent = cat.nome;
@@ -203,6 +240,11 @@
       Character.draw(ctx, canvas.width / 2, canvas.height - 26, appearance, {
         dir: 'down', moving: true, walkTime: previewTime * 0.4, scale: 2,
       });
+      if (appearance.pet && appearance.pet !== 'nenhum' && window.Pets) {
+        Pets.desenharIndividual(ctx, canvas.width / 2 + 38, canvas.height - 24, appearance.pet, {
+          dir: 'down', state: 'idle', animTime: previewTime, scale: 2.1,
+        });
+      }
     }
     clearInterval(previewIntervalId);
     previewIntervalId = setInterval(renderPreview, 1000 / 60);

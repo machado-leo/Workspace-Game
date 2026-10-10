@@ -400,6 +400,7 @@ function sanitizeAppearance(appearance) {
     shoesStyle: allowedEnum(a.shoesStyle, ['tenis', 'sandalia', 'bota', 'pantufa', 'descalco'], 'tenis'),
     pescoco: allowedEnum(a.pescoco, ['nenhum', 'gravata', 'lenco'], 'nenhum'),
     pescocoColor: allowedHex(a.pescocoColor, '#a03028'),
+    pet: allowedEnum(a.pet, ['nenhum', 'caramelo', 'gato', 'capivara', 'pato'], 'nenhum'),
   };
 }
 

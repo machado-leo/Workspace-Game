@@ -4259,6 +4259,7 @@
 
   function render(now, dt) {
     atualizarCamera(dt);
+    if (window.Pets) Pets.update(dt, players);
     if (window.Youtube) {
        // atualiza volumes usando as funcoes do Calls pra consistencia do ambiente!
        window.Youtube.atualizarVolumes(idLocal, players, (dist) => {
@@ -4304,8 +4305,17 @@
     // da frente pelo mesmo motivo.
     const posandoNaMesa = !!(Decorador.pintandoEmCima && Decorador.pintandoEmCima());
 
-    const lista = Array.from(players.values()).sort((a, b) => a.displayY - b.displayY);
-    lista.forEach((p) => {
+    const listaEntidades = [
+      ...Array.from(players.values()).map((p) => ({ tipo: 'player', y: p.displayY, p })),
+      ...(window.Pets ? Pets.getTodosParaDesenho().map((pet) => ({ tipo: 'pet', y: pet.displayY, pet })) : []),
+    ].sort((a, b) => a.y - b.y);
+
+    listaEntidades.forEach((entidade) => {
+      if (entidade.tipo === 'pet') {
+        entidade.pet.desenhar(ctx);
+        return;
+      }
+      const p = entidade.p;
       // Sentado: desce uns pixels pra encaixar no assento e nao subir em cima da
       // mesa que esta na celula de tras. Tambem para a animacao de caminhada.
       const py = p.displayY + (p.sentado ? 2 : 0);
@@ -4451,6 +4461,8 @@
       }
     });
 
+    if (window.Pets) Pets.desenharParticulas(ctx);
+
     // Editor de areas por cima de tudo: as alcas nao podem sumir atras de quem
     // esta em pe na borda da sala.
     if (editandoAreas) EditorAreas.desenhar(ctx, ZOOM);
@@ -4558,6 +4570,10 @@
     // A placa de creditos abre a lista completa numa aba nova (a sede continua).
     if (cliqueNaPlaca(clickX, clickY)) {
       window.open('/creditos.html', '_blank', 'noopener');
+      return;
+    }
+
+    if (window.Pets && Pets.cliqueEm(clickX, clickY)) {
       return;
     }
 

@@ -127,6 +127,7 @@
     shoesStyle: 'tenis',
     pescoco: 'nenhum',
     pescocoColor: '#a03028',
+    pet: 'nenhum',
   };
 
   // Perfis antigos (salvos no navegador antes de existirem calca/sapato/cor de
@@ -154,6 +155,7 @@
       shoesStyle: acha(SAPATOS, ap.shoesStyle).id,
       pescoco: acha(PESCOCOS, ap.pescoco).id,
       pescocoColor: ap.pescocoColor || PADROES.pescocoColor,
+      pet: ap.pet || PADROES.pet,
     };
   }
 
